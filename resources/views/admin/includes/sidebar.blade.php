@@ -65,7 +65,7 @@
               </a>
           </li>
       @endrole
-      @role('school-accountant')
+      @role('school-accountant|super-admin')
         <li class="nav-item">
             <a href="{{route('admin.payment.index')}}" class="nav-link {{ request()->routeIs('admin.payment.index') ? 'active' : '' }}">
               <i class="nav-icon fas fa-th"></i>            
