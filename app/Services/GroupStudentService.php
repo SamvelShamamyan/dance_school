@@ -63,7 +63,8 @@ class GroupStudentService
         $item->school_name = $item->school->name ?? '';
         $item->action = '
             <button class="btn btn-info btn-edit-student" data-id="'.$item->id.'" title="Խմբագրել"><i class="fas fa-edit"></i></button>
-            <button class="btn btn-danger btn-delete-group-student" data-id-student="'.$item->id.'" title="Հեռացնել սանին տվյալ խմբից"><i class="fas fa-trash-alt"></i></button>
+            <button class="btn btn-danger btn-delete-group-student" data-id-student="'.$item->id.'" title="Հեռացնել աշակերտին տվյալ խմբից"><i class="fas fa-trash-alt"></i></button>
+            <button class="btn btn-warning btn-change-group-student" id="studentGroupRepeatModalBtn" data-toggle="modal" data-target="#studentGroupRepeatModal" data-id-student="'.$item->id.'" title="Տեղափոխել մեկ այլ խումբ"><i class="fas fa-sync" style="color: white;"></i></button>
         ';
         return $item;
     });

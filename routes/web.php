@@ -72,6 +72,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::get('/{id}/staff', [GroupController::class, 'staffPage'])->name('admin.group.staffPage');    
         Route::post('/{id}/getStaffList', action: [GroupController::class, 'getStaffList'])->name('admin.group.getStaffList');
         Route::post('/staff/{staffId}/{groupId}/delete', action: [GroupController::class, 'deleteGroupStaff'])->name('admin.group.deleteGroupStaff');
+
+        Route::post('/studentRepeat', [GroupController::class, 'studentRepeat'])->name('admin.group.studentRepeat'); 
        
     });
 

@@ -42,9 +42,9 @@ class PaymentStoreRequest extends FormRequest
             'group_id.integer'  => 'Խումբը պետք է լինի թվային նույնացուցիչ:',
             'group_id.exists'   => 'Ընտրված խումբ չի գտնվել:',
 
-            'student_id.required' => 'Սանը պարտադիր է:',
-            'student_id.integer'  => 'Սանը պետք է լինի թվային նույնացուցիչ:',
-            'student_id.exists'   => 'Ընտրված սան չի գտնվել:',
+            'student_id.required' => 'Աշակերտը պարտադիր է:',
+            'student_id.integer'  => 'Աշակերտը պետք է լինի թվային նույնացուցիչ:',
+            'student_id.exists'   => 'Ընտրված Աշակերտ չի գտնվել:',
 
             'paid_at.required'    => 'Վճարման ամսաթիվը պարտադիր է:',
             'paid_at.date_format' => 'Ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օր.` 06.08.2025):',

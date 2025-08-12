@@ -60,7 +60,7 @@
               <a href="{{route('admin.student.index')}}" class="nav-link {{ request()->routeIs('admin.student.index') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-th"></i>
                 <p>
-                  Սաներ
+                  Աշակերտներ
                 </p>
               </a>
           </li>

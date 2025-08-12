@@ -13,10 +13,8 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
     <h3 class="mb-0">Ամսական վճարումներ</h3>
-    <!-- <div class="text-muted small">Визуальный макет: фильтры, сводка, таблица, модалка</div> -->
   </div>
   <div class="btn-group">
-    <!-- <button class="btn btn-outline-secondary" id="btnRefresh"><i class="bi bi-arrow-repeat"></i> Update</button> -->
     <button class="btn btn-success" id="paymentBtn" data-toggle="modal" data-target="#addPaymentModal" ><i class="fas fa-plus"></i> Ավելացնել վճարում</button>
   </div>
 </div>
@@ -58,7 +56,7 @@
       <table class="table table-striped table-bordered dtTbl" style="width:100%" id="paymentTbl">
           <thead>
               <tr>
-                  <th>Սան</th>
+                  <th>Աշակերտ</th>
                   <th>Հուն</th>
                   <th>Փետ</th>
                   <th>Մար</th>
@@ -87,7 +85,7 @@
       <form id="singlePaymentForm">
         <div class="modal-header">
           <h5 class="modal-title">Ավելացնել վճարում (միանվագ)</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Закрыть">
+          <button type="button" class="close" data-dismiss="modal" aria-label="close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -102,7 +100,7 @@
           </div>
 
           <div class="form-group mb-2">
-            <label>Սան</label>
+            <label>Աշակերտ</label>
             <select name="student_id" class="form-control" id="students_list" disabled>
               <option value="" disabled selected>Ընտրել</option>
             </select>

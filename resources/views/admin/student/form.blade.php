@@ -27,7 +27,7 @@
     <div class="col-6">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">{{ isset($student) ? 'Խմբագրել սան' : 'Ավելացնել սան' }}</h3>
+                <h3 class="card-title">{{ isset($student) ? 'Խմբագրել աշակերտիօն' : 'Ավելացնել աշակերտ' }}</h3>
             </div>
             
             <form id="StudentForm" action="{{ isset($student) ? route('admin.student.update', $student->id) : route('admin.student.add') }}">

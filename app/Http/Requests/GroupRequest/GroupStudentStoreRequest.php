@@ -32,7 +32,7 @@ class GroupStudentStoreRequest extends FormRequest
     {
         return [
             'group_id.required'     => 'Խումբը պարտադիր է:',
-            'add_student.required'  => 'Ընտրեք առնվազն մեկ սան:',
+            'add_student.required'  => 'Ընտրեք առնվազն մեկ աշակերտ:',
         ];
     }
 }

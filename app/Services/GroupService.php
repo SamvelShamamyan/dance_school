@@ -49,8 +49,8 @@ class GroupService
     $data->transform(function ($item) {
         $item->school_name = $item->school->name ?? '';
         $item->action = '
-            <a href="'.route('admin.group.studentsPage', $item->id).'" class="btn btn-success" id="getGroupStudent" data-group-id ="'.$item->id.'"><i class="fas fa-users"></i> Սաներ</a>
-            <button class="btn btn-success" id="studentGroupModalBtn" data-toggle="modal" data-target="#studentGroupModal" data-group-id ="'.$item->id.'"><i class="fas fa-user"></i> Ավելացնել սան</button>
+            <a href="'.route('admin.group.studentsPage', $item->id).'" class="btn btn-success" id="getGroupStudent" data-group-id ="'.$item->id.'"><i class="fas fa-users"></i> Աշակերտներ</a>
+            <button class="btn btn-success" id="studentGroupModalBtn" data-toggle="modal" data-target="#studentGroupModal" data-group-id ="'.$item->id.'"><i class="fas fa-user"></i> Ավելացնել աշակերտ</button>
             <a href="'.route('admin.group.staffPage', $item->id).'" class="btn btn-warning" id="getGroupStaff" data-group-id ="'.$item->id.'"><i class="fas fa-users"></i> Աշխատակազմ</a>
             <button class="btn btn-warning" id="staffGroupModalBtn" data-toggle="modal" data-target="#staffGroupModal" data-group-id ="'.$item->id.'"><i class="fas fa-users"></i> Ավելացնել աշխատակից</button>
             <button class="btn btn-info btn-edit-group" data-id="'.$item->id.'" title="Խմբագրել"><i class="fas fa-edit"></i></button>

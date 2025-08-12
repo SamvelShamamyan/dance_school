@@ -326,6 +326,45 @@ $(document).on('click', '.btn-delete-group-staff', function () {
 });
 
 
+$(document).on('click', '#studentGroupRepeatModalBtn', function () {  
+    let studentId = $(this).data('id-student');
+    $('#studentId').val(studentId);
+});
+
+function saveStudentRepeat() {
+    const form = document.getElementById("singleRepeatForm");
+    const formData = new FormData(form);
+    $.ajax({        
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url:  `/admin/group/studentRepeat`,
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        dataType: 'json',
+        success: function(response) {
+
+            if (response.status === 1) {
+                swal("success", response.message, true, true);
+                $('#singleRepeatForm')[0].reset();
+                $('.text-danger').text('');
+                $('#singleRepeatBtn').prop('disabled', true)
+            }
+        },
+        error: function(xhr) {
+            if (xhr.status === 422) {
+                let errors = xhr.responseJSON.errors;
+                $.each(errors, function(field, messages) {
+                    $(`.error_${field}`).text(messages[0])
+                });
+            } else {
+                swal("error", "Ինչ-որ բան այն չէ, կրկին փորձեք!", true, true)
+            }
+        }
+    });
+}
+
 $(function () {
     $('.select2').select2({
         theme: 'bootstrap4'
@@ -368,4 +407,11 @@ $('#staffGroupModal').on('hidden.bs.modal', function () {
   if ($select.hasClass('select2-hidden-accessible')) {
     $select.val(null).trigger('change');
   }
+});
+
+$('#studentGroupRepeatModal').on('hidden.bs.modal', function () {
+  const form = $('#singleRepeatForm')[0];
+  if (form) form.reset();              
+  $('#student_id').val('');     
+  $('.text-danger').empty();    
 });

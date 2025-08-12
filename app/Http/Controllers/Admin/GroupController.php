@@ -8,6 +8,7 @@ use App\Http\Requests\GroupRequest\GroupStoreRequest;
 use App\Http\Requests\GroupRequest\GroupUpdateRequest; 
 use App\Http\Requests\GroupRequest\GroupStudentStoreRequest; 
 use App\Http\Requests\GroupRequest\GroupStaffStoreRequest; 
+use App\Http\Requests\GroupRequest\StudentRepeatStoreRequest; 
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Group;
@@ -152,12 +153,40 @@ class GroupController extends Controller
     }
 
     public function studentsPage($groupId){
-        return view('admin.group.student', compact('groupId'));
+
+        $groupsData = Group::where('school_id',Auth::user()->school_id)->get();
+        $group = Group::where('school_id', Auth::user()->school_id)
+            ->where('id',$groupId)->first();
+        $groupName = $group->name;
+
+        return view('admin.group.student', compact('groupId','groupsData', 'groupName'));
     }
 
     public function getStudenetsList(Request $request, $groupId){
         $result = $this->groupStudentService->getStudenetsList($request, $groupId);
         return response()->json($result);
+    }
+
+
+    public function studentRepeat(StudentRepeatStoreRequest $request){
+        try{
+
+            $validated = $request->validated();            
+            $student = Student::findOrFail($validated['student_id']); 
+            $student->update(['group_id'=> $validated['group_id']]);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Գործողությունը կատարված է։'
+            ]);
+
+        }catch (Throwable $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
+                'error' => $e->getMessage(), 
+            ], 500);
+        }
     }
 
 
@@ -265,15 +294,4 @@ class GroupController extends Controller
             ], 500);
         }
     } 
-    
-    
-
-    public function money(){
-         return view('admin.group.money');
-    }
-
-    public function payment(){
-         return view('admin.group.payment');
-    }
-
 }

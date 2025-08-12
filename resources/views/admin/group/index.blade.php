@@ -1,16 +1,9 @@
 @extends('admin.layouts.main')
 @section('content')
 
-
-    <!-- <a href="{{ route('admin.group.create') }}" class="btn btn-success mb-3">
-        <i class="fas fa-plus"></i> Ավաելացնել
-    </a> -->
-
-
 <div class="d-flex justify-content-between align-items-center mb-3">
   <div>
-    <h3 class="mb-0">{{  auth()->user()->school->name  }}</h3>
-    <!-- <div class="text-muted small">Визуальный макет: фильтры, сводка, таблица, модалка</div> -->
+    <h3 class="mb-0">Խումբ՝ <span class="text-muted">{{  auth()->user()->school->name  }}</span></h3>
   </div>
   <div class="btn-group">
        <a href="{{ route('admin.group.create') }}" class="btn btn-success mb-3">
@@ -19,29 +12,29 @@
   </div>
 </div>
 
-    <div class="card shadow-sm">
-        <div class="card-body bg-white">
-          <table class="table table-striped table-bordered dtTbl" style="width:100%" id="groupTbl">
-              <thead>
-                  <tr>
-                      <th>ID</th>
-                      <th>Խմբի անուն</th>
-                      <th>Ուս․ հաստատություն</th>
-                      <th>Գործողություն</th>
-                  </tr>
-              </thead>
-              <tbody>
-              </tbody>
-          </table>
-      </div>
-    </div>
+<div class="card shadow-sm">
+    <div class="card-body bg-white">
+      <table class="table table-striped table-bordered dtTbl" style="width:100%" id="groupTbl">
+          <thead>
+              <tr>
+                  <th>ID</th>
+                  <th>Խմբի անուն</th>
+                  <th>Ուս․ հաստատություն</th>
+                  <th>Գործողություն</th>
+              </tr>
+          </thead>
+          <tbody>
+          </tbody>
+      </table>
+  </div>
+</div>
 
   <!-- Modal -->
 <div class="modal fade" id="studentGroupModal" tabindex="-1" role="dialog" aria-labelledby="studentGroupModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document"> 
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="studentGroupModalLabel">Ավելացնել խմբում նոր սան</h5>
+        <h5 class="modal-title" id="studentGroupModalLabel">Ավելացնել խմբում նոր աշակերտ</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Փակել">
           <span aria-hidden="true">&times;</span>
         </button>
