@@ -365,6 +365,13 @@ function saveStudentRepeat() {
     });
 }
 
+// $(document).on('click', '#getGroupStudent', function () {
+//     let groupId = $(this).data('group-id');
+//     if (groupId) {
+//         window.location.href = `/admin/group/${groupId}/students`;
+//     }
+// });
+
 $(function () {
     $('.select2').select2({
         theme: 'bootstrap4'

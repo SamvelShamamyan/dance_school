@@ -1,31 +1,37 @@
 @extends('admin.layouts.main')
 @section('content')
 
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h3 class="mb-0">Խումբ՝ <span class="text-muted">{{ $groupName }}</span></h3>
+    </div>
+    <div class="btn-group">
+        <a href="{{ route('admin.staff.create') }}" class="btn btn-success mb-3">
+            <i class="fas fa-plus"></i> Ավաելացնել
+        </a>
+    </div>
+</div>
 
-    <a href="{{ route('admin.staff.create') }}" class="btn btn-success mb-3">
-        <i class="fas fa-plus"></i> Ավաելացնել
-    </a>
-
-    <div class="card shadow-sm">
-        <div class="card-body bg-white">
-            <table class="table table-striped table-bordered dtTbl" style="width:100%" id="staffListTbl" data-id="{{ $groupId }}">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>ԱԱՀ</th>
-                        <th>Բնակության հասցե</th>
-                        <th>Ծննդյան ամսաթիվ</th>
-                        <!-- <th>Աշխատանքի ընդունման ամսաթիվ</th> -->
-                        <th>Էլ․ հասցե</th>
-                        <th>ՀԾՀ</th>
-                        <!-- <th>Ուս․ հաստատություն</th> -->
-                        <th>Գործողություն</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
-    </div>    
+<div class="card shadow-sm">
+    <div class="card-body bg-white">
+        <table class="table table-striped table-bordered dtTbl" style="width:100%" id="staffListTbl" data-id="{{ $groupId }}">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>ԱԱՀ</th>
+                    <th>Բնակության հասցե</th>
+                    <th>Ծննդյան ամսաթիվ</th>
+                    <!-- <th>Աշխատանքի ընդունման ամսաթիվ</th> -->
+                    <th>Էլ․ հասցե</th>
+                    <th>ՀԾՀ</th>
+                    <!-- <th>Ուս․ հաստատություն</th> -->
+                    <th>Գործողություն</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+</div>    
 
 @endsection

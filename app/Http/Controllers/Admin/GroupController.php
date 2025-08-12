@@ -167,7 +167,6 @@ class GroupController extends Controller
         return response()->json($result);
     }
 
-
     public function studentRepeat(StudentRepeatStoreRequest $request){
         try{
 
@@ -266,7 +265,10 @@ class GroupController extends Controller
     }
 
     public function staffPage($groupId){
-        return view('admin.group.staff', compact('groupId'));
+         $group = Group::where('school_id', Auth::user()->school_id)
+            ->where('id',$groupId)->first();
+        $groupName = $group->name;
+        return view('admin.group.staff', compact('groupId', 'groupName'));
     }
 
     public function getStaffList(Request $request, $groupId){
