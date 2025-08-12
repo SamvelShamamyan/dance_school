@@ -1,0 +1,95 @@
+@extends('admin.layouts.main')
+@section('content')
+
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">{{ isset($user) ? 'Խմբագրել համակարգողին' : 'Ավելացնել համակարգող' }}</h3>
+    </div>
+    
+    <form id="UserForm" action="{{ isset($user) ? route('admin.user.update', $user->id) : route('admin.user.add') }}">
+        @csrf
+
+        <div class="card-body">
+
+            <div class="form-group">
+                <label for="first_name">Անուն</label>
+                <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', $user->first_name ?? '') }}" placeholder="">
+                 <small class="error_first_name text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="last_name">Ազգանուն</label>
+                <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name', $user->last_name ?? '') }}" placeholder="">
+                <small class="error_last_name text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="father_name">Հայրանուն</label>
+                <input type="text" class="form-control" id="father_name" name="father_name" value="{{ old('father_name', $user->father_name ?? '') }}" placeholder="">
+                <small class="error_father_name text-danger"></small>
+            </div>
+
+             <div class="form-group">
+                <label for="email">Էլ․ հասցե</label>
+                <input type="text" class="form-control" id="email" name="email" value="{{ old('email', $user->email ?? '') }}" placeholder="">
+                <small class="error_email text-danger"></small>
+            </div>
+
+            <!-- <div class="form-group">
+                <label for="school_id">Դպրոց</label>
+                <select class="form-control" name="school_id" id="school_id">
+                    <option value="" disabled selected>Ընտրել դպրոցը</option>
+                    @foreach($schoolNameData as $school)
+                        <option value="{{ $school->id }}">{{ $school->name }}</option>
+                    @endforeach
+                </select>
+                <small class="error_school_id text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="role_name">Դերը</label>
+                <select class="form-control" name="role_name" id="role_name">
+                    <option value="" disabled selected>Ընտրել դպրոցը</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->name }}">{{ $role->name }}</option>
+                    @endforeach
+                </select>
+                <small class="error_role_name text-danger"></small>
+            </div> -->
+
+            <div class="form-group">
+                <label for="school_id">Դպրոց</label>
+                <select class="form-control" name="school_id" id="school_id">
+                    <option value="" disabled {{ empty(old('school_id', $user->school_id ?? '')) ? 'selected' : '' }}>Ընտրել դպրոցը</option>
+                    @foreach($schoolNameData as $school)
+                        <option value="{{ $school->id }}" 
+                            {{ old('school_id', $user->school_id ?? '') == $school->id ? 'selected' : '' }}>
+                            {{ $school->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <small class="error_school_id text-danger"></small>
+            </div>
+
+            <div class="form-group">
+                <label for="role_name">Դերը</label>
+                <select class="form-control" name="role_name" id="role_name">
+                    <option value="" disabled {{ empty(old('role_name', $userRole ?? '')) ? 'selected' : '' }}>Ընտրել դերը</option>
+                    @foreach($roles as $role)
+                        <option value="{{ $role->name }}" 
+                            {{ old('role_name', $userRole ?? '') == $role->name ? 'selected' : '' }}>
+                            {{ $role->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <small class="error_role_name text-danger"></small>
+            </div>
+
+        </div>
+        <div class="card-footer  text-right">
+            <button type="button" class="btn btn-primary" id="userFormBtn"onClick="saveUser()">Պահպանել</button>
+        </div>
+    </form>
+</div>
+
+@endsection
