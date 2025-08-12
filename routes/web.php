@@ -40,7 +40,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
 
         Route::get('/{id}/edit', [SchoolController::class, 'edit'])->name('admin.school.edit');
         Route::post('/{id}/update', [SchoolController::class, 'update'])->name('admin.school.update');
-        Route::post('/{id}/delete', [SchoolController::class, 'delete'])->name('admin.school.delete');
+        // Route::post('/{id}/delete', [SchoolController::class, 'delete'])->name('admin.school.delete');
        
     });
 
