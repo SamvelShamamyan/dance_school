@@ -2,9 +2,22 @@
 @section('content')
 
 
-    <a href="{{ route('admin.group.create') }}" class="btn btn-success mb-3">
+    <!-- <a href="{{ route('admin.group.create') }}" class="btn btn-success mb-3">
         <i class="fas fa-plus"></i> Ավաելացնել
-    </a>
+    </a> -->
+
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <div>
+    <h3 class="mb-0">{{  auth()->user()->school->name  }}</h3>
+    <!-- <div class="text-muted small">Визуальный макет: фильтры, сводка, таблица, модалка</div> -->
+  </div>
+  <div class="btn-group">
+       <a href="{{ route('admin.group.create') }}" class="btn btn-success mb-3">
+         <i class="fas fa-plus"></i> Ավաելացնել
+      </a>
+  </div>
+</div>
 
     <div class="card shadow-sm">
         <div class="card-body bg-white">
