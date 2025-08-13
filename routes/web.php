@@ -114,7 +114,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/student/{student}/data', [PaymentController::class, 'studentPaymentsData'])->name('admin.payment.student.data');
         Route::get('/student/filters/{student}', [PaymentController::class,'userFilters'])->name('admin.payment.studentfilters');
 
-
+  
 
            
     });
