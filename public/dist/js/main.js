@@ -454,3 +454,99 @@ $(function () {
 });
 
 
+//
+
+// === Student payments DataTable ===
+$(function () {
+  if (!$('#studentPaymentTbl').length) return;
+
+  const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
+  const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
+  const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
+  const methodMap = { cash:'Կանխիկ', card:'Անկանխիկ', online:'Առցանց' };
+
+function renderSummary(arr){
+  const wrap = document.getElementById('summary');
+  const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
+  const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
+
+  if (wrap) {
+    wrap.innerHTML = (arr || []).map((sum, i) => `
+      <div class="col-6 col-sm-4 col-md-2 col-lg-1 mb-2">
+        <div class="card p-2 text-center">
+          <div class="text-muted small">${monthShortHY[i] || ''}</div>
+          <div class="sum" style="font-weight:700">${money(sum)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  const total = (arr || []).reduce((a, b) => a + Number(b || 0), 0);
+  $('#tfootTotal').text(money(total));
+}
+
+  const $tbl = $('#studentPaymentTbl');
+  const STUDENT_ID = $tbl.data('student-id');
+
+  let studentPaymentTbl = null;
+
+  function initStudentPaymentTable(){
+    if (studentPaymentTbl) return;
+
+    studentPaymentTbl = $("#studentPaymentTbl").DataTable({
+      language: lang,
+      processing: true,
+      serverSide: true,
+      ajax: {
+        headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+        url: `/admin/payment/student/${STUDENT_ID}/data`,
+        type: 'post',
+        data: function(d) {
+          d.year   = $('#year').val();
+          d.status = $('#status').val();
+        }
+      },
+      columns: [
+        { data: 'paid_at', render: v => moment(v).format('DD.MM.YYYY') },
+        { data: 'amount', className: 'text-end', render: v => money(v) },
+        { data: 'method', render: v => methodMap[v] || v || '' },
+        { data: 'status', render: v => {
+            const label = statusMap[v] || v || '';
+            const cls = v==='paid' ? 'success' : (v==='pending' ? 'warning' : (v==='failed' ? 'danger' : 'secondary'));
+            return `<span class="badge badge-${cls}">${label}</span>`;
+          }
+        },
+        { data: 'comment', defaultContent: '' },
+        {
+          data: 'id', orderable: false, searchable: false, className: 'text-center',
+          render: (id, t, row) => `
+            <button class="btn btn-sm btn-outline-primary act-edit"
+                    data-id="${id}"
+                    data-paid="${moment(row.paid_at).format('DD.MM.YYYY')}"
+                    data-amount="${row.amount}"
+                    data-method="${row.method}"
+                    data-status="${row.status}"
+                    data-comment="${(row.comment||'').replace(/"/g,'&quot;')}">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-danger act-del" data-id="${id}">
+              <i class="fas fa-trash"></i>
+            </button>`
+        }
+      ]
+    });
+
+    $('#studentPaymentTbl').on('xhr.dt', function (_e, _settings, json) {
+      if (json && Array.isArray(json.summary)) renderSummary(json.summary);
+    });
+
+    $('#btnRefresh, #year, #status').on('change click', function(){
+      if ($.fn.DataTable.isDataTable('#studentPaymentTbl')) {
+        studentPaymentTbl.ajax.reload();
+      }
+    });
+  }
+
+  $(document).one('payment:filtersLoaded', initStudentPaymentTable);
+  if ($('#year option').length) initStudentPaymentTable();
+});

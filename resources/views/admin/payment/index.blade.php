@@ -11,12 +11,15 @@
 
 
 <div class="d-flex justify-content-between align-items-center mb-3">
-  <div>
-    <h3 class="mb-0">Ամսական վճարումներ</h3>
-  </div>
-  <div class="btn-group">
-    <button class="btn btn-success" id="paymentBtn" data-toggle="modal" data-target="#addPaymentModal" ><i class="fas fa-plus"></i> Ավելացնել վճարում</button>
-  </div>
+    <div class="d-flex align-items-center">
+        <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <h3 class="mb-0">Ամսական վճարումներ</h3>
+    </div>
+    <div class="btn-group">
+      <button class="btn btn-success" id="paymentBtn" data-toggle="modal" data-target="#addPaymentModal" ><i class="fas fa-plus"></i> Ավելացնել վճարում</button>
+    </div>
 </div>
 
 <div class="card mb-3">
@@ -178,7 +181,7 @@
           <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
         </div>
         <div class="modal-body">
-          <input type="hidden" name="id" id="edit_id">
+          <input type="hidden" name="id" id="payment_id">
 
             <div class="form-group">
               <label for="group_date">Վճարման ամսաթիվ</label>
@@ -209,7 +212,7 @@
               <select class="form-control" name="method" id="edit_method">
                 <option value="cash">Կանխիկ</option>
                 <option value="card">Անկանխիկ</option>
-                <option value="online">Առցանց</option>
+                <!-- <option value="online">Առցանց</option> -->
               </select>
             </div>
             <div class="form-group col-6">
@@ -217,8 +220,8 @@
               <select class="form-control" name="status" id="edit_status">
                 <option value="paid">Վճարված</option>
                 <option value="pending">Սպասման մեջ</option>
-                <option value="failed">Սխալ</option>
-                <option value="refunded">Վերադարձված</option>
+                <!-- <option value="failed">Սխալ</option> -->
+                <!-- <option value="refunded">Վերադարձված</option> -->
               </select>
             </div>
           </div>

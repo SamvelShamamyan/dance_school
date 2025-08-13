@@ -208,8 +208,8 @@ class PaymentService
     }
 
 
-    public function getStudentHistory(int $studentId, $year = null, $groupId = null, $status = null){
-    
+    public function getStudentHistory(int $studentId, $year = null, $groupId = null, $status = null, $limit = 5){
+        
         $schoolId = Auth::user()->school_id;
 
         $q = Payment::query()
@@ -219,6 +219,9 @@ class PaymentService
         if ($year)    $q->whereYear('payments.paid_at', (int)$year);
         if ($groupId) $q->where('payments.group_id', $groupId);
         if ($status)  $q->where('payments.status', $status);
+
+
+        if (!empty($limit)) {$q->limit($limit);}
 
         return $q->orderByDesc('payments.paid_at')
             ->get([
@@ -241,6 +244,137 @@ class PaymentService
             })
             ->toArray();
     }
+
+
+public function getStudentFilterOptions(int $studentId): array
+{
+    $schoolId = optional(Auth::user())->school_id;
+
+    // годы, в которые у ЭТОГО ученика были платежи
+    $years = Payment::query()
+        ->where('school_id', $schoolId)
+        ->where('student_id', $studentId)
+        ->selectRaw('DISTINCT YEAR(paid_at) as y')
+        ->orderByDesc('y')
+        ->pluck('y')
+        ->map(fn($y)=>(int)$y)
+        ->values();
+
+    // статусы, которые встречались у ЭТОГО ученика
+    $statuses = Payment::query()
+        ->where('school_id', $schoolId)
+        ->where('student_id', $studentId)
+        ->select('status')
+        ->distinct()
+        ->pluck('status')
+        ->values();
+
+    // (опционально) группы, в которых у ЭТОГО ученика есть платежи
+    // если на странице ученика группы не нужны — можно удалить этот блок
+    $groups = Payment::query()
+        ->where('payments.school_id', $schoolId)
+        ->where('payments.student_id', $studentId)
+        ->whereNotNull('payments.group_id')
+        ->join('groups as g', 'g.id', '=', 'payments.group_id')
+        ->select('g.id', 'g.name')
+        ->distinct()
+        ->orderBy('g.name')
+        ->get();
+
+    return [
+        'years'    => $years,     // [2025, 2024, ...] именно для этого ученика
+        'statuses' => $statuses,  // ['paid','pending',...]
+        'groups'   => $groups,    // [{id,name}] — если не используете, просто игнорируйте в JS
+    ];
+}
+
+public function getStudentPaymentsTable(Request $request, int $studentId): array
+{
+    $schoolId = Auth::user()->school_id;
+
+    $year   = (int)($request->input('year') ?: now()->year);
+    $status = $request->input('status');
+
+    $draw   = (int)$request->input('draw', 1);
+    $start  = (int)$request->input('start', 0);
+    $length = (int)$request->input('length', 10);
+    $search = trim((string)$request->input('search.value', ''));
+
+    $base = Payment::query()
+        ->where('school_id', $schoolId)
+        ->where('student_id', $studentId);
+
+    if (!empty($year))   $base->whereYear('paid_at', $year);
+    if (!empty($status)) $base->where('status', $status);
+
+    $summaryRow = (clone $base)->selectRaw("
+        SUM(CASE WHEN MONTH(paid_at)=1  THEN amount ELSE 0 END) as m01,
+        SUM(CASE WHEN MONTH(paid_at)=2  THEN amount ELSE 0 END) as m02,
+        SUM(CASE WHEN MONTH(paid_at)=3  THEN amount ELSE 0 END) as m03,
+        SUM(CASE WHEN MONTH(paid_at)=4  THEN amount ELSE 0 END) as m04,
+        SUM(CASE WHEN MONTH(paid_at)=5  THEN amount ELSE 0 END) as m05,
+        SUM(CASE WHEN MONTH(paid_at)=6  THEN amount ELSE 0 END) as m06,
+        SUM(CASE WHEN MONTH(paid_at)=7  THEN amount ELSE 0 END) as m07,
+        SUM(CASE WHEN MONTH(paid_at)=8  THEN amount ELSE 0 END) as m08,
+        SUM(CASE WHEN MONTH(paid_at)=9  THEN amount ELSE 0 END) as m09,
+        SUM(CASE WHEN MONTH(paid_at)=10 THEN amount ELSE 0 END) as m10,
+        SUM(CASE WHEN MONTH(paid_at)=11 THEN amount ELSE 0 END) as m11,
+        SUM(CASE WHEN MONTH(paid_at)=12 THEN amount ELSE 0 END) as m12
+    ")->first();
+
+    $summary = [
+        (int)($summaryRow->m01 ?? 0),(int)($summaryRow->m02 ?? 0),(int)($summaryRow->m03 ?? 0),
+        (int)($summaryRow->m04 ?? 0),(int)($summaryRow->m05 ?? 0),(int)($summaryRow->m06 ?? 0),
+        (int)($summaryRow->m07 ?? 0),(int)($summaryRow->m08 ?? 0),(int)($summaryRow->m09 ?? 0),
+        (int)($summaryRow->m10 ?? 0),(int)($summaryRow->m11 ?? 0),(int)($summaryRow->m12 ?? 0),
+    ];
+
+    $q = (clone $base);
+    if ($search !== '') {
+        $needle = mb_strtolower($search, 'UTF-8');
+        $needle = str_replace(['\\','%','_'], ['\\\\','\%','\_'], $needle);
+        $like   = '%'.$needle.'%'; $esc='\\\\';
+        $q->where(function($w) use ($like, $esc){
+            $w->orWhereRaw("LOWER(method)  LIKE ? ESCAPE '{$esc}'", [$like])
+              ->orWhereRaw("LOWER(status)  LIKE ? ESCAPE '{$esc}'", [$like])
+              ->orWhereRaw("LOWER(comment) LIKE ? ESCAPE '{$esc}'", [$like])
+              ->orWhereRaw("LOWER(CAST(amount AS CHAR)) LIKE ? ESCAPE '{$esc}'", [$like]);
+        });
+    }
+
+    $orderIdx = $request->input('order.0.column');
+    $orderCol = $request->input("columns.$orderIdx.data");
+    $orderDir = $request->input('order.0.dir', 'asc');
+    $allowed  = ['paid_at','amount','method','status','comment','id'];
+    if (!in_array($orderCol, $allowed, true)) $orderCol = 'paid_at';
+    $q->orderBy($orderCol, $orderDir === 'desc' ? 'desc' : 'asc');
+
+    $recordsTotal    = (clone $base)->count();
+    $recordsFiltered = (clone $q)->count();
+
+    $rows = $q->offset($start)->limit($length)->get([
+        'id','paid_at','amount','method','status','comment'
+    ])->map(function($p){
+        return [
+            'id'      => (int)$p->id,
+            'paid_at' => Carbon::parse($p->paid_at)->toDateString(),
+            'amount'  => (int)$p->amount,
+            'method'  => (string)$p->method,
+            'status'  => (string)$p->status,
+            'comment' => (string)($p->comment ?? ''),
+        ];
+    })->toArray();
+
+    return [
+        'draw'            => $draw,
+        'recordsTotal'    => $recordsTotal,
+        'recordsFiltered' => $recordsFiltered,
+        'data'            => $rows,
+        'summary'         => $summary,
+        'meta'            => ['year'=>$year, 'status'=>$status, 'student_id'=>$studentId],
+    ];
+}
+
 
 
 }

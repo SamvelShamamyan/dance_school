@@ -214,6 +214,11 @@ $(document).on('click', '#paymentTbl .view-history', function () {
   const name = $(this).data('name');
   const id   = $(this).data('id');
 
+  const year   = $('#year').val()   || '';
+  const status = $('#status').val() || '';
+  const group  = $('#group_id').val() || '';
+  const moreUrl = `/admin/payment/student/${id}`;
+
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
     url: '/admin/payment/history',
@@ -221,37 +226,39 @@ $(document).on('click', '#paymentTbl .view-history', function () {
     dataType: 'json',
     data: {
       student_id: id,
-      year: $('#year').val(),
-      group_id: $('#group_id').val(),
-      status: $('#status').val()
+      year: year,
+      group_id: group,
+      status: status
     },
     success: function (res) {
       const rows = (res && res.data) ? res.data : [];
 
-      const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
+      const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սպ','Հոկ','Նոյ','Դեկ'];
       const money = n => Number(n||0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
 
       const methodMap = { cash:'Կանխիկ', card:'Անկանխիկ', online:'Առցանց' };
       const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
 
       const html = rows.length ? rows.map(r => {
-        const d = new Date(r.paid_at);
-        const dateStr = d.toLocaleDateString('hy-AM');
+      const d = new Date(r.paid_at);
+        // const dateStr = d.toLocaleDateString('hy-AM');
+
+        const dateStr = moment(r.paid_at).format('DD.MM.YYYY');
+
         const badge = monthShortHY[d.getMonth()] || '';
         const method = methodMap[r.method] || r.method || '';
-        const status = statusMap[r.status] || r.status || '';
+        const statusL = statusMap[r.status] || r.status || '';
         const comment = r.comment ? ' · ' + r.comment : '';
 
         return `
           <div class="list-group-item d-flex justify-content-between align-items-center">
             <div>
               <div class="font-weight-bold">${dateStr} · <span class="text-success">${money(r.amount)}</span></div>
-              <div class="small text-muted">${method} · ${status}${comment}</div>
+              <div class="small text-muted">${method} · ${statusL}${comment}</div>
             </div>
-
             <div class="d-flex align-items-center">
               <span class="badge badge-light text-dark mr-2">${badge}</span>
-              <button class="btn btn-sm btn-outline-primary history-edit"
+              <button class="btn btn-sm btn-outline-primary history-edit mr-2"
                       data-id="${r.id}"
                       data-paid="${moment(r.paid_at).format('DD.MM.YYYY')}"
                       data-amount="${r.amount}"
@@ -286,6 +293,10 @@ $(document).on('click', '#paymentTbl .view-history', function () {
                   ${html}
                 </div>
               </div>
+              <div class="modal-footer">
+                <a class="btn btn-primary" href="${moreUrl}">Տեսնել ավելին</a>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Փակել</button>
+              </div>
             </div>
           </div>
         </div>`;
@@ -300,8 +311,9 @@ $(document).on('click', '#paymentTbl .view-history', function () {
   });
 });
 
+
 $(document).on('click', '.history-edit', function(){
-    $('#edit_id').val($(this).data('id'));
+    $('#payment_id').val($(this).data('id'));
     $('#edit_paid_at').val($(this).data('paid'));
     $('#edit_amount').val($(this).data('amount'));
     $('#edit_method').val($(this).data('method'));
@@ -330,7 +342,7 @@ $(document).on('click', '.history-edit', function(){
 
 $('#editPaymentForm').on('submit', function(e){
     e.preventDefault();
-    const id = $('#edit_id').val();
+    const id = $('#payment_id').val();
     const data = $(this).serialize();
 
     $.ajax({

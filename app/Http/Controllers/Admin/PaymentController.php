@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\PaymentRequest\PaymentStoreRequest;
+use App\Http\Requests\PaymentRequest\PaymentUpdateRequest;
 
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Payment;
+use App\Models\Student;
 use App\Services\PaymentService;
 
 
@@ -116,22 +118,16 @@ class PaymentController extends Controller
         }  
     }
 
-    public function update(Request $request, int $id){
-        //^-^// -> to change
-        $validated = $request->validate([
-            'edit_paid_at' => 'required|date_format:d.m.Y',
-            'amount'  => 'required|integer|min:0',
-            'method'  => 'required|in:cash,card,online',
-            'status'  => 'required|in:paid,pending,failed,refunded',
-            'comment' => 'nullable|string|max:255',
-        ]);
+    public function update(PaymentUpdateRequest $request, int $id){
 
+        $validated = $request->validated();
+        $formattedPaidDate = Carbon::createFromFormat('d.m.Y', $validated['edit_paid_at'])->format('Y-m-d');
         $payment = Payment::where('id', $id)
             ->where('school_id', Auth::user()->school_id)
             ->firstOrFail();
 
         $payment->update([
-            'paid_at' => Carbon::createFromFormat('d.m.Y', $validated['edit_paid_at'])->format('Y-m-d'),
+            'paid_at' => $formattedPaidDate,
             'amount'  => (int) $validated['amount'],
             'method'  => $validated['method'],  
             'status'  => $validated['status'],
@@ -151,6 +147,39 @@ class PaymentController extends Controller
 
         return response()->json(['status'=>1, 'message' => 'Գործողությունը կատարված է']);
     }
+
+
+    public function userFilters(Student $student){
+         //^-^// -> to change
+        if ($student->school_id !== Auth::user()->school_id) {
+            abort(403);
+        }
+
+        $data = $this->paymentService->getStudentFilterOptions($student->id);
+        return response()->json($data);
+    }
+
+    public function studentPage(Request $request, Student $student){
+         //^-^// -> to change
+        if ($student->school_id !== Auth::user()->school_id) abort(403);
+
+        return view('admin.payment.student', [
+            'student'    => $student,
+            'prefilters' => [
+                'year'   => $request->query('year'),
+                'status' => $request->query('status'),
+            ],
+        ]);
+    }
+
+    public function studentPaymentsData(Request $request, Student $student){
+         //^-^// -> to change
+        if ($student->school_id !== Auth::user()->school_id) abort(403);
+
+        $data = $this->paymentService->getStudentPaymentsTable($request, $student->id);
+        return response()->json($data);
+    }
+
 
 
 }

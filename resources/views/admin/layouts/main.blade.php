@@ -170,6 +170,7 @@
 <script src="{{ asset('dist/js/staff.js') }}"></script>
 <script src="{{ asset('dist/js/student.js') }}"></script>
 <script src="{{ asset('dist/js/payment.js') }}"></script>
+<script src="{{ asset('dist/js/payment.student.js') }}"></script>
 <!-- CURRENT END_2 -->
 
 
