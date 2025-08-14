@@ -1,16 +1,20 @@
 @extends('admin.layouts.main')
 @section('content')
 
-    
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h3 class="mb-0">Խումբ՝ <span class="text-muted">{{ $groupName }}</span></h3>
-    </div>
-    <div class="btn-group">
-        <a href="{{ route('admin.student.create') }}" class="btn btn-success mb-3">
-            <i class="fas fa-plus"></i> Ավաելացնել
-        </a>
-    </div>
+  
+<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+  <div class="d-flex align-items-center">
+      <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
+          <i class="fas fa-arrow-left"></i>
+      </a>
+        <h3 class="mb-0">
+          Խումբ 
+          <small class="text-muted">{{ auth()->user()->school->name }}</small>
+      </h3>
+  </div>
+    <a href="{{ route('admin.group.create') }}" class="btn btn-success">
+        <i class="fas fa-plus me-1"></i> Ավելացնել
+    </a>
 </div>
 
 <div class="card shadow-sm">

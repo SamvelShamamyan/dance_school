@@ -1,10 +1,17 @@
 @extends('admin.layouts.main')
 @section('content')
 
-
+<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+  <div class="d-flex align-items-center">
+    <h3 class="mb-0">
+        Ուս․ հաստատություն 
+        <small class="text-muted">{{ auth()->user()->school->name }}</small>
+    </h3>
+  </div>
     <a href="{{ route('admin.staff.create') }}" class="btn btn-success mb-3">
         <i class="fas fa-plus"></i> Ավաելացնել
     </a>
+</div>
 
     <div class="card shadow-sm">
         <div class="card-body bg-white">

@@ -143,6 +143,9 @@ $(document).on('click', '.act-del', function () {
     let id = $(this).data('id');
     let el = this;
 
+    const $tbl = $('#studentPaymentTbl');
+    const SCHOOL_ID = $tbl.data('school-id');
+
     Swal.fire({
         title: "Դուք համոզված եք՞",
         showDenyButton: true,
@@ -154,7 +157,7 @@ $(document).on('click', '.act-del', function () {
         if (result.isConfirmed) {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: `/admin/payment/${id}/delete`,
+                url: `/admin/payment/${id}/delete${SCHOOL_ID ? '?school_id=' + SCHOOL_ID : ''}`,
                 cache: false,
                 contentType: false,
                 processData: false,
