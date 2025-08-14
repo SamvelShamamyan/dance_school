@@ -112,9 +112,11 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
 
         Route::get('/student/{student}', [PaymentController::class, 'studentPage'])->name('admin.payment.student');
         Route::post('/student/{student}/data', [PaymentController::class, 'studentPaymentsData'])->name('admin.payment.student.data');
-        Route::get('/student/filters/{student}', [PaymentController::class,'userFilters'])->name('admin.payment.studentfilters');
+        Route::get('/student/filters/{student}', [PaymentController::class,'studentFilters'])->name('admin.payment.studentfilters');
 
-  
+        Route::get('/getSchools', [PaymentController::class, 'getSchools'])->name('admin.payment.getSchools');
+        Route::get('/getGroupsBySchool/{schoolId}', [PaymentController::class, 'getGroupsBySchool'])->name('admin.payment.getGroupsBySchool');
+
 
            
     });

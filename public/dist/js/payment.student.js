@@ -1,6 +1,9 @@
 function savePayent() {
     const form = document.getElementById("singlePaymentForm");
     const formData = new FormData(form);
+    const $tbl = $('#studentPaymentTbl');
+    const SCHOOL_ID = $tbl.data('school-id');
+    formData.append('school_id', SCHOOL_ID)
     $.ajax({        
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url: `/admin/payment/add`,
@@ -40,6 +43,14 @@ $(function () {
 
   const STUDENT_ID = $tbl.data('student-id');
 
+  const SCHOOL_ID = $tbl.data('school-id');
+
+  // alert(SCHOOL_ID)
+
+   const studentPaymentUrl = `/admin/payment/student/filters/${STUDENT_ID}` + 
+    (SCHOOL_ID ? `?school_id=${SCHOOL_ID}` : '');
+
+
   moment.locale('hy');
   if ($('#paymentDatePicker').length){
     $('#paymentDatePicker').datetimepicker({
@@ -56,7 +67,7 @@ $(function () {
   });
 
   $.ajax({
-    url: `/admin/payment/student/filters/${STUDENT_ID}`,
+    url: studentPaymentUrl,
     type: 'GET',
     dataType: 'json',
     success: function (response) {
@@ -66,8 +77,7 @@ $(function () {
       years.forEach(y => $year.append(new Option(y, y)));
       $year.val(years[0]); 
 
-      // const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
-      const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ'};
+      const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
       const $status = $('#status').empty().append(new Option('Բոլորը',''));
       (response.statuses || []).forEach(s => $status.append(new Option(statusMap[s] || s, s)));
 
@@ -90,6 +100,9 @@ $(document).on('click', '.act-edit', function(){
   $('#edit_method').val($(this).data('method'));
   $('#edit_status').val($(this).data('status'));
   $('#edit_comment').val($(this).data('comment'));
+  const $tbl = $('#studentPaymentTbl');
+  const SCHOOL_ID = $tbl.data('school-id');
+  $('#edit_school_id').val(SCHOOL_ID);
   $('#editPaymentModal').modal('show');
 
   setTimeout(function(){

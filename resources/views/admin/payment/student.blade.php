@@ -62,6 +62,7 @@
     <table class="table table-striped table-bordered"
            id="studentPaymentTbl"
            data-student-id="{{ $student->id }}"
+           data-school-id="{{ $school_id }}"
            style="width:100%">
       <thead>
         <tr>
@@ -162,6 +163,7 @@
         <input type="hidden" name="student_id" value="{{ $student->id }}">
         <input type="hidden" name="group_id" value="{{ $student->group_id }}">
         <input type="hidden" name="id" id="payment_id">
+        <input type="hidden" name="school_id" id="edit_school_id">
         <div class="modal-header">
           <h5 class="modal-title">Խմբագրել վճարումը</h5>
           <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
@@ -226,4 +228,8 @@
 
 
 @endsection
+
+<script>
+  window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
+</script>
 

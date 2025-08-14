@@ -25,6 +25,16 @@
 <div class="card mb-3">
   <div class="card-body">
     <div class="row align-items-end">
+
+      @role('super-admin')
+        <div class="col-4 col-md-4 mb-3">
+          <label class="form-label d-block">Դպրոց</label>
+          <select id="school_id" class="form-control"></select>
+        </div>
+
+      
+
+      @endrole
       
       <div class="col-4 col-md-4 mb-3">
         <label class="form-label d-block">Տարի</label>
@@ -163,7 +173,7 @@
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-dismiss="modal">Փակել</button>
-          <button type="button" class="btn btn-primary" id="singlePaymentBtn" onclick="savePayent()">Պահպանել</button>
+          <button type="button" class="btn btn-primary" id="singlePaymentBtn" onclick="savePayment()">Պահպանել</button>
         </div>
       </form>
     </div>
@@ -176,6 +186,7 @@
   <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
       <form id="editPaymentForm">
+        <input type="hidden" name="school_id" id="edit_school_id">
         <div class="modal-header">
           <h5 class="modal-title">Խմբագրել վճարումը</h5>
           <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
@@ -242,3 +253,8 @@
 
 
 @endsection
+
+
+<script>
+  window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
+</script>

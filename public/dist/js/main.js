@@ -370,7 +370,6 @@ $(function() {
 // === Payments page ===
 $(function () {
   if (!$('#paymentTbl').length) return;
-
   const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
   const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
   const renderMonth = v => (Number(v || 0) === 0 ? '<span class="text-muted">0</span>' : money(v));
@@ -391,6 +390,7 @@ $(function () {
   let paymentTbl = null;
 
   function initPaymentTable(){
+    
     if (paymentTbl) return; 
 
     paymentTbl = $("#paymentTbl").DataTable({
@@ -405,6 +405,11 @@ $(function () {
           d.year     = $('#year').val();
           d.group_id = $('#group_id').val();
           d.status   = $('#status').val();
+
+          if (window.currentUserRole === 'super-admin') {
+                d.school_id = $('#school_id').val();
+            }
+
         }
       },
       columns: [
@@ -465,28 +470,35 @@ $(function () {
   const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
   const methodMap = { cash:'Կանխիկ', card:'Անկանխիկ', online:'Առցանց' };
 
-function renderSummary(arr){
-  const wrap = document.getElementById('summary');
-  const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
-  const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
+    function renderSummary(arr){
+    const wrap = document.getElementById('summary');
+    const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
+    const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
 
-  if (wrap) {
-    wrap.innerHTML = (arr || []).map((sum, i) => `
-      <div class="col-6 col-sm-4 col-md-2 col-lg-1 mb-2">
-        <div class="card p-2 text-center">
-          <div class="text-muted small">${monthShortHY[i] || ''}</div>
-          <div class="sum" style="font-weight:700">${money(sum)}</div>
+    if (wrap) {
+        wrap.innerHTML = (arr || []).map((sum, i) => `
+        <div class="col-6 col-sm-4 col-md-2 col-lg-1 mb-2">
+            <div class="card p-2 text-center">
+            <div class="text-muted small">${monthShortHY[i] || ''}</div>
+            <div class="sum" style="font-weight:700">${money(sum)}</div>
+            </div>
         </div>
-      </div>
-    `).join('');
-  }
+        `).join('');
+    }
 
-  const total = (arr || []).reduce((a, b) => a + Number(b || 0), 0);
-  $('#tfootTotal').text(money(total));
-}
+    const total = (arr || []).reduce((a, b) => a + Number(b || 0), 0);
+    $('#tfootTotal').text(money(total));
+    }
 
-  const $tbl = $('#studentPaymentTbl');
-  const STUDENT_ID = $tbl.data('student-id');
+    const $tbl = $('#studentPaymentTbl');
+    const STUDENT_ID = $tbl.data('student-id');
+
+    const SCHOOLID = $tbl.data('school-id');
+
+    const moreUrl = (SCHOOLID)
+    ? `/admin/payment/student/${STUDENT_ID}/data?school_id=${SCHOOLID}`
+    : `/admin/payment/student/${STUDENT_ID}/data`;
+
 
   let studentPaymentTbl = null;
 
@@ -499,7 +511,7 @@ function renderSummary(arr){
       serverSide: true,
       ajax: {
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-        url: `/admin/payment/student/${STUDENT_ID}/data`,
+        url: moreUrl,
         type: 'post',
         data: function(d) {
           d.year   = $('#year').val();

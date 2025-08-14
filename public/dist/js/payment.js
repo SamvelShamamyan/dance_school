@@ -1,7 +1,8 @@
-function savePayent() {
+function savePayment() {
     const form = document.getElementById("singlePaymentForm");
     const formData = new FormData(form);
-    // const url = form.getAttribute('action'); 
+    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+    formData.append('school_id',schoolId);
 
     $.ajax({        
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -80,7 +81,7 @@ $(function () {
             const statusMap = {
                 paid: 'Վճարված',
                 pending: 'Սպասման մեջ',
-                refunded: 'Հետե վերադարձ',
+                refunded: 'Հետ վերադարձ',
                 failed: 'Սխալ'
             };
 
@@ -128,10 +129,13 @@ $(function () {
 
 
 $(document).on('click', '#paymentBtn', function () {
-  
+
+    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+
+  // const schoolId = 1
     $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-        url: `/admin/payment/getGroups`,
+        url: `/admin/payment/getGroups${schoolId ? '?school_id=' + schoolId : ''}`,
         type: 'GET',
         dataType: 'json',
         success: function (response) {            
@@ -154,8 +158,11 @@ $(document).on('click', '#paymentBtn', function () {
 
 $('#groups').on('change', function () {
     let groupId = $(this).val(); 
+
+    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+
     $.ajax({
-        url: `/admin/payment/getStudents/${groupId}`, 
+        url: `/admin/payment/getStudents/${groupId}/${schoolId ? '?school_id=' + schoolId : ''}`, 
         type: 'GET',
         data: { group_id: groupId },
         success: function (response) {
@@ -217,7 +224,13 @@ $(document).on('click', '#paymentTbl .view-history', function () {
   const year   = $('#year').val()   || '';
   const status = $('#status').val() || '';
   const group  = $('#group_id').val() || '';
-  const moreUrl = `/admin/payment/student/${id}`;
+  //  const moreUrl = `/admin/payment/student/${id}`;
+  const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+  // const moreUrl = `/admin/payment/student/${id}?school_id=${schoolId}`;
+
+  const moreUrl = (schoolId)
+  ? `/admin/payment/student/${id}?school_id=${schoolId}`
+  : `/admin/payment/student/${id}`;
 
   $.ajax({
     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -228,7 +241,8 @@ $(document).on('click', '#paymentTbl .view-history', function () {
       student_id: id,
       year: year,
       group_id: group,
-      status: status
+      status: status,
+      school_id: schoolId,
     },
     success: function (res) {
       const rows = (res && res.data) ? res.data : [];
@@ -241,14 +255,13 @@ $(document).on('click', '#paymentTbl .view-history', function () {
 
       const html = rows.length ? rows.map(r => {
       const d = new Date(r.paid_at);
-        // const dateStr = d.toLocaleDateString('hy-AM');
 
-        const dateStr = moment(r.paid_at).format('DD.MM.YYYY');
+      const dateStr = moment(r.paid_at).format('DD.MM.YYYY');
 
-        const badge = monthShortHY[d.getMonth()] || '';
-        const method = methodMap[r.method] || r.method || '';
-        const statusL = statusMap[r.status] || r.status || '';
-        const comment = r.comment ? ' · ' + r.comment : '';
+      const badge = monthShortHY[d.getMonth()] || '';
+      const method = methodMap[r.method] || r.method || '';
+      const statusL = statusMap[r.status] || r.status || '';
+      const comment = r.comment ? ' · ' + r.comment : '';
 
         return `
           <div class="list-group-item d-flex justify-content-between align-items-center">
@@ -320,6 +333,9 @@ $(document).on('click', '.history-edit', function(){
     $('#edit_status').val($(this).data('status'));
     $('#edit_comment').val($(this).data('comment'));
     $('#editPaymentModal').modal('show');
+    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+    $('#edit_school_id').val(schoolId);
+
 
     const openEdit = () => {
     $('#editPaymentModal').modal('show');
@@ -372,6 +388,9 @@ $(document).on('click', '.history-delete', function () {
     let id = $(this).data('id');
     let el = this;
 
+    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+
+
     Swal.fire({
         title: "Դուք համոզված եք՞",
         showDenyButton: true,
@@ -383,7 +402,7 @@ $(document).on('click', '.history-delete', function () {
         if (result.isConfirmed) {
             $.ajax({
                 headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: `/admin/payment/${id}/delete`,
+                url: `/admin/payment/${id}/delete${schoolId ? '?school_id=' + schoolId : ''}`,
                 cache: false,
                 contentType: false,
                 processData: false,
@@ -407,6 +426,118 @@ $(document).on('click', '.history-delete', function () {
         }
     });
 });
+
+
+// $('#school').on('change', function () {
+//     let groupId = $(this).val(); 
+//     $.ajax({
+//         url: `/admin/payment/getStudents/${groupId}`, 
+//         type: 'GET',
+//         data: { group_id: groupId },
+//         success: function (response) {
+//             let $select = $('#students_list');  
+                
+//             $select.empty(); 
+//             $select.append('<option value="" disabled selected>Ընտրել</option>');
+
+//             $.each(response, function (index, student) {
+//                 $select.append(
+//                     $('<option>', {
+//                         value: student.id,
+//                         text: student.full_name
+//                     })
+//                 );
+//             }); 
+//             $('#students_list').prop('disabled', false);           
+//         }
+//     });
+// });
+
+
+if (window.currentUserRole === 'super-admin') {
+  $.ajax({
+    url: '/admin/payment/getSchools',
+    type: 'GET',
+    success: function (schools) {
+      const $school = $('#school_id');
+      $school.empty().append('<option value="" disabled selected>Ընտրել դպրոց</option>');
+
+      schools.forEach(school => {
+        $school.append(`<option value="${school.id}">${school.name}</option>`);
+      });
+
+      $school.on('change', function () {
+        const schoolId = $(this).val();
+
+        $.ajax({
+          url: `/admin/payment/getGroupsBySchool/${schoolId}`,
+          type: 'GET',
+          success: function (groups) {
+            const $group = $('#group_id');
+            $group.empty().append('<option value="">Բոլորը</option>');
+
+            groups.forEach(group => {
+              $group.append(`<option value="${group.id}">${group.name}</option>`);
+            });
+
+            $('#paymentTbl').DataTable().ajax.reload();
+          }
+        });
+      });
+    }
+  });
+}
+
+//super-admin
+$('#school_id').on('change', function () {
+  const schoolId = $(this).val();
+
+  $.ajax({
+    url: '/admin/payment/filters',
+    type: 'GET',
+    data: { school_id: schoolId },
+    success: function (res) {
+      // === Տարի ===
+      const $year = $('#year');
+      $year.empty();
+      if (res.years && res.years.length) {
+        res.years.forEach(y => {
+          $year.append(`<option value="${y}">${y}</option>`);
+        });
+        $year.val(res.years[0]);
+      }
+
+      // === Խումբ ===
+      const $group = $('#group_id');
+      $group.empty().append('<option value="">Բոլորը</option>');
+      if (res.groups && res.groups.length) {
+        res.groups.forEach(g => {
+          $group.append(`<option value="${g.id}">${g.name}</option>`);
+        });
+      }
+
+      // === Վճարման կարգավիճակ ===
+      const $status = $('#status');
+      const statusMap = {
+        paid: 'Վճարված',
+        pending: 'Սպասման մեջ',
+        refunded: 'Հետե վերադարձ',
+        failed: 'Սխալ'
+      };
+
+      $status.empty().append('<option value="">Բոլորը</option>');
+      if (res.statuses && res.statuses.length) {
+        res.statuses.forEach(s => {
+          $status.append(`<option value="${s}">${statusMap[s] || s}</option>`);
+        });
+      }
+
+      // reload table
+      $('#paymentTbl').DataTable().ajax.reload();
+    }
+  });
+});
+
 
 
 $('#addPaymentModal').on('hidden.bs.modal', function () {
