@@ -159,7 +159,7 @@ class StaffController extends Controller
                         'size'     => $file->getSize(),
                     ]);
                 }
-            }
+            } 
 
             DB::commit();
             return response()->json(['status' => 1, 'message' => 'Թարմացվել է']);
