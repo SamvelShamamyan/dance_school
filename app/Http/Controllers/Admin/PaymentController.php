@@ -35,9 +35,7 @@ class PaymentController extends Controller
 
            $schoolId = Auth::user()->school_id;
 
-        //    dd($request->input('school_id'));
-
-            if (Auth::user()->hasRole('super-admin')) {
+            if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
                 $schoolId = $request->input('school_id');       
             }
 
@@ -79,7 +77,7 @@ class PaymentController extends Controller
     public function getGroups(Request $request){
         try{
 
-            if (Auth::user()->hasRole('super-admin')) {
+            if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
                  $schoolId = $request->query('school_id');
             }
             $result = $this->paymentService->getGroupsData($request);
@@ -141,7 +139,7 @@ class PaymentController extends Controller
 
         $schoolId = Auth::user()->school_id;
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->school_id;      
         }
 
@@ -168,7 +166,7 @@ class PaymentController extends Controller
 
         $schoolId = Auth::user()->school_id;
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->input('school_id');   
         }
 
@@ -188,7 +186,7 @@ class PaymentController extends Controller
         //     abort(403);
         // }
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
         $schoolId = (int) $request->query('school_id');
         if (!$schoolId || $schoolId !== (int) $student->school_id) {
             abort(403);
@@ -218,7 +216,7 @@ class PaymentController extends Controller
 
     public function studentPage(Request $request, Student $student){
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->query('school_id');
             if (!$schoolId || $student->school_id != $schoolId) {
                 abort(403);

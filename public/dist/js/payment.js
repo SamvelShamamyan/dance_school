@@ -1,7 +1,7 @@
 function savePayment() {
     const form = document.getElementById("singlePaymentForm");
     const formData = new FormData(form);
-    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+    const schoolId = (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') ? $('#school_id').val() : null;
     formData.append('school_id',schoolId);
 
     $.ajax({        
@@ -130,7 +130,7 @@ $(function () {
 
 $(document).on('click', '#paymentBtn', function () {
 
-    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+    const schoolId = (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') ? $('#school_id').val() : null;
 
   // const schoolId = 1
     $.ajax({
@@ -159,7 +159,7 @@ $(document).on('click', '#paymentBtn', function () {
 $('#groups').on('change', function () {
     let groupId = $(this).val(); 
 
-    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+    const schoolId = (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') ? $('#school_id').val() : null;
 
     $.ajax({
         url: `/admin/payment/getStudents/${groupId}/${schoolId ? '?school_id=' + schoolId : ''}`, 
@@ -225,7 +225,7 @@ $(document).on('click', '#paymentTbl .view-history', function () {
   const status = $('#status').val() || '';
   const group  = $('#group_id').val() || '';
   //  const moreUrl = `/admin/payment/student/${id}`;
-  const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+  const schoolId = (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') ? $('#school_id').val() : null;
   // const moreUrl = `/admin/payment/student/${id}?school_id=${schoolId}`;
 
   const moreUrl = (schoolId)
@@ -333,7 +333,7 @@ $(document).on('click', '.history-edit', function(){
     $('#edit_status').val($(this).data('status'));
     $('#edit_comment').val($(this).data('comment'));
     $('#editPaymentModal').modal('show');
-    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+    const schoolId = (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') ? $('#school_id').val() : null;
     $('#edit_school_id').val(schoolId);
 
 
@@ -388,7 +388,7 @@ $(document).on('click', '.history-delete', function () {
     let id = $(this).data('id');
     let el = this;
 
-    const schoolId = (window.currentUserRole === 'super-admin') ? $('#school_id').val() : null;
+    const schoolId = (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') ? $('#school_id').val() : null;
 
 
     Swal.fire({
@@ -454,7 +454,7 @@ $(document).on('click', '.history-delete', function () {
 // });
 
 
-if (window.currentUserRole === 'super-admin') {
+if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') {
   $.ajax({
     url: '/admin/payment/getSchools',
     type: 'GET',

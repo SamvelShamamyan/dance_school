@@ -406,7 +406,7 @@ $(function () {
           d.group_id = $('#group_id').val();
           d.status   = $('#status').val();
 
-          if (window.currentUserRole === 'super-admin') {
+          if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') {
                 d.school_id = $('#school_id').val();
             }
 

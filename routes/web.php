@@ -99,7 +99,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     });
 
 
-    Route::group(['prefix'=>'payment','middleware' => ['role:school-accountant|super-admin']], function(){
+    Route::group(['prefix'=>'payment','middleware' => ['role:school-accountant|super-admin|super-accountant']], function(){
         Route::get('/', [PaymentController::class, 'index'])->name('admin.payment.index');
         Route::post('/getData', [PaymentController::class, 'getPaymentData'])->name('admin.payment.data');
         Route::get('/filters', [PaymentController::class,'filters'])->name('admin.payment.filters');

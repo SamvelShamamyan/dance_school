@@ -16,7 +16,7 @@ class PaymentService
         //super-admin
         $schoolId = Auth::user()->school_id;
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->input('school_id') ?: null;
         }
 
@@ -316,7 +316,7 @@ class PaymentService
     public function getFilterOptions(Request $request): array{
 
         $schoolId = Auth::user()->school_id;
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->input('school_id') ?: null;
         }
 
@@ -360,7 +360,7 @@ class PaymentService
     public function getGroupsData($request){
        
         $schoolId = Auth::user()->school_id;
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->input('school_id') ?: null;
         }
         $groups = Group::select('id', 'name')->where('school_id', $schoolId)->get();
@@ -370,7 +370,7 @@ class PaymentService
     public function getStudentsData(int $groupId,$request){
 
         $schoolId = Auth::user()->school_id;
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->input('school_id') ?: null;
         }
         $students = Student::select('id',
@@ -384,7 +384,7 @@ class PaymentService
         
         $schoolId = Auth::user()->school_id;
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->input('school_id') ?: null;
         }    
 
@@ -430,7 +430,7 @@ class PaymentService
    
         $schoolId = Auth::user()->school_id;
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->input('school_id') ?: null;
         }   
 
@@ -472,7 +472,7 @@ class PaymentService
     public function getStudentPaymentsTable(Request $request, int $studentId): array{
         $schoolId = Auth::user()->school_id;
 
-        if (Auth::user()->hasRole('super-admin')) {
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
             $schoolId = $request->query('school_id') ?: null;
         }
             

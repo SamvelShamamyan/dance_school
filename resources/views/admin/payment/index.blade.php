@@ -26,7 +26,7 @@
   <div class="card-body">
     <div class="row align-items-end">
 
-      @role('super-admin')
+      @role('super-admin|super-accountant')
         <div class="col-4 col-md-4 mb-3">
           <label class="form-label d-block">Դպրոց</label>
           <select id="school_id" class="form-control"></select>
