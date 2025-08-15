@@ -34,6 +34,7 @@
 <!-- Select2 -->
 <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
+<link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css">
 
 <!-- CURRENT START_3 -->
 
@@ -165,9 +166,12 @@
 <script src="{{ asset('dist/js/main.js') }}"></script>
 <script src="{{ asset('dist/js/school.js') }}"></script>
 <script src="{{ asset('dist/js/user.js') }}"></script>
-
+<script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+<script>
+if (window.Dropzone) { Dropzone.autoDiscover = false; }
+</script>
 <script src="{{ asset('dist/js/group.js') }}"></script>
-<script src="{{ asset('dist/js/staff.js') }}"></script>
+<script src="{{ asset('dist/js/staff.js') }}?v=2"></script>
 <script src="{{ asset('dist/js/student.js') }}"></script>
 <script src="{{ asset('dist/js/payment.js') }}"></script>
 <script src="{{ asset('dist/js/payment.student.js') }}"></script>

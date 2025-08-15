@@ -36,7 +36,9 @@ function savePayment() {
 }
 
 
+
 $(function () {
+  if(window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant'){
     $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         url: `/admin/payment/filters`,
@@ -124,7 +126,7 @@ $(function () {
     $('#btnRefresh, #year, #group_id, #status').on('change click', function () {
         $('#paymentTbl').DataTable().ajax.reload();
     });
-
+  }
 });
 
 

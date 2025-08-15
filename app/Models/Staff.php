@@ -20,11 +20,16 @@ class Staff extends Model
     ];
 
     public function school(){
-        return $this->belongsTo(\App\Models\SchoolName::class, 'school_id');
+        return $this->belongsTo(SchoolName::class, 'school_id');
     }
 
     public function groups(){
-        return $this->belongsToMany(\App\Models\Group::class, 'group_staff')
+        return $this->belongsToMany(Group::class, 'group_staff')
                     ->withTimestamps();
     }
+
+    public function files(){
+        return $this->hasMany(StaffFile::class);
+    }
+
 }
