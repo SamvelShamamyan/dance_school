@@ -6,9 +6,13 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StudentRequest\StudentStoreRequest;
 use App\Http\Requests\StudentRequest\StudentUpdateRequest;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Student;
+use App\Models\StudentFile;
 use App\Services\StudentService;
 use Throwable;
 
@@ -18,7 +22,6 @@ class StudentController extends Controller
     protected $student;
     public function __construct(StudentService $studentService){
         $this->studentService = $studentService;
-        $this->student = new Student();
     }
     public function index(){
         return view('admin.student.index');
@@ -39,7 +42,7 @@ class StudentController extends Controller
             $validated = $request->validated();
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['student_date'])->format('Y-m-d');
-            $this->student::create([
+            $student = Student::create([
                 'first_name'    => $validated['first_name'],       
                 'last_name'     => $validated['last_name'],
                 'father_name'   => $validated['father_name'],
@@ -50,6 +53,20 @@ class StudentController extends Controller
                 'created_date'  => $formattedStudentDate, 
                 'school_id'     => Auth::user()->school_id,  
             ]);   
+
+            if ($request->hasFile('files')) {
+                foreach ($request->file('files') as $file) {
+                    $path = $file->store("student_files/{$student->id}", 'public');
+
+                    StudentFile::create([
+                        'student_id' => $student->id,
+                        'path'     => $path,
+                        'url'      => Storage::disk('public')->url($path),
+                        'name'     => $file->getClientOriginalName(),
+                        'size'     => $file->getSize(),
+                    ]);
+                }
+            }
 
             return response()->json(['status' => 1, 'message' => 'Պահպանված է']); 
 
@@ -62,16 +79,37 @@ class StudentController extends Controller
         }  
     }
 
-    public function edit($id) {
-        $student = Student::findOrFail($id);
-        return view('admin.student.form', compact('student')); 
+
+    public function edit($id){
+        $student = Student::with('files')->findOrFail($id);
+
+        $files = $student->files->map(function ($f) {
+            $url = $f->url ?? Storage::disk('public')->url($f->path);
+            $isImage = Str::endsWith(strtolower($f->name ?? $f->path), [
+                '.jpg','.jpeg','.png','.gif','.webp', 'pdf'
+            ]);
+
+            return [
+                'id'   => $f->id,
+                'name' => $f->name ?? basename($f->path),
+                'size' => (int) ($f->size ?? 0),
+                'url'  => $url,
+                'thumb'=> $isImage ? $url : null, 
+            ];
+        })->values();
+
+        return view('admin.student.form', [
+            'student' => $student,
+            'studentFilesJson' => $files->toJson(),
+        ]);
     }
 
-    public function update(StudentUpdateRequest $request, $id) {            
-        try{
-
+    public function update(StudentUpdateRequest $request, $id){
+        DB::beginTransaction();
+        try {
             $validated = $request->validated();
-            $student = $this->student::findOrFail($id);   
+            $student = Student::findOrFail($id);
+
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['student_date'])->format('Y-m-d');
             $student->update([
@@ -85,22 +123,57 @@ class StudentController extends Controller
                 'created_date'  => $formattedStudentDate,
             ]);
 
+            $removeIds = (array) $request->input('removed_files', []);
+            if (!empty($removeIds)) {
+                $toDelete = StudentFile::where('student_id', $student->id)
+                    ->whereIn('id', $removeIds)
+                    ->get();
+
+                foreach ($toDelete as $f) {
+                    if (!empty($f->path)) {
+                        Storage::disk('public')->delete($f->path);
+                    }
+                }
+
+                StudentFile::whereIn('id', $toDelete->pluck('id'))->delete();
+            }
+
+            $incoming = $request->file('files');
+            if ($incoming) {
+                $incoming = is_array($incoming) ? $incoming : [$incoming];
+
+                foreach ($incoming as $file) {
+                    if (!$file) continue;
+
+                    $path = $file->store("staff_files/{$student->id}", 'public');
+
+                    StudentFile::create([
+                        'student_id' => $student->id,
+                        'path'     => $path,
+                        'url'      => Storage::disk('public')->url($path),
+                        'name'     => $file->getClientOriginalName(),
+                        'size'     => $file->getSize(),
+                    ]);
+                }
+            } 
+
+            DB::commit();
             return response()->json(['status' => 1, 'message' => 'Թարմացվել է']);
 
-        }catch(Throwable $e){
+        } catch (Throwable $e) {
+            DB::rollBack();
             return response()->json([
-                'status' => 0,
+                'status'  => 0,
                 'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
-                'error' => $e->getMessage(), 
+                'error'   => $e->getMessage(),
             ], 500);
-        }  
-
+        }
     }
 
     public function delete($id){
         try {
 
-            $student = $this->student::find($id);
+            $student = Student::find($id);
 
             if (!$student) {
                 return response()->json([

@@ -45,6 +45,9 @@ class StudentUpdateRequest extends FormRequest
                 'date_format:d.m.Y',
                 // 'after_or_equal:today'
             ],
+            'files.*'        => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'],
+            'removed_files'  => ['array'],
+            'removed_files.*'=> ['integer','exists:staff_files,id'],
         ];
     }
 

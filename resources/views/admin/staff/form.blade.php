@@ -132,7 +132,7 @@
 
                     @if(isset($staff) && $staff->files->count())
                     <div class="form-group">
-                        <label>Ավելացված ֆայլեր (ներկա)</label>
+                        <label>Ավելացված ֆայլեր</label>
 
                         <div class="row" id="existing-files">
                         @foreach($staff->files as $file)
@@ -203,17 +203,5 @@
         </div>
     </div>
 </div>
-
-
-
-
-
-
-
-
-
-
-
-
 
 @endsection

@@ -4,7 +4,7 @@
     <div class="col-6">
         <div class="card card-primary">
                 <div class="card-header">
-                <h3 class="card-title">{{ isset($school) ? 'Խմբագրել Ավաելացնել ուաս․ հաստատությունը' : 'Ավաելացնել ուաս․ հաստատություն' }}</h3>
+                <h3 class="card-title">{{ isset($school) ? 'Խմբագրել Ավաելացնել ուս․ հաստատությունը' : 'Ավաելացնել ուս․ հաստատություն' }}</h3>
                 </div>
                 <form id="schoolForm" action="{{ isset($school) ? route('admin.school.update', $school->id) : route('admin.school.add') }}">
                      @csrf

@@ -9,13 +9,14 @@ use App\Http\Requests\StaffRequest\StaffStoreRequest;
 use App\Http\Requests\StaffRequest\StaffUpdateRequest;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Staff;
 use App\Models\StaffFile;
 use App\Services\StaffService;
 use Throwable;
 
-use Illuminate\Support\Str;
+
 
 class StaffController extends Controller
 {
@@ -87,7 +88,7 @@ class StaffController extends Controller
         $files = $staff->files->map(function ($f) {
             $url = $f->url ?? Storage::disk('public')->url($f->path);
             $isImage = Str::endsWith(strtolower($f->name ?? $f->path), [
-                '.jpg','.jpeg','.png','.gif','.webp'
+                '.jpg','.jpeg','.png','.gif','.webp', 'pdf'
             ]);
 
             return [

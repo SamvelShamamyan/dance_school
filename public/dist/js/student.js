@@ -110,4 +110,88 @@ $(function () {
 });
 
 
+$(function () {
+  const dzElStud   = document.getElementById('student-dropzone');
+  const formEl = document.getElementById('StudentForm');
+  const saveBtn= document.getElementById('studentBtn');
 
+  if (!dzElStud || !formEl || !saveBtn) return;
+  if (typeof Dropzone === 'undefined') { console.error('Dropzone not loaded'); return; }
+
+  const dzStud = new Dropzone(dzElStud, {
+    url: formEl.action,
+    paramName: "files",           
+    uploadMultiple: true,
+    parallelUploads: 5,
+    autoProcessQueue: false,
+    maxFilesize: 10,               // MB
+    maxFiles: 5,
+    acceptedFiles: "image/*,.pdf",
+    addRemoveLinks: true,
+    clickable: '#student-dropzone',
+    previewsContainer: '#student-dropzone',
+    hiddenInputContainer: document.body,
+    headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content }
+  });
+
+  dzStud.on("sendingmultiple", function (files, xhr, formData) {
+    $('#StudentForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
+    $('.text-danger').text('');
+    $('#studentBtn').prop('disabled', true);
+  });
+
+  dzStud.on("successmultiple", function (files, response) {
+    if (response && response.status === 1) {
+      swal("success", "Գործողությունը կատարված է", true, true);
+      formEl.reset();
+      dzStud.removeAllFiles(true);
+      $('#removed-files').empty(); 
+      $('#studentBtn').prop('disabled', true);
+    } else {
+      $('#studentBtn').prop('disabled', false);
+      swal("error", "Something went wrong!", true, true);
+    }
+  });
+
+  dzStud.on("errormultiple", function (files, xhrResp, xhr) {
+    $('#studentBtn').prop('disabled', false);
+    try {
+      const res = xhr && xhr.response ? JSON.parse(xhr.response) : xhrResp;
+      if (xhr && xhr.status === 422 && res && res.errors) {
+        for (const field in res.errors) $(`.error_${field}`).text(res.errors[field][0]);
+      } else {
+        swal("error", (res && res.message) ? res.message : "Upload failed", true, true);
+      }
+    } catch {
+      swal("error", "Upload failed", true, true);
+    }
+  });
+
+  saveBtn.addEventListener('click', function () {
+    if (dzStud.getAcceptedFiles().length > 0) {
+      dzStud.processQueue();         
+    } else {
+      saveStudent();              
+    }
+  });
+});
+
+
+
+$(document).on('click', '.js-mark-remove-st', function () {
+  const id   = $(this).data('id');
+  const card = $(this).closest('[data-file-id]');
+  const wrap = $('#removed-files');
+
+  let input = wrap.find(`input[name="removed_files[]"][value="${id}"]`);
+
+  if (input.length) {
+    input.remove();
+    $(this).removeClass('btn-danger').addClass('btn-outline-danger').text('Ջնջել');
+    card.removeClass('border-danger bg-light');
+  } else {
+    $('<input>', {type:'hidden', name:'removed_files[]', value:id}).appendTo(wrap);
+    $(this).removeClass('btn-outline-danger').addClass('btn-danger').text('Չեղարկել');
+    card.addClass('border-danger bg-light');
+  }
+});

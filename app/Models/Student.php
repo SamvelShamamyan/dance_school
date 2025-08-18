@@ -27,4 +27,8 @@ class Student extends Model
     public function group(){
         return $this->belongsTo(\App\Models\Group::class, 'group_id');
     }
+
+    public function files(){
+        return $this->hasMany(StudentFile::class);
+    }
 }
