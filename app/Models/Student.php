@@ -18,6 +18,7 @@ class Student extends Model
         'created_date',
         'school_id',
         'group_id',
+        'group_date',
     ];
 
     public function school(){

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\GroupRequest\GroupStoreRequest; 
 use App\Http\Requests\GroupRequest\GroupUpdateRequest; 
 use App\Http\Requests\GroupRequest\GroupStudentStoreRequest; 
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Group;
 use App\Models\Student;
-
+use App\Models\StudentGroupChangeHistory;
 use App\Services\GroupService;
 use App\Services\GroupStudentService;
 use App\Services\GroupStaffService;
@@ -167,23 +168,52 @@ class GroupController extends Controller
         return response()->json($result);
     }
 
+
     public function studentRepeat(StudentRepeatStoreRequest $request){
-        try{
+        try {
+            DB::beginTransaction();
 
-            $validated = $request->validated();            
-            $student = Student::findOrFail($validated['student_id']); 
-            $student->update(['group_id'=> $validated['group_id']]);
+            $validated = $request->validated();
 
-            return response()->json([
-                'status' => 1,
-                'message' => 'Գործողությունը կատարված է։'
+            $student = Student::select('id','school_id','group_id','group_date')
+                ->lockForUpdate()
+                ->findOrFail($validated['student_id']);
+
+            StudentGroupChangeHistory::where('student_id', $student->id)
+                ->where('is_last', true)
+                ->update(['is_last' => false]);
+
+            StudentGroupChangeHistory::create([
+                'student_id' => $student->id,
+                'data' => [
+                    'old_data' => $student->only(['id','school_id','group_id','group_date']),
+                    'new_data' => [
+                        'id' => $student->id,
+                        'school_id'  => $student->school_id,
+                        'group_id'   => $validated['group_id'],
+                        'group_date' => Carbon::now()->toDateString(),
+                    ],
+                ],
+                'is_last' => true,
             ]);
 
-        }catch (Throwable $e) {
+            $student->update([
+                'group_id'   => $validated['group_id'],
+                'group_date' => Carbon::now()->toDateString(),
+            ]);
+
+            DB::commit();
+
             return response()->json([
-                'status' => 0,
+                'status'  => 1,
+                'message' => 'Գործողությունը կատարված է։'
+            ]);
+        } catch (Throwable $e) {
+            DB::rollBack();
+            return response()->json([
+                'status'  => 0,
                 'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
-                'error' => $e->getMessage(), 
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }

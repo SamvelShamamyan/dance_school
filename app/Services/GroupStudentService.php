@@ -6,6 +6,7 @@ use App\Models\Student;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class GroupStudentService
 {
@@ -93,6 +94,7 @@ class GroupStudentService
             ->whereIn('id', $ids)
             ->update([
                 'group_id'   => $groupId,
+                'group_date' => Carbon::now()->format('Y-m-d'),
             ]);
         return $result;
     }

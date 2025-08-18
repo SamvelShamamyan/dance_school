@@ -23,13 +23,14 @@ return new class extends Migration
             $table->date('created_date');
             $table->unsignedBigInteger('school_id')->nullable();
             $table->unsignedBigInteger('group_id')->nullable();
+            $table->date('group_date')->nullable();
             $table->timestamps();
 
             $table->index('school_id', 'school_name_idx');
-            $table->foreign('school_id')->references('id')->on('school_names')->onDelete('set null');
+            $table->foreign('school_id')->references('id')->on('school_names')->nullOnDelete();
 
             $table->index('group_id', 'school_group_idx');
-            $table->foreign('group_id')->references('id')->on('groups')->onDelete('set null');
+            $table->foreign('group_id')->references('id')->on('groups')->nullOnDelete();
 
         });
     }

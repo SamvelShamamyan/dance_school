@@ -11,6 +11,7 @@ use App\Http\Controllers\Admin\GroupController;
 use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Admin\StudentHistoryController;
 
 
 
@@ -96,6 +97,8 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('admin.student.edit');
         Route::post('/{id}/update', [StudentController::class, 'update'])->name('admin.student.update');
         Route::post('/{id}/delete', [StudentController::class, 'delete'])->name('admin.student.delete');
+
+        Route::post('/{student}/groupHistory', action: [StudentHistoryController::class, 'groupHistoryData'])->name('admin.student.groupHistoryData');
     });
 
 

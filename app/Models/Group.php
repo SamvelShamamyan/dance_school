@@ -14,11 +14,11 @@ class Group extends Model
     ];
 
     public function school(){
-        return $this->belongsTo(\App\Models\SchoolName::class, 'school_id');
+        return $this->belongsTo(SchoolName::class, 'school_id');
     }
 
     public function staff(){
-        return $this->belongsToMany(\App\Models\Staff::class, 'group_staff')
+        return $this->belongsToMany(Staff::class, 'group_staff')
                     ->withTimestamps(); 
     }
 }

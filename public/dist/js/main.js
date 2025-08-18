@@ -367,6 +367,33 @@ $(function() {
     });
 });
 
+
+$(function () {
+  const $tbl = $('#studentGroupHistoryTbl');
+  const studentId = $tbl.data('student-id');
+
+  const historyTbl = $tbl.DataTable({
+    language: lang,
+    processing: true,
+    serverSide: true,
+    searching: true,
+    responsive: true,
+    autoWidth: false,
+    ajax: {
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url: `/admin/student/${studentId}/groupHistory`,
+      type: 'post'
+    },
+    columns: [
+      { data: 'id',             name: 'id', width: '60px' },
+      { data: 'transition',     name: 'transition', orderable: false },
+      { data: 'period',         name: 'period', orderable: false, searchable: false },
+      { data: 'is_last',        name: 'is_last', width: '70px' },
+    ],
+    order: [[0, 'desc']],
+  });
+});
+
 // === Payments page ===
 $(function () {
   if (!$('#paymentTbl').length) return;

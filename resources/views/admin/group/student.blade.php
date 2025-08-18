@@ -47,6 +47,7 @@
   <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
     <div class="modal-content">
       <form id="singleRepeatForm">
+        <input type="hidden" name="student_id" id="studentId">
         <div class="modal-header">
           <h5 class="modal-title">Տեղափոխել մեկ այլ խումբ</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="close">
@@ -67,7 +68,6 @@
                 <small class="error_group_id text-danger"></small>
                 <small class="error_student_id text-danger"></small>
             </div>
-            <input type="hidden" name="student_id" id="studentId">
         </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-dismiss="modal">Փակել</button>
