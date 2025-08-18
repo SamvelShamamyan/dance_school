@@ -120,7 +120,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::get('/getSchools', [PaymentController::class, 'getSchools'])->name('admin.payment.getSchools');
         Route::get('/getGroupsBySchool/{schoolId}', [PaymentController::class, 'getGroupsBySchool'])->name('admin.payment.getGroupsBySchool');
 
-
+ 
            
     });
 
