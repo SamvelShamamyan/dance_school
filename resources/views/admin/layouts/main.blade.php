@@ -109,7 +109,7 @@
   </strong>
   <span>: Բոլոր իրավունքները պաշտպանված են։</span>
   <div class="float-right d-none d-sm-inline-block">
-    <b>Version</b> {{ config('app.version', '0.0.1') }}
+    <b>Version</b> {{ config('app.version', '1.0.0') }}
   </div>
 </footer>
 
