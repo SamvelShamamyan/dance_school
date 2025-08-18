@@ -131,7 +131,8 @@ $(function () {
     clickable: '#student-dropzone',
     previewsContainer: '#student-dropzone',
     hiddenInputContainer: document.body,
-    headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content }
+    headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
+    dictRemoveFile: 'Հեռացնել',
   });
 
   dzStud.on("sendingmultiple", function (files, xhr, formData) {

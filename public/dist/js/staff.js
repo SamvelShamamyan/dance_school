@@ -128,7 +128,8 @@ $(function () {
     clickable: '#staff-dropzone',
     previewsContainer: '#staff-dropzone',
     hiddenInputContainer: document.body,
-    headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content }
+    headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
+    dictRemoveFile: 'Հեռացնել',
   });
 
   dz.on("sendingmultiple", function (files, xhr, formData) {
