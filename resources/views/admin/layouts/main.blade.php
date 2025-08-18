@@ -105,9 +105,9 @@
   <strong>
      Հեղինակային իրավունքներ &copy;
     {{ $start }}@if($year > $start)–{{ $year }}@endif
-    <a href="{{ url('/') }}">CRM Համակարգ</a>.
+    <a href="{{ url('/') }}">CRM Համակարգ</a>
   </strong>
-  <span>Բոլոր իրավունքները պաշտպանված են։</span>
+  <span>: Բոլոր իրավունքները պաշտպանված են։</span>
   <div class="float-right d-none d-sm-inline-block">
     <b>Version</b> {{ config('app.version', '0.0.1') }}
   </div>
