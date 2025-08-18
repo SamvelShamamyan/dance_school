@@ -36,9 +36,8 @@ function savePayment() {
 }
 
 
-
 $(function () {
-  if(window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant'){
+  if(window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant' || window.currentUserRole === 'school-accountant'){
     $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         url: `/admin/payment/filters`,
