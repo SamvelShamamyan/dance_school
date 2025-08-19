@@ -13,7 +13,7 @@
         </h3>
   </div>
     <a href="{{ route('admin.student.create') }}" class="btn btn-success mb-3">
-        <i class="fas fa-plus"></i> Ավաելացնել
+        <i class="fas fa-plus"></i> Ավելացնել
     </a>
 </div>
 

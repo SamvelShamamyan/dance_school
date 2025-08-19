@@ -3,7 +3,7 @@
 
 
     <a href="{{ route('admin.user.create') }}" class="btn btn-success mb-3">
-        <i class="fas fa-plus"></i> Ավաելացնել
+        <i class="fas fa-plus"></i> Ավելացնել
     </a>
 
     <table class="table table-striped table-bordered dtTbl" style="width:100%" id="userTbl">

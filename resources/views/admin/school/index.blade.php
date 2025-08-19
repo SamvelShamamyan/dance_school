@@ -3,7 +3,7 @@
 
 
     <a href="{{ route('admin.school.create') }}" class="btn btn-success mb-3">
-        <i class="fas fa-plus"></i> Ավաելացնել
+        <i class="fas fa-plus"></i> Ավելացնել
     </a>
 
     <div class="card shadow-sm">

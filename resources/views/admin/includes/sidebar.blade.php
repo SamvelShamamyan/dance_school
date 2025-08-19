@@ -27,7 +27,7 @@
           <li class="nav-item">
               <a href="{{route('admin.school.index')}}" class="nav-link {{ request()->routeIs('admin.school.index') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-th"></i>            
-                  Ավաելացնել </br>ուս. հաստատություն          
+                  Ավելացնել </br>ուս. հաստատություն          
               </a>
           </li>
           <li class="nav-item">
