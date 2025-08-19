@@ -201,31 +201,32 @@
     </div>
 
 
-    <div class="col-6">
-    <div class="card card-primary">
-        <div class="card-header">
-        <h3 class="card-title">Խմբերում տեղափոխությունների պատմություն</h3>
+    @if (isset($student))
+        <div class="col-6">
+            <div class="card card-primary">
+                <div class="card-header">
+                <h3 class="card-title">Խմբերում տեղափոխությունների պատմություն</h3>
+                </div>
+                <div class="card-body p-3">
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered mb-0 w-100" 
+                        id="studentGroupHistoryTbl"
+                        data-student-id="{{ $student->id ?? '' }}">
+                    <thead>
+                        <tr>
+                        <th>#</th>
+                        <th>Փոխադրումը</th>         
+                        <th>Ժամանակահատվածը (նախորդ խմբում)</th>
+                        <th>Վերջին՞</th>        
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                    </table>
+                </div>
+                </div>
+            </div>
         </div>
-        <div class="card-body p-3">
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered mb-0 w-100" 
-                id="studentGroupHistoryTbl"
-                data-student-id="{{ $student->id ?? '' }}">
-            <thead>
-                <tr>
-                <th>#</th>
-                <th>Փոխադրումը</th>         
-                <th>Ժամանակահատվածը (նախորդ խմբում)</th>
-                <th>Վերջին՞</th>        
-                </tr>
-            </thead>
-            <tbody></tbody>
-            </table>
-        </div>
-        </div>
-    </div>
-    </div>
-
+    @endif
 
 </div>
 @endsection
