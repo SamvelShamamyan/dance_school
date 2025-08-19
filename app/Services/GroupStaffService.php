@@ -17,6 +17,12 @@ public function getStaffListData(Request $request, $groupId)
     $start = $request->input('start');
     $length = $request->input('length');
     $search = $request->input('search.value');
+
+    $schoolId = Auth::user()->school_id;
+
+    if (Auth::user()->hasRole('super-admin')) {
+        $schoolId = $request->input('school_id');
+    }
     
     $query = Staff::query()
         ->with('school')
@@ -25,7 +31,7 @@ public function getStaffListData(Request $request, $groupId)
         ->join('groups', 'groups.id', '=', 'group_staff.group_id')
         ->where('group_staff.group_id', $groupId)
         ->whereNotNull('staff.school_id')
-        ->where('staff.school_id', Auth::user()->school_id)
+        ->where('staff.school_id', $schoolId)
         ->distinct('staff.id');
 
 

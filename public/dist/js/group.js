@@ -85,11 +85,16 @@ $(document).on('click', '#studentGroupModalBtn', function () {
     
     let groupId = $(this).data('group-id');
     $('#group_id').val(groupId);
+    let school_id = '';
+    if (window.currentUserRole === 'super-admin') {
+         school_id = $('#filterSchool').val() || '';
+    }
   
     $.ajax({
         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
         url: `/admin/group/getStudents`,
         type: 'POST',
+        data: {'school_id':school_id},
         dataType: 'json',
         success: function (response) {            
 

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 use App\Models\Group;
 use App\Models\Student;
+use App\Models\SchoolName;
 use App\Models\StudentGroupChangeHistory;
 use App\Services\GroupService;
 use App\Services\GroupStudentService;
@@ -33,11 +34,16 @@ class GroupController extends Controller
     }
 
     public function index(){
-        return view('admin.group.index');
+        $schools = [];
+        if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
+        return view('admin.group.index', compact('schools'));
     }
 
-    public function create(){
-        return view('admin.group.form');
+    public function create(Request $request){
+         $schoolId = $request->input('school_id');
+        return view('admin.group.form', compact('schoolId'));
     }
 
     public function getGroupData(Request $request){
@@ -48,12 +54,18 @@ class GroupController extends Controller
     public function add(GroupStoreRequest $request){
         try{
 
+            $schoolId = Auth::user()->school_id;
+
+            if (Auth::user()->hasRole('super-admin')) {
+                $schoolId = $request->input('school_id');
+            }
+
             $validated = $request->validated();
             $formattedDate = Carbon::createFromFormat('d.m.Y', $validated['group_date'])->format('Y-m-d');
             Group::create([
                 'name'          => $validated['group_name'],
                 'created_date'  => $formattedDate,
-                'school_id'     => Auth::user()->school_id,
+                'school_id'     => $schoolId,
             ]);   
 
             return response()->json([
@@ -120,10 +132,10 @@ class GroupController extends Controller
         }
     }
 
-    public function getStudents(){
+    public function getStudents(Request $request){
         try{
 
-            $result = $this->groupStudentService->getStudentData();
+            $result = $this->groupStudentService->getStudentData($request);
             return response()->json($result);
 
         }catch(Throwable $e){
@@ -153,14 +165,19 @@ class GroupController extends Controller
         }  
     }
 
-    public function studentsPage($groupId){
+    public function studentsPage(Request $request, $groupId){
 
-        $groupsData = Group::where('school_id',Auth::user()->school_id)->get();
-        $group = Group::where('school_id', Auth::user()->school_id)
+        $schoolId = Auth::user()->school_id;
+        if (Auth::user()->hasRole('super-admin')) {  
+            $schoolId = $request->input('school_id');        
+        }
+
+        $groupsData = Group::where('school_id',$schoolId)->get();
+        $group = Group::where('school_id', $schoolId)
             ->where('id',$groupId)->first();
         $groupName = $group->name;
 
-        return view('admin.group.student', compact('groupId','groupsData', 'groupName'));
+        return view('admin.group.student', compact('groupId','groupsData', 'groupName', 'schoolId'));
     }
 
     public function getStudenetsList(Request $request, $groupId){
@@ -294,11 +311,17 @@ class GroupController extends Controller
         }
     }
 
-    public function staffPage($groupId){
-         $group = Group::where('school_id', Auth::user()->school_id)
+    public function staffPage(Request $request, $groupId){
+        
+        $schoolId = Auth::user()->school_id;
+        if (Auth::user()->hasRole('super-admin')) {  
+            $schoolId = $request->input('school_id');        
+        }
+
+         $group = Group::where('school_id', $schoolId)
             ->where('id',$groupId)->first();
         $groupName = $group->name;
-        return view('admin.group.staff', compact('groupId', 'groupName'));
+        return view('admin.group.staff', compact('groupId', 'groupName', 'schoolId'));
     }
 
     public function getStaffList(Request $request, $groupId){

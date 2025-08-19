@@ -55,7 +55,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     });
 
 
-    Route::group(['prefix'=>'group','middleware' => ['role:school-admin']], function(){
+    Route::group(['prefix'=>'group','middleware' => ['role:school-admin|super-admin']], function(){
         Route::get('/', [GroupController::class, 'index'])->name('admin.group.index');
         Route::post('/getData',  [GroupController::class, 'getGroupData'])->name('admin.group.data');
         Route::get('/create', [GroupController::class, 'create'])->name('admin.group.create');
@@ -65,7 +65,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{id}/delete', [GroupController::class, 'delete'])->name('admin.group.delete');
         Route::post('/getStudents',  [GroupController::class, 'getStudents'])->name('admin.group.getStudents');
         Route::post('/addStudenets',  [GroupController::class, 'addStudenets'])->name('admin.group.addStudenets');
-        Route::get('/{id}/students',  [GroupController::class, 'studentsPage'])->name('admin.group.studentsPage');    
+        Route::get('/{groupId}/students',  [GroupController::class, 'studentsPage'])->name('admin.group.studentsPage');    
         Route::post('/{id}/getStudenetsList',  [GroupController::class, 'getStudenetsList'])->name('admin.group.getStudenetsList');
         Route::post('/student/{studentId}/delete',  [GroupController::class, 'deleteGroupStudent'])->name('admin.group.deleteGroupStudent');
         Route::post('/getStaff', [GroupController::class, 'getStaff'])->name('admin.group.getStaff');
@@ -78,7 +78,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
        
     });
 
-    Route::group(['prefix'=>'staff','middleware' => ['role:school-admin']], function(){
+    Route::group(['prefix'=>'staff','middleware' => ['role:school-admin|super-admin']], function(){
         Route::get('/', [StaffController::class, 'index'])->name('admin.staff.index');
         Route::post('/getData', [StaffController::class, 'getStaffData'])->name('admin.staff.data');
         Route::get('/create', [StaffController::class, 'create'])->name('admin.staff.create');
@@ -89,7 +89,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     });
 
 
-    Route::group(['prefix'=>'student','middleware' => ['role:school-admin']], function(){
+    Route::group(['prefix'=>'student','middleware' => ['role:school-admin|super-admin']], function(){
         Route::get('/', [StudentController::class, 'index'])->name('admin.student.index');
         Route::post('/getData', [StudentController::class, 'getSudentData'])->name('admin.student.data');
         Route::get('/create', [StudentController::class, 'create'])->name('admin.student.create');

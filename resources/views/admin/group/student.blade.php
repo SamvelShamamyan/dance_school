@@ -1,3 +1,7 @@
+@php
+  $isSuper = Auth::user()->hasRole('super-admin');
+@endphp
+
 @extends('admin.layouts.main')
 @section('content')
 
@@ -9,8 +13,14 @@
       </a>
         <h3 class="mb-0">
             <small class="text-muted">
-                <i class="fas fa-school mr-1"></i> {{ auth()->user()->school->name }} /
-                <i class="fas fa-users mr-1"></i> {{ $groupName }}
+              @if($isSuper)
+              {{ $groupId }}
+              @else
+                  <i class="fas fa-school mr-1"></i> {{ auth()->user()->school->name }}
+                  /
+                  <i class="fas fa-users mr-1"></i> {{ $groupName }}
+              @endif
+
             </small>
         </h3>
   </div>
@@ -21,7 +31,7 @@
 
 <div class="card shadow-sm">
     <div class="card-body bg-white">
-        <table class="table table-striped table-bordered dtTbl" style="width:100%" id="studenetsListTbl" data-id="{{ $groupId }}">
+        <table class="table table-striped table-bordered dtTbl" style="width:100%" id="studenetsListTbl" data-id="{{ $groupId }}" data-school-id="{{ $schoolId }}">
             <thead>
                 <tr>
                     <th>ID</th>

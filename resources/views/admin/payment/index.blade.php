@@ -31,9 +31,6 @@
           <label class="form-label d-block">Դպրոց</label>
           <select id="school_id" class="form-control"></select>
         </div>
-
-      
-
       @endrole
       
       <div class="col-4 col-md-4 mb-3">

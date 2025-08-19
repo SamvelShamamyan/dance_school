@@ -32,6 +32,9 @@
             
             <form id="GroupForm" action="{{ isset($group) ? route('admin.group.update', $group->id) : route('admin.group.add') }}">
                 @csrf
+                @if(Auth::user()->hasRole('super-admin'))
+                    <input type="hidden" name="school_id" value="{{ old('school_id', $schoolId ?? request('school_id')) }}">
+                @endif
                 <div class="card-body">
 
                     <div class="form-group">

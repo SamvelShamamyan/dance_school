@@ -1,3 +1,7 @@
+@php
+  $isSuper = Auth::user()->hasRole('super-admin');
+@endphp
+
 @extends('admin.layouts.main')
 @section('content')
 
@@ -7,10 +11,13 @@
           <i class="fas fa-arrow-left"></i>
       </a>
         <h3 class="mb-0">
-            <small class="text-muted">
-                <i class="fas fa-school mr-1"></i> {{ auth()->user()->school->name }} /
-                <i class="fas fa-users mr-1"></i> {{ $groupName }}
-            </small>
+            @if($isSuper)
+              {{ $groupId }}
+              @else
+                  <i class="fas fa-school mr-1"></i> {{ auth()->user()->school->name }}
+                  /
+                  <i class="fas fa-users mr-1"></i> {{ $groupName }}
+              @endif
         </h3>
   </div>
     <a href="{{ route('admin.staff.create') }}" class="btn btn-success mb-3">
@@ -20,7 +27,7 @@
 
 <div class="card shadow-sm">
     <div class="card-body bg-white">
-        <table class="table table-striped table-bordered dtTbl" style="width:100%" id="staffListTbl" data-id="{{ $groupId }}">
+        <table class="table table-striped table-bordered dtTbl" style="width:100%" id="staffListTbl" data-id="{{ $groupId }}" data-school-id="{{ $schoolId }}">
             <thead>
                 <tr>
                     <th>ID</th>

@@ -39,7 +39,7 @@
               </a>
           </li>
         @endrole
-        @role('school-admin')
+        @role('school-admin|super-admin')
           <li class="nav-item">
               <a href="{{route('admin.group.index')}}" class="nav-link {{ request()->routeIs('admin.group.index') ? 'active' : '' }}">
                 <i class="nav-icon fas fa-th"></i>

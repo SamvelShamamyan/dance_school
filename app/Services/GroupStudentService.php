@@ -17,14 +17,20 @@ class GroupStudentService
     $start  = $request->input('start');
     $length = $request->input('length');
     $search = $request->input('search.value');
+
+    $schoolId = Auth::user()->school_id;
+
+    if (Auth::user()->hasRole('super-admin')) {
+        $schoolId = $request->input('school_id');
+    }
+
     
     $query = Student::with('school')
         ->select('students.*', 'groups.id as group_id')
         ->whereNotNull('students.school_id')
         ->join('groups', 'groups.id', '=', 'students.group_id')
-        ->where('students.school_id', Auth::user()->school_id)
+        ->where('students.school_id', $schoolId)
         ->where('groups.id', $groupId); 
-
 
 
     $recordsTotal = $query->count();
@@ -78,10 +84,17 @@ class GroupStudentService
     ];
 }
 
-    public function getStudentData(){
+    public function getStudentData($request){
+
+        $schoolId = Auth::user()->school_id;
+
+        if (Auth::user()->hasRole('super-admin')) {
+            $schoolId = $request->input('school_id');
+        }
+
         $students = Student::select('id',
         DB::raw("CONCAT(first_name, ' ', last_name, ' ', father_name) as full_name")
-        )->where('school_id', Auth::user()->school_id)->whereNull('group_id')->get();
+        )->where('school_id', $schoolId)->whereNull('group_id')->get();
         return $students;
     }
     

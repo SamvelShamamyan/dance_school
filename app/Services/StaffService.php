@@ -16,8 +16,22 @@ class StaffService
     $start = $request->input('start');
     $length = $request->input('length');
     $search = $request->input('search.value');
-    
-    $query = Staff::with('school')->whereNotNull('school_id')->where('school_id', Auth::user()->school_id);
+
+    $schoolId = Auth::user()->school_id;
+
+    $query = Staff::with('school');
+
+    if (Auth::user()->hasRole('super-admin')) {
+        $schoolId = $request->input('school_id');
+        if ($schoolId !== null && $schoolId !== '') {
+            $query->where('school_id', $schoolId);
+        } else {
+            $query->whereNotNull('school_id'); 
+        }
+    } else {
+        $query->where('school_id', $schoolId);
+    }
+
 
 
     $recordsTotal = $query->count();

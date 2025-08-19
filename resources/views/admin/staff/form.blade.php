@@ -51,7 +51,9 @@
                   action="{{ isset($staff) ? route('admin.staff.update', $staff->id) : route('admin.staff.add') }}"
                   method="post">
                 @csrf
-                
+                @if(Auth::user()->hasRole('super-admin'))
+                    <input type="hidden" name="school_id" value="{{ old('school_id', $schoolId ?? request('school_id')) }}">
+                @endif
                 <div class="card-body">
 
                     <div class="form-group">

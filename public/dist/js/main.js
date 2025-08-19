@@ -105,7 +105,10 @@ $(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             url: "/admin/group/getData",
-            type: 'post'
+            type: 'post',
+            data: function(d) {
+                if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterSchoolGroup').val() || '';}
+            }
         },
         columns: [  
             {
@@ -128,6 +131,30 @@ $(function() {
             }
         ]
     });
+
+    if (window.currentUserRole === 'super-admin') {
+        $('#filterSchoolGroup').on('change', function () {
+            const $select = $(this); 
+            const name = $select.find('option:selected').data('name');
+            const schoolId = $select.val();
+
+            $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
+
+            const baseUrl = $('#addGroupBtn').attr('href');
+            const newUrl = schoolId ? (baseUrl + '?school_id=' + schoolId) : '#';
+            $('#addGroupBtn').attr('href', newUrl);
+
+
+            if (!schoolId) {
+                $('#addGroupBtn').addClass('hidden');
+            } else {
+                $('#addGroupBtn').removeClass('hidden');
+            }
+
+            groupTbl.ajax.reload();
+        });
+    }
+
 });
 
 
@@ -141,7 +168,10 @@ $(function() {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
             url: "/admin/staff/getData",
-            type: 'post'
+            type: 'post',
+            data: function(d) {
+            if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterSchool').val() || '';}
+            }
         },
         columns: [  
             {
@@ -186,6 +216,39 @@ $(function() {
             }
         ]
     });
+
+    if (window.currentUserRole === 'super-admin') {
+        $('#filterSchool').on('change', function () {
+            const $select = $(this); 
+            const name = $select.find('option:selected').data('name');
+            const schoolId = $select.val();
+
+            $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
+
+            // const baseUrl = $('#addStaffBtn').data('base-url');
+            // const newUrl = schoolId ? (baseUrl + '?school_id=' + schoolId) : '#';
+            // $('#addStaffBtn').attr('href', newUrl);
+
+
+            const baseUrl = $('#addStaffBtn').attr('href');
+            const newUrl = schoolId ? (baseUrl + '?school_id=' + schoolId) : '#';
+            $('#addStaffBtn').attr('href', newUrl);
+
+
+            if (!schoolId) {
+                alert(1)
+                $('#addStaffBtn').addClass('hidden');
+                // $('#getGroupStudent').addClass('hidden');
+            } else {
+                $('#addStaffBtn').removeClass('hidden');
+                // $('#getGroupStudent').removeClass('hidden');
+            }
+
+            staffTbl.ajax.reload();
+        });
+    }
+
+
 });
 
 
@@ -253,6 +316,12 @@ $(function() {
 
 $(function() {
     const groupId = $("#studenetsListTbl").data('id');
+    const school_id = $("#studenetsListTbl").data('school-id');
+
+    let studenetsListTblUrl = school_id
+        ? `/admin/group/${groupId}/getStudenetsList?school_id=${school_id}`
+        : `/admin/group/${groupId}/getStudenetsList`;
+
     let studenetsListTbl = $("#studenetsListTbl").DataTable({
         language: lang,
         processing: true,
@@ -261,7 +330,7 @@ $(function() {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: `/admin/group/${groupId}/getStudenetsList`,
+            url: studenetsListTblUrl,
             type: 'post'
         },
         columns: [  
@@ -311,6 +380,12 @@ $(function() {
 
 $(function() {
     const groupId = $("#staffListTbl").data('id');
+    const school_id = $("#staffListTbl").data('school-id');
+
+    let staffListTblTblUrl = school_id
+        ? `/admin/group/${groupId}/getStaffList?school_id=${school_id}`
+        : `/admin/group/${groupId}/getStaffList`;
+
     let staffListTbl = $("#staffListTbl").DataTable({
         language: lang,
         processing: true,
@@ -319,7 +394,7 @@ $(function() {
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             },
-            url: `/admin/group/${groupId}/getStaffList`,
+            url: staffListTblTblUrl,
             type: 'post'
         },
         columns: [  

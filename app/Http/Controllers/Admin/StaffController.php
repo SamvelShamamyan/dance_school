@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Staff;
 use App\Models\StaffFile;
+use App\Models\SchoolName;
 use App\Services\StaffService;
 use Throwable;
 
@@ -26,11 +27,16 @@ class StaffController extends Controller
     }
 
     public function index(){
-        return view('admin.staff.index');
+        $schools = [];
+        if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
+        return view('admin.staff.index', compact('schools'));
     }
 
-    public function create(){
-        return view('admin.staff.form');
+    public function create(Request $request){
+        $schoolId = $request->input('school_id');
+        return view('admin.staff.form', compact('schoolId'));
     }
 
     public function getStaffData(Request $request){
@@ -40,8 +46,14 @@ class StaffController extends Controller
 
     public function add(StaffStoreRequest $request){
         try {
-            $validated = $request->validated();
 
+            $schoolId = Auth::user()->school_id;
+
+            if (Auth::user()->hasRole('super-admin')) {
+                $schoolId = $request->input('school_id');
+            }
+
+            $validated = $request->validated();
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStaffDate = Carbon::createFromFormat('d.m.Y', $validated['staff_date'])->format('Y-m-d');
 
@@ -54,7 +66,7 @@ class StaffController extends Controller
                 'soc_number'    => $validated['soc_number'] ?? null,
                 'birth_date'    => $formattedBirthDate,
                 'created_date'  => $formattedStaffDate,
-                'school_id'     => Auth::user()->school_id,
+                'school_id'     => $schoolId ,
             ]);
 
             if ($request->hasFile('files')) {

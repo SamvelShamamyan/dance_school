@@ -9,6 +9,7 @@ class SchoolName extends Model
 
    protected $table = 'school_names';
    protected $fillable = [
+        'id',
         'name',
     ];
 }
