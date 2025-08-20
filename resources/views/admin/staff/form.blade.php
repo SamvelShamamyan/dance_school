@@ -51,10 +51,24 @@
                   action="{{ isset($staff) ? route('admin.staff.update', $staff->id) : route('admin.staff.add') }}"
                   method="post">
                 @csrf
-                @if(Auth::user()->hasRole('super-admin'))
-                    <input type="hidden" name="school_id" value="{{ old('school_id', $schoolId ?? request('school_id')) }}">
-                @endif
+
                 <div class="card-body">
+
+                    @if(Auth::user()->hasRole('super-admin') && $is_create)            
+                        <div class="form-group">
+                            <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն</label>
+                            <select name="school_id" id="schoolIdStudFilter" class="form-control">
+                                <option value="" disabled {{ empty(old('school_id', $student->school_id ?? '')) ? 'selected' : '' }}>Ընտրել</option>
+                                @foreach($schools as $school)
+                                    <option value="{{ $school->id }}" data-name="{{ $school->name }}" 
+                                    {{ old('school_id', $student->school_id ?? '') == $school->id ? 'selected' : '' }}>
+                                        {{ $school->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="error_school_id text-danger"></small>
+                        </div>     
+                    @endif
 
                     <div class="form-group">
                         <label for="first_name">Անուն</label>

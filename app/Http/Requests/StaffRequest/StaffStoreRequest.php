@@ -4,6 +4,9 @@ namespace App\Http\Requests\StaffRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+use Illuminate\Support\Facades\Auth;
+
+
 class StaffStoreRequest extends FormRequest
 {
     /**
@@ -39,6 +42,10 @@ class StaffStoreRequest extends FormRequest
                 // 'after_or_equal:today'
             ],
             'files.*'    => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'], // 10 МБ
+             'school_id' => Auth::user()->hasRole('super-admin')
+                ? 'required|integer|exists:school_names,id'
+                : 'nullable',
+
         ];
     }
 

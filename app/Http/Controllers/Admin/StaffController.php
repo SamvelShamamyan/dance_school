@@ -35,8 +35,12 @@ class StaffController extends Controller
     }
 
     public function create(Request $request){
-        $schoolId = $request->input('school_id');
-        return view('admin.staff.form', compact('schoolId'));
+         $schools = [];
+        if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
+        $is_create = true;
+        return view('admin.staff.form', compact('schools','is_create'));
     }
 
     public function getStaffData(Request $request){
@@ -50,7 +54,7 @@ class StaffController extends Controller
             $schoolId = Auth::user()->school_id;
 
             if (Auth::user()->hasRole('super-admin')) {
-                $schoolId = $request->input('school_id');
+                $schoolId = $request->school_id;
             }
 
             $validated = $request->validated();
@@ -96,6 +100,7 @@ class StaffController extends Controller
 
     public function edit($id){
         $staff = Staff::with('files')->findOrFail($id);
+        $is_create = false;
 
         $files = $staff->files->map(function ($f) {
             $url = $f->url ?? Storage::disk('public')->url($f->path);
@@ -115,6 +120,7 @@ class StaffController extends Controller
         return view('admin.staff.form', [
             'staff' => $staff,
             'staffFilesJson' => $files->toJson(),
+            'is_create' => $is_create,
         ]);
     }
 
