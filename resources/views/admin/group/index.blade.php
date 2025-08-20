@@ -61,7 +61,7 @@
   <div class="modal-dialog modal-lg" role="document"> 
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="studentGroupModalLabel">Ավելացնել խմբում նոր աշակերտ</h5>
+        <h5 class="modal-title" id="studentGroupModalLabel">Ավելացնել խմբում նոր աշակերտ (ներ)</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Փակել">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -69,17 +69,29 @@
       <div class="modal-body">
         <form id="SutdentGroupModalForm">
           @csrf
-            @if(Auth::user()->hasRole('super-admin'))
-              <input type="hidden" name="school_id" value="{{ old('school_id', $schoolId ?? request('school_id')) }}">
-            @endif
-            <div class="form-group">
-                <label></label>
-                <select name="add_student[]" id="addStudentsGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">
+          <input type="hidden" name="group_id" id="group_id">
+           
+            @if(Auth::user()->hasRole('super-admin'))      
                 
+                <input type="hidden" name="school_id" id="school_id">
+                <div class="form-group">
+                  <label>111111</label>
+                  <select name="add_student[]" id="addStudentsGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">      
+                  </select>
+                  <small class="error_add_student text-danger"></small>
+                </div>  
+
+              @else
+
+              <div class="form-group">
+                <label>22222</label>
+                <select name="add_student[]" id="addStudentsGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">    
                 </select>
                 <small class="error_add_student text-danger"></small>
-            </div>
-            <input type="hidden" name="group_id" id="group_id">
+              </div>
+
+            @endif
+
         </form>
       </div>
       <div class="modal-footer">
@@ -101,17 +113,28 @@
         </button>
       </div>
       <div class="modal-body">
-        <form id="StaffGroupModalForm">
+        <form id="StaffGroupModalForm"> 
           @csrf
+          <input type="hidden" name="group_id" id="group_staff_id">
+          @if(Auth::user()->hasRole('super-admin'))
+              <input type="hidden" name="school_id" id="school_id">
+              <div class="form-group">
+                    <label>1111111</label>
+                    <select name="add_staff[]" id="addStaffGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">
+                    
+                    </select>
+                    <small class="error_add_staff text-danger"></small>
+                </div>
+            @else  
             <div class="form-group">
-                <label></label>
-                <select name="add_staff[]" id="addStaffGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">
-                
-                </select>
-                <small class="error_add_staff text-danger"></small>
+              <label>2222222</label>
+              <select name="add_staff[]" id="addStaffGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">
+              
+              </select>
+              <small class="error_add_staff text-danger"></small>
             </div>
-              <input type="hidden" name="group_id" id="group_staff_id">
-              <small class="error_group_id text-danger"></small>
+          @endif
+
         </form>
       </div>
       <div class="modal-footer">

@@ -98,12 +98,18 @@ class GroupStudentService
         return $students;
     }
     
-    public function addStudents(array $validated){
+    public function addStudents(array $validated , $request){
+
+        $schoolId = Auth::user()->school_id;
+
+        if (Auth::user()->hasRole('super-admin')) {
+            $schoolId = $request->school_id;
+        }        
 
         $groupId = (int) $validated['group_id'];
         $ids     = array_map('intval', $validated['add_student'] ?? []);
 
-        $result = Student::where('school_id', Auth::user()->school_id)
+        $result = Student::where('school_id',  $schoolId)
             ->whereIn('id', $ids)
             ->update([
                 'group_id'   => $groupId,

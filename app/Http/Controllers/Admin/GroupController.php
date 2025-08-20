@@ -158,7 +158,7 @@ class GroupController extends Controller
         try{    
 
             $validated = $request->validated();
-            $this->groupStudentService->addStudents($validated);
+            $this->groupStudentService->addStudents($validated, $request);
 
             return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']); 
             
@@ -264,10 +264,13 @@ class GroupController extends Controller
     }  
 
 
-    public function getStaff(){
+    public function getStaff(Request $request){
         try{
 
-            $result = $this->groupStaffService->getStaffData();
+
+            // dd($request->all());
+
+            $result = $this->groupStaffService->getStaffData($request);
             return response()->json($result);
 
         }catch(Throwable $e){

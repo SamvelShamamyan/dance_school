@@ -84,10 +84,14 @@ public function getStaffListData(Request $request, $groupId)
     ];
 }
 
-    public function getStaffData(){
+    public function getStaffData($request){
+        $schoolId = Auth::user()->school_id;
+        if (Auth::user()->hasRole('super-admin')) {
+            $schoolId = $request->input('school_id');
+        }
         $staff = Staff::select('id',
         DB::raw("CONCAT(first_name, ' ', last_name, ' ', father_name) as full_name")
-        )->where('school_id', Auth::user()->school_id)->get();    
+        )->where('school_id', $schoolId)->get();    
         return $staff;
     }
 
