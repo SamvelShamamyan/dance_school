@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use Carbon\Carbon;
 use App\Models\Student;
 use App\Models\StudentFile;
+use App\Models\SchoolName;
 use App\Services\StudentService;
 use Throwable;
 
@@ -22,13 +23,20 @@ class StudentController extends Controller
     protected $student;
     public function __construct(StudentService $studentService){
         $this->studentService = $studentService;
+
+        
     }
     public function index(){
         return view('admin.student.index');
     }
 
     public function create(){
-        return view('admin.student.form');
+        $schools = [];
+        if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
+        $is_create = true;
+        return view('admin.student.form', compact('schools','is_create'));
     }
 
     public function getSudentData(Request $request){
@@ -38,6 +46,12 @@ class StudentController extends Controller
    
     public function add(StudentStoreRequest $request){
         try{
+
+            $schoolId = Auth::user()->school_id;
+
+            if (Auth::user()->hasRole('super-admin')) {
+                $schoolId = $request->school_id;
+            }
 
             $validated = $request->validated();
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
@@ -51,7 +65,7 @@ class StudentController extends Controller
                 'soc_number'    => $validated['soc_number'],  
                 'birth_date'    => $formattedBirthDate,
                 'created_date'  => $formattedStudentDate, 
-                'school_id'     => Auth::user()->school_id,  
+                'school_id'     => $schoolId,  
             ]);   
 
             if ($request->hasFile('files')) {
@@ -101,6 +115,7 @@ class StudentController extends Controller
         return view('admin.student.form', [
             'student' => $student,
             'studentFilesJson' => $files->toJson(),
+            'is_create' => false,
         ]);
     }
 
@@ -145,7 +160,7 @@ class StudentController extends Controller
                 foreach ($incoming as $file) {
                     if (!$file) continue;
 
-                    $path = $file->store("staff_files/{$student->id}", 'public');
+                    $path = $file->store("students_files/{$student->id}", 'public');
 
                     StudentFile::create([
                         'student_id' => $student->id,

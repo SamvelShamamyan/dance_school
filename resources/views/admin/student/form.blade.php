@@ -52,6 +52,23 @@
 
                 <div class="card-body">
 
+                    @if(Auth::user()->hasRole('super-admin') && $is_create)            
+                        <div class="form-group">
+                            <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն</label>
+                            <select name="school_id" id="schoolIdStudFilter" class="form-control">
+                                <option value="" disabled {{ empty(old('school_id', $student->school_id ?? '')) ? 'selected' : '' }}>Ընտրել</option>
+                                @foreach($schools as $school)
+                                    <option value="{{ $school->id }}" data-name="{{ $school->name }}" 
+                                    {{ old('school_id', $student->school_id ?? '') == $school->id ? 'selected' : '' }}>
+                                        {{ $school->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="error_school_id text-danger"></small>
+                        </div>     
+                    @endif
+
+
                     <div class="form-group">
                         <label for="first_name">Անուն</label>
                         <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', $student->first_name ?? '') }}" placeholder="">
@@ -67,7 +84,9 @@
                     <div class="form-group">
                         <label for="father_name">Հայրանուն</label>
                         <input type="text" class="form-control" id="father_name" name="father_name" value="{{ old('first_name', $student->father_name ?? '') }}" placeholder="">
-                        <small class="error_father_name text-danger"></small>
+                        <small
+                        
+                        class="error_father_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
@@ -229,4 +248,10 @@
     @endif
 
 </div>
+
+<script>
+  window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
+</script>
+
 @endsection
+

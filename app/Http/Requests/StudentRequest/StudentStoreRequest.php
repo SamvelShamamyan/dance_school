@@ -4,6 +4,9 @@ namespace App\Http\Requests\StudentRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
 
+use Illuminate\Support\Facades\Auth;
+
+
 class StudentStoreRequest extends FormRequest
 {
     /**
@@ -39,6 +42,13 @@ class StudentStoreRequest extends FormRequest
                 // 'after_or_equal:today'
             ],
             'files.*'    => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'], // 10 МБ
+             'school_id' => Auth::user()->hasRole('super-admin')
+                ? 'required|integer|exists:school_names,id'
+                : 'nullable',
+
+            // 'group_id' => Auth::user()->hasRole('super-admin')
+            //     ? 'required|integer|exists:groups,id'
+            //     : 'nullable',      
         ];
     }
 
@@ -76,6 +86,14 @@ class StudentStoreRequest extends FormRequest
             'student_date.required'     => 'Ուսուցման ընդունվելու ամսաթիվը պարտադիր է:',
             'student_date.date_format'  => 'Ուսուցման ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
             // 'student_date.after_or_equal' => 'Ուսուցման ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
+
+            'school_id.required'        => 'Ուս․ հաստատություն պարտադիր է:',
+            'school_id.integer'         => 'Ուս․ հաստատություն ID-ն պետք է լինի ամբողջ թիվ:',
+            'school_id.exists'          => 'Նշված ուս․ հաստատություն ID-ն գոյություն չունի:',
+
+            // 'group_id.required'        => 'Խումբը պարտադիր է:',
+            // 'group_id.integer'         => 'Խումբ ID-ն պետք է լինի ամբողջ թիվ:',
+            // 'group_id.exists'          => 'Նշված խումբ ID-ն գոյություն չունի:',
         ];
     }
 }

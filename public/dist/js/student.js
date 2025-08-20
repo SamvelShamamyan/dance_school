@@ -196,3 +196,30 @@ $(document).on('click', '.js-mark-remove-st', function () {
     card.addClass('border-danger bg-light');
   }
 });
+
+
+// if (window.currentUserRole === 'super-admin') {
+
+//   $(document).on('change','#schoolIdStudFilter', function(){
+
+//     let schoolId = $(this).val();
+
+//     $.ajax({
+//       url: `/admin/payment/getGroupsBySchool/${schoolId}`,
+//       type: 'GET',
+//       success: function (groups) {
+//         const $group = $('#group_id');
+//         $group.empty().append('<option value="">Բոլորը</option>');
+
+//         groups.forEach(group => {
+//           $group.append(`<option value="${group.id}">${group.name}</option>`);
+//         });
+
+//         $group.prop('disabled',false)
+//       }
+//     });
+
+//   });
+
+
+// }

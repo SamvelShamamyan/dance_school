@@ -47,7 +47,7 @@ class StudentUpdateRequest extends FormRequest
             ],
             'files.*'        => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'],
             'removed_files'  => ['array'],
-            'removed_files.*'=> ['integer','exists:staff_files,id'],
+            'removed_files.*'=> ['integer','exists:student_files,id'],
         ];
     }
 
