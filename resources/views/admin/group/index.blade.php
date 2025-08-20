@@ -75,7 +75,7 @@
                 
                 <input type="hidden" name="school_id" id="school_id">
                 <div class="form-group">
-                  <label>111111</label>
+                  <label></label>
                   <select name="add_student[]" id="addStudentsGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">      
                   </select>
                   <small class="error_add_student text-danger"></small>
@@ -84,7 +84,7 @@
               @else
 
               <div class="form-group">
-                <label>22222</label>
+                <label></label>
                 <select name="add_student[]" id="addStudentsGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">    
                 </select>
                 <small class="error_add_student text-danger"></small>
@@ -119,7 +119,7 @@
           @if(Auth::user()->hasRole('super-admin'))
               <input type="hidden" name="school_id" id="school_id">
               <div class="form-group">
-                    <label>1111111</label>
+                    <label></label>
                     <select name="add_staff[]" id="addStaffGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">
                     
                     </select>
@@ -127,7 +127,7 @@
                 </div>
             @else  
             <div class="form-group">
-              <label>2222222</label>
+              <label></label>
               <select name="add_staff[]" id="addStaffGroup" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">
               
               </select>
