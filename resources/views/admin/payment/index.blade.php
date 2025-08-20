@@ -9,15 +9,23 @@
 
 @endpush
 
-
-<div class="d-flex justify-content-between align-items-center mb-3">
+<!-- <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="d-flex align-items-center">
-        <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
-            <i class="fas fa-arrow-left"></i>
-        </a>
         <h3 class="mb-0">Ամսական վճարումներ</h3>
     </div>
     <div class="btn-group">
+      <button class="btn btn-success" id="paymentBtn" data-toggle="modal" data-target="#addPaymentModal" ><i class="fas fa-plus"></i> Ավելացնել վճարում</button>
+    </div>
+</div> -->
+
+
+<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+  <div class="d-flex align-items-center">
+    <div class="d-flex align-items-center">
+        <h3 class="mb-0">Ամսական վճարումներ</h3>
+    </div>
+  </div>
+   <div class="btn-group">
       <button class="btn btn-success" id="paymentBtn" data-toggle="modal" data-target="#addPaymentModal" ><i class="fas fa-plus"></i> Ավելացնել վճարում</button>
     </div>
 </div>

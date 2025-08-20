@@ -21,15 +21,11 @@
 @section('content')
 
 
-
 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
   <div class="d-flex align-items-center">
-      <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
-          <i class="fas fa-arrow-left"></i>
-      </a>
         <h3 class="mb-0">
             <small class="text-muted">
-                <i class="fas fa-school mr-1"></i> {{ optional(auth()->user()->school)->name ?? 'Բոլոր ուսումնական հաստատությունները' }}
+                <i class="fas fa-school mr-1"></i> {{ optional(auth()->user()->school)->name  ? 'Ուս․ հաստատություն →  '.auth()->user()->school->name : 'Բոլոր ուսումնական հաստատությունները' }}
             </small>
         </h3>
   </div>

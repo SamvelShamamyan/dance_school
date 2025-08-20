@@ -39,6 +39,14 @@
 
 </style>
 
+<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+  <div class="d-flex align-items-center">
+      <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
+          <i class="fas fa-arrow-left"></i>
+      </a>
+  </div>
+</div>
+
 <div class="row">
     <div class="col-6">
         <div class="card card-primary">
