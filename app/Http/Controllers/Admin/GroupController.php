@@ -41,9 +41,12 @@ class GroupController extends Controller
         return view('admin.group.index', compact('schools'));
     }
 
-    public function create(Request $request){
-         $schoolId = $request->input('school_id');
-        return view('admin.group.form', compact('schoolId'));
+    public function create(){
+        $schools = [];
+        if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
+        return view('admin.group.form', compact('schools'));
     }
 
     public function getGroupData(Request $request){
@@ -57,7 +60,7 @@ class GroupController extends Controller
             $schoolId = Auth::user()->school_id;
 
             if (Auth::user()->hasRole('super-admin')) {
-                $schoolId = $request->input('school_id');
+                $schoolId = $request->school_id;
             }
 
             $validated = $request->validated();
@@ -84,7 +87,11 @@ class GroupController extends Controller
 
     public function edit($id) {
         $group = Group::findOrFail($id);
-        return view('admin.group.form', compact('group')); 
+         $schools = [];
+        if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
+        return view('admin.group.form', compact('group','schools')); 
     }
 
     public function update(GroupUpdateRequest $request, $id) {            

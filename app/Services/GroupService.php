@@ -8,8 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupService
 {
-   public function getGroupData(Request $request)
-{
+   public function getGroupData(Request $request){
     $draw   = $request->input('draw');
     $start  = $request->input('start');
     $length = $request->input('length');
@@ -83,7 +82,7 @@ class GroupService
         $effectiveSchoolId = (int) $item->school_id;
 
         $studentsParams = ['groupId' => $item->id, 'school_id' => $effectiveSchoolId];
-        $staffParams    = ['id'      => $item->id, 'school_id' => $effectiveSchoolId];
+        $staffParams    = ['groupId' => $item->id, 'school_id' => $effectiveSchoolId];
 
         $item->school_name = $item->school->name ?? '';
 

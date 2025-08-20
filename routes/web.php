@@ -70,7 +70,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/student/{studentId}/delete',  [GroupController::class, 'deleteGroupStudent'])->name('admin.group.deleteGroupStudent');
         Route::post('/getStaff', [GroupController::class, 'getStaff'])->name('admin.group.getStaff');
         Route::post('/addStaff', [GroupController::class, 'addStaff'])->name('admin.group.addStaff');
-        Route::get('/{id}/staff', [GroupController::class, 'staffPage'])->name('admin.group.staffPage');    
+        Route::get('/{groupId}/staff', [GroupController::class, 'staffPage'])->name('admin.group.staffPage');    
         Route::post('/{id}/getStaffList',  [GroupController::class, 'getStaffList'])->name('admin.group.getStaffList');
         Route::post('/staff/{staffId}/{groupId}/delete', [GroupController::class, 'deleteGroupStaff'])->name('admin.group.deleteGroupStaff');
 

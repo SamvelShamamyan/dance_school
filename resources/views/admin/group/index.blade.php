@@ -1,31 +1,3 @@
-<style>
-  #addGroupBtn {
-      transition: all 0.3s ease;
-      opacity: 1;
-      transform: scale(1);
-  }
-
-  #addGroupBtn.hidden {
-      opacity: 0;
-      transform: scale(0.9);
-      pointer-events: none;
-  }
-
-
-  #getGroupStudent {
-      transition: all 0.3s ease;
-      opacity: 1;
-      transform: scale(1);
-  }
-
-  #getGroupStudent.hidden {
-      opacity: 0;
-      transform: scale(0.9);
-      pointer-events: none;
-  }
-
-</style>
-
 @php
   $isSuper = Auth::user()->hasRole('super-admin');
 @endphp
@@ -44,8 +16,7 @@
             </small>
         </h3>
   </div>
-     <a href="{{  
-        $isSuper ? route('admin.group.create') : route('admin.group.create') }}" class="btn btn-success {{ $isSuper  ? 'hidden' : ' ' }}" id="addGroupBtn">
+     <a href="{{ route('admin.group.create') }}" class="btn btn-success" id="addGroupBtn">
         <i class="fas fa-plus me-1"></i> Ավելացնել
     </a>
 </div>

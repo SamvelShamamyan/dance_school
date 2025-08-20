@@ -95,6 +95,7 @@ $(function() {
     });
 });
 
+
 $(function() {
     let groupTbl = $("#groupTbl").DataTable({
         language: lang,
@@ -106,7 +107,7 @@ $(function() {
             },
             url: "/admin/group/getData",
             type: 'post',
-            data: function(d) {
+             data: function(d) {
                 if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterSchoolGroup').val() || '';}
             }
         },
@@ -136,21 +137,7 @@ $(function() {
         $('#filterSchoolGroup').on('change', function () {
             const $select = $(this); 
             const name = $select.find('option:selected').data('name');
-            const schoolId = $select.val();
-
             $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
-
-            const baseUrl = $('#addGroupBtn').attr('href');
-            const newUrl = schoolId ? (baseUrl + '?school_id=' + schoolId) : '#';
-            $('#addGroupBtn').attr('href', newUrl);
-
-
-            if (!schoolId) {
-                $('#addGroupBtn').addClass('hidden');
-            } else {
-                $('#addGroupBtn').removeClass('hidden');
-            }
-
             groupTbl.ajax.reload();
         });
     }
