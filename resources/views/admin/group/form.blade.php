@@ -27,7 +27,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
   <div class="d-flex align-items-center">
     <a href="{{ url()->previous() }}" 
-        class="btn btn-outline-secondary btn-sm mr-3" 
+        class="btn btn-outline-secondary btn-sm mr-3 btn-icon" 
         title="Հետ վերադարձ">
         <i class="fas fa-arrow-left"></i>
     </a>

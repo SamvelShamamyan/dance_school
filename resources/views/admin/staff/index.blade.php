@@ -6,7 +6,7 @@
         <div class="row align-items-center">
             <div class="col d-flex align-items-center">
                 <a href="{{ url()->previous() }}" 
-                   class="btn btn-outline-secondary btn-sm mr-3" 
+                   class="btn btn-outline-secondary btn-sm mr-3 btn-icon" 
                    title="Հետ վերադարձ">
                     <i class="fas fa-arrow-left"></i>
                 </a>

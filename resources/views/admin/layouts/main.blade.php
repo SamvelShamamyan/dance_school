@@ -35,6 +35,7 @@
 <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css">
+<link rel="stylesheet" href="{{ asset('dist\css\main.css') }}">
 
 <!-- CURRENT START_3 -->
 
