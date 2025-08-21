@@ -1,38 +1,43 @@
-<style>
-#addStaffBtn {
-    transition: all 0.3s ease;
-    opacity: 1;
-    transform: scale(1);
-}
-
-#addStaffBtn.hidden {
-    opacity: 0;
-    transform: scale(0.9);
-    pointer-events: none;
-}
-
-</style>
-
-@php
-    $isSuper = Auth::user()->hasRole('super-admin');
-@endphp
-
 @extends('admin.layouts.main')
 @section('content')
 
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col d-flex align-items-center">
+                <a href="{{ url()->previous() }}" 
+                   class="btn btn-outline-secondary btn-sm mr-3" 
+                   title="Հետ վերադարձ">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 bg-transparent p-0">
 
-<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-  <div class="d-flex align-items-center">
-        <h3 class="mb-0">
-            <small class="text-muted">
-                <i class="fas fa-school mr-1"></i> {{ optional(auth()->user()->school)->name  ? 'Ուս․ հաստատություն →  '.auth()->user()->school->name : 'Բոլոր ուսումնական հաստատությունները' }}
-            </small>
-        </h3>
-  </div>
-    <a href="{{  
-        $isSuper ? route('admin.staff.create') : route('admin.staff.create') }}" class="btn btn-success mb-3 {{ $isSuper  ? 'hidden' : ' ' }}" id="addStaffBtn">
-        <i class="fas fa-plus"></i> Ավելացնել
-    </a>
+                        @if(optional(auth()->user()->school)->name)
+                            <li class="breadcrumb-item d-flex align-items-center">
+                                <i class="fas fa-university text-primary mr-1 fa-lg"></i>
+                                <span>{{ auth()->user()->school->name }}</span>
+                            </li>
+                        @else
+                            <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
+                                <i class="fas fa-university text-primary mr-1 fa-lg"></i>
+                                <span>Բոլոր ուսումնական հաստատությունները</span>
+                            </li>
+                        @endif
+
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="col-auto">
+                <a href="{{ route('admin.staff.create') }}" 
+                   class="btn btn-success shadow-sm" id="addStaffBtn">
+                    <i class="fas fa-plus"></i> Ավելացնել
+                </a>
+            </div>
+
+        </div>
+    </div>
 </div>
 
 @if(Auth::user()->hasRole('super-admin'))

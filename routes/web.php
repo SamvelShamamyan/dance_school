@@ -97,7 +97,6 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::get('/{id}/edit', [StudentController::class, 'edit'])->name('admin.student.edit');
         Route::post('/{id}/update', [StudentController::class, 'update'])->name('admin.student.update');
         Route::post('/{id}/delete', [StudentController::class, 'delete'])->name('admin.student.delete');
-
         Route::post('/{student}/groupHistory', action: [StudentHistoryController::class, 'groupHistoryData'])->name('admin.student.groupHistoryData');
     });
 
@@ -112,16 +111,12 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/history', [PaymentController::class, 'history'])->name('admin.payment.history');
         Route::post('/update/{id}', [PaymentController::class, 'update'])->name('admin.payment.update');
         Route::post('/{id}/delete', [PaymentController::class, 'delete'])->name('admin.payment.delete');
-
         Route::get('/student/{student}', [PaymentController::class, 'studentPage'])->name('admin.payment.student');
         Route::post('/student/{student}/data', [PaymentController::class, 'studentPaymentsData'])->name('admin.payment.student.data');
         Route::get('/student/filters/{student}', [PaymentController::class,'studentFilters'])->name('admin.payment.studentfilters');
-
         Route::get('/getSchools', [PaymentController::class, 'getSchools'])->name('admin.payment.getSchools');
         Route::get('/getGroupsBySchool/{schoolId}', [PaymentController::class, 'getGroupsBySchool'])->name('admin.payment.getGroupsBySchool');
-
- 
-           
+        
     });
 
 

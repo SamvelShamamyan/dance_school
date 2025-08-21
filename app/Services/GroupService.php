@@ -92,7 +92,7 @@ class GroupService
                 id="getGroupStudent"
                 data-group-id="'.$item->id.'"
                 data-school-id="'.$effectiveSchoolId.'">
-                <i class="fas fa-users"></i> Աշակերտներ
+                <i class="fas fa-user-graduate"></i> Աշակերտներ
             </a>
 
             <button class="btn btn-success"
@@ -101,7 +101,7 @@ class GroupService
                     data-target="#studentGroupModal"
                     data-group-id="'.$item->id.'"
                     data-school-id="'.$effectiveSchoolId.'">
-                <i class="fas fa-user"></i> Ավելացնել աշակերտ
+                <i class="fas fa-user-graduate"></i> Ավելացնել աշակերտ
             </button>
 
             <a href="'.route('admin.group.staffPage', $staffParams).'"
@@ -109,7 +109,7 @@ class GroupService
             id="getGroupStaff"
             data-group-id="'.$item->id.'"
             data-school-id="'.$effectiveSchoolId.'">
-                <i class="fas fa-users"></i> Աշխատակազմ
+                <i class="fas fa-briefcase"></i> Աշխատակազմ
             </a>
 
             <button class="btn btn-warning"
@@ -118,7 +118,7 @@ class GroupService
                     data-target="#staffGroupModal"
                     data-group-id="'.$item->id.'"
                     data-school-id="'.$effectiveSchoolId.'">
-                <i class="fas fa-users"></i> Ավելացնել աշխատակից
+                <i class="fas fa-briefcase"></i> Ավելացնել աշխատակից
             </button>
 
             <button class="btn btn-info btn-edit-group" data-id="'.$item->id.'" title="Խմբագրել">

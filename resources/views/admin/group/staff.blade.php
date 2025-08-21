@@ -1,29 +1,56 @@
-@php
-  $isSuper = Auth::user()->hasRole('super-admin');
-@endphp
-
 @extends('admin.layouts.main')
 @section('content')
 
-<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-  <div class="d-flex align-items-center">
-      <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
-          <i class="fas fa-arrow-left"></i>
-      </a>
-        <h3 class="mb-0">
-            @if($isSuper)
-              {{ $groupId }}
-              @else
-                  <i class="fas fa-school mr-1"></i> {{ auth()->user()->school->name }}
-                  /
-                  <i class="fas fa-users mr-1"></i> {{ $groupName }}
-              @endif
-        </h3>
-  </div>
-    <a href="{{ route('admin.staff.create') }}" class="btn btn-success mb-3">
-        <i class="fas fa-plus"></i> Ավելացնել
-    </a>
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col d-flex align-items-center">
+                <a href="{{ url()->previous() }}" 
+                   class="btn btn-outline-secondary btn-sm mr-3" 
+                   title="Հետ վերադարձ">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 bg-transparent p-0">
+
+                        @if(optional(auth()->user()->school)->name)
+                            <li class="breadcrumb-item d-flex align-items-center">
+                                <i class="fas fa-university text-primary mr-1 fa-lg"></i>
+                                <span>{{ auth()->user()->school->name }}</span>
+                            </li>
+
+                            <li class="breadcrumb-item d-flex align-items-center">
+                                <i class="fas fa-users text-info mr-1 fa-lg"></i>
+                                <span>{{ $groupName }}</span>
+                            </li>
+
+                            <li class="breadcrumb-item active d-flex align-items-center font-weight-bold" aria-current="page">
+                                <i class="fas fa-briefcase text-success mr-1 fa-lg"></i>
+                                <span>Աշխատակազմ</span>
+                            </li>
+                        @else
+                            <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
+                                <i class="fas fa-university text-primary mr-1 fa-lg"></i>
+                                <span>Բոլոր ուսումնական հաստատությունները</span>
+                            </li>
+                        @endif
+
+                    </ol>
+                </nav>
+            </div>
+
+            <div class="col-auto">
+                <a href="{{ route('admin.staff.create') }}" 
+                   class="btn btn-success shadow-sm">
+                    <i class="fas fa-plus"></i> Ավելացնել
+                </a>
+            </div>
+
+        </div>
+    </div>
 </div>
+
 
 <div class="card shadow-sm">
     <div class="card-body bg-white">

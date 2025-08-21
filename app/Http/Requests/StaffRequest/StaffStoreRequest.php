@@ -83,6 +83,9 @@ class StaffStoreRequest extends FormRequest
             'staff_date.required'     => 'Աշխատանքի ընդունման ամսաթիվը պարտադիր է:',
             'staff_date.date_format'  => 'Աշխատանքի ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
             // 'staff_date.after_or_equal' => 'Աշխատանքի ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
+            'school_id.required'        => 'Ուս․ հաստատություն պարտադիր է:',
+            'school_id.integer'         => 'Ուս․ հաստատություն ID-ն պետք է լինի ամբողջ թիվ:',
+            'school_id.exists'          => 'Նշված ուս․ հաստատություն ID-ն գոյություն չունի:',
         ];
     }
 }

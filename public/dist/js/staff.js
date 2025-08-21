@@ -194,17 +194,3 @@ $(document).on('click', '.js-mark-remove', function () {
   }
 });
 
-
-$(function () {
-    if ($('#filterSchool').val() === '') {
-        $('#addStaffBtn').addClass('hidden');
-    }
-
-    $('#filterSchool').on('change', function () {
-        if ($(this).val() === '') {
-            $('#addStaffBtn').addClass('hidden');
-        } else {
-            $('#addStaffBtn').removeClass('hidden');
-        }
-    });
-});

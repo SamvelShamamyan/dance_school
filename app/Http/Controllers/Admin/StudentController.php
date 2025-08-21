@@ -27,7 +27,12 @@ class StudentController extends Controller
         
     }
     public function index(){
-        return view('admin.student.index');
+        $schools = [];
+        if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
+        $is_create = true;
+        return view('admin.student.index', compact('schools'));
     }
 
     public function create(){

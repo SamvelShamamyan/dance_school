@@ -1,19 +1,32 @@
 @extends('admin.layouts.main')
 @section('content')
 
-
-
-<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-  <div class="d-flex align-items-center">
-        <h3 class="mb-0">
-            <small class="text-muted">
-                <i class="fas fa-school mr-1"></i> Ուս․ հաստատություններ 
-            </small>
-        </h3>
-  </div>
-   <a href="{{ route('admin.school.create') }}" class="btn btn-success mb-3">
-        <i class="fas fa-plus"></i> Ավելացնել
-    </a>
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col d-flex align-items-center">
+                <a href="{{ url()->previous() }}" 
+                   class="btn btn-outline-secondary btn-sm mr-3" 
+                   title="Հետ վերադարձ">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 bg-transparent p-0">
+                        <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
+                            <i class="fas fa-university text-primary mr-1 fa-lg"></i>
+                            <span>Ուս․ հաստատություններ </span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-auto">
+                <a href="{{ route('admin.school.create') }}" 
+                   class="btn btn-success shadow-sm">
+                    <i class="fas fa-plus"></i> Ավելացնել
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="card shadow-sm">
