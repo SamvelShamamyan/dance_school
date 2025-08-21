@@ -27,7 +27,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> 
 
 <div class="card shadow-sm">
     <div class="card-body bg-white">
