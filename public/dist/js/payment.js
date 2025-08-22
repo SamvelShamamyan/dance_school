@@ -29,7 +29,7 @@ if (window.__PAYMENT_JS_LOADED__) {
   function savePayment() {
     const form = document.getElementById("singlePaymentForm");
     const formData = new FormData(form);    
-    const schoolId = $('#addPaymentModal').find('#school_id').val();
+    const schoolId = ($('#addPaymentModal').find('#school_id').val() ?? window.currentUserRoleSchoolId) ;
     if (schoolId !== undefined) formData.append('school_id', schoolId);
 
     $.ajax({
@@ -148,17 +148,35 @@ if (window.__PAYMENT_JS_LOADED__) {
     $('#school_id').off('change.payment').on('change.payment', loadFiltersAndMaybeInitTables);
   });
 
+  
   $(document).off('click.payment', '#paymentBtn').on('click.payment', '#paymentBtn', function () { 
-    $.ajax({
-      url: '/admin/payment/getSchools',
-      type: 'GET',
-      success: function (schools) {
-        const $modalSchool = $('#addPaymentModal').find('#school_id');
-        $modalSchool.empty().append('<option value="" selected>Բոլորը</option>');
-        (schools || []).forEach(school => $modalSchool.append(`<option value="${school.id}">${school.name}</option>`));
+    if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant'){
+      $.ajax({
+        url: '/admin/payment/getSchools',
+        type: 'GET',
+        success: function (schools) {
+          const $modalSchool = $('#addPaymentModal').find('#school_id');
+          $modalSchool.empty().append('<option value="" selected>Բոլորը</option>');
+          (schools || []).forEach(school => $modalSchool.append(`<option value="${school.id}">${school.name}</option>`));
 
-      }
-    });
+        }
+      });
+    }else{
+      schoolId = window.currentUserRoleSchoolId ?? 'undefined';
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url: `/admin/payment/getGroups${schoolId !== undefined ? ('?school_id=' + schoolId) : ''}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          const $select = $('#groups').empty().append('<option value="" disabled selected>Ընտրել</option>');
+          (response || []).forEach(group => {
+            $select.append($('<option>', { value: group.id, text: group.name }));
+          });
+          $select.prop('disabled', false);
+        }
+      });
+    }
   });
 
   $(document).on('change', '#addPaymentModal #school_id', function () {
@@ -180,13 +198,8 @@ if (window.__PAYMENT_JS_LOADED__) {
 
   $(document).off('change.payment', '#groups').on('change.payment', '#groups', function () {
     const groupId = $(this).val();
-    const sid = currentSchoolId();
-    const url = sid !== undefined
-      ? `/admin/payment/getStudents/${groupId}?school_id=${sid}`
-      : `/admin/payment/getStudents/${groupId}`;
-
     $.ajax({
-      url,
+      url : `/admin/payment/getStudents/${groupId}`,
       type: 'GET',
       success: function (response) {
         const $select = $('#students_list').empty().append('<option value="" disabled selected>Ընտրել</option>');

@@ -9,14 +9,25 @@
 
 @endpush
 
-<div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
-  <div class="d-flex align-items-center">
-    <div class="d-flex align-items-center">
-        <h3 class="mb-0">Ամսական վճարումներ</h3>
-    </div>
-  </div>
-   <div class="btn-group">
-      <button class="btn btn-success" id="paymentBtn" data-toggle="modal" data-target="#addPaymentModal" ><i class="fas fa-plus"></i> Ավելացնել վճարում</button>
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col d-flex align-items-center">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb mb-0 bg-transparent p-0">
+                        <li class="breadcrumb-item active d-flex align-items-center" aria-current="page">
+                            <i class="fas fa-coins text-primary mr-1 fa-lg"></i>
+                            <span>Ամսական վճարումներ</span>
+                        </li>
+                    </ol>
+                </nav>
+            </div>
+            <div class="col-auto">
+              <div class="btn-group">
+                  <button class="btn btn-success" id="paymentBtn" data-toggle="modal" data-target="#addPaymentModal" ><i class="fas fa-plus"></i> Ավելացնել վճարում</button>
+              </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -113,7 +124,7 @@
 
           <div class="form-group mb-2">
             <label>Խումբ</label>
-            <select name="group_id" class="form-control" id="groups" disabled>
+            <select name="group_id" class="form-control" id="groups" {{ Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') ? 'disbled' : '' }} >
               <option value="" disabled selected>Ընտրել</option>
             </select>
             <small class="error_group_id text-danger"></small>
@@ -121,7 +132,7 @@
 
           <div class="form-group mb-2">
             <label>Աշակերտ</label>
-            <select name="student_id" class="form-control" id="students_list" disabled>
+            <select name="student_id" class="form-control" id="students_list">
               <option value="" disabled selected>Ընտրել</option>
             </select>
             <small class="error_student_id text-danger"></small>
@@ -192,5 +203,6 @@
 
 <script>
     window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
+    window.currentUserRoleSchoolId = @json(Auth::user()->school_id ?? null);
 </script>
 <script src="{{ asset('dist/js/payment.js') }}" defer></script>
