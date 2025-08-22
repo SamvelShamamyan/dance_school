@@ -10,7 +10,7 @@
 </style>
 @endpush
 
-<div class="d-flex justify-content-between align-items-center mb-3">
+<!-- <div class="d-flex justify-content-between align-items-center mb-3">
   <div class="d-flex align-items-center">
     <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
       <i class="fas fa-arrow-left"></i>
@@ -28,6 +28,32 @@
       <i class="fas fa-plus"></i> Ավելացնել վճարում
     </button>
   </div>
+</div> -->
+
+<div class="card shadow-sm mb-4 border-0">
+    <div class="card-body">
+        <div class="row align-items-center">
+            <div class="col d-flex align-items-center">
+                <a href="{{ url()->previous() }}" 
+                   class="btn btn-outline-secondary btn-sm mr-3 btn-icon" 
+                   title="Հետ վերադարձ">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <nav aria-label="breadcrumb">
+                    Վճարումներ — {{ $student->last_name }} {{ $student->first_name }} {{ $student->father_name }}
+                     @if(optional($student->group)->name)
+                      <span class="badge badge-info ml-2">{{ $student->group->name }}</span>
+                    @endif
+                    <span class="badge badge-secondary ml-1">ID: {{ $student->id }}</span>
+                </nav>
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal">
+                  <i class="fas fa-plus"></i> Ավելացնել վճարում
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div class="card mb-3">
