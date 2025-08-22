@@ -32,9 +32,8 @@ class PaymentController extends Controller
     // PaymentStoreRequest
     public function add(PaymentStoreRequest $request){
         try{
-
+            
            $schoolId = Auth::user()->school_id;
-
             if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
                 $schoolId = $request->input('school_id');       
             }
@@ -143,9 +142,8 @@ class PaymentController extends Controller
             $schoolId = $request->school_id;      
         }
 
-
         $validated = $request->validated();
-        $formattedPaidDate = Carbon::createFromFormat('d.m.Y', $validated['edit_paid_at'])->format('Y-m-d');
+        $formattedPaidDate = Carbon::createFromFormat('d.m.Y', $validated['paid_at'])->format('Y-m-d');
         $payment = Payment::where('id', $id)
             ->where('school_id', $schoolId)
             ->firstOrFail();
@@ -201,19 +199,6 @@ class PaymentController extends Controller
         return response()->json($data);
     }
 
-    // public function studentPage(Request $request, Student $student){
-    //      //^-^// -> to change
-    //     if ($student->school_id !== Auth::user()->school_id) abort(403);
-
-    //     return view('admin.payment.student', [
-    //         'student'    => $student,
-    //         'prefilters' => [
-    //             'year'   => $request->query('year'),
-    //             'status' => $request->query('status'),
-    //         ],
-    //     ]);
-    // }
-
     public function studentPage(Request $request, Student $student){
 
         if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
@@ -240,20 +225,6 @@ class PaymentController extends Controller
 
     public function studentPaymentsData(Request $request, Student $student){
          //^-^// -> to change
-        //  dd('studentPaymentsData');
-        // if ($student->school_id !== Auth::user()->school_id) abort(403);
-
-        // if (Auth::user()->hasRole('super-admin')) {
-        //     $schoolId = $request->query('school_id');
-        //     if (!$schoolId || $student->school_id != $schoolId) {
-        //         abort(403);
-        //     }
-        // } else {
-        //     if ($student->school_id !== Auth::user()->school_id) {
-        //         abort(403);
-        //     }
-        // }
-
         $data = $this->paymentService->getStudentPaymentsTable($request, $student->id);
         return response()->json($data);
     }

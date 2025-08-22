@@ -15,22 +15,14 @@ class PaymentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'student_id' => [
-                'bail', 'required', 'integer',
-                Rule::exists('students', 'id'),
-            ],
-
-            'group_id' => ['bail', 'integer', Rule::exists('groups', 'id')],
-
-            'paid_at' => ['bail', 'required', 'date_format:d.m.Y'],
-
-            'amount' => ['bail', 'required', 'numeric', 'min:0'],
-
-            'method' => ['bail', 'required', Rule::in(['cash', 'card'])],
-
-            'status' => ['bail', 'required', Rule::in(['paid', 'pending'])],
-
-            'comment' => ['nullable', 'string', 'max:255'],
+            'school_id'     => ['required','integer', Rule::exists('school_names', 'id')],
+            'student_id'    => ['bail', 'required', 'integer',Rule::exists('students', 'id'),],
+            'group_id'      => ['bail', 'required','integer', Rule::exists('groups', 'id')],
+            'paid_at'       => ['bail', 'required', 'date_format:d.m.Y'],
+            'amount'        => ['bail', 'required', 'numeric', 'min:0'],
+            'method'        => ['bail', 'required', Rule::in(['cash', 'card'])],
+            'status'        => ['bail', 'required', Rule::in(['paid', 'pending'])],
+            'comment'       => ['nullable', 'string', 'max:255'],
         ];
     }
 
@@ -38,29 +30,33 @@ class PaymentStoreRequest extends FormRequest
     {
         return [
 
-            'group_id.required' => 'Խումբը պարտադիր է:',
-            'group_id.integer'  => 'Խումբը պետք է լինի թվային նույնացուցիչ:',
-            'group_id.exists'   => 'Ընտրված խումբ չի գտնվել:',
+            'school_id.required'    => 'Ուս․ հաստատություն պարտադիր է:',
+            'school_id.integer'     => 'Ուս․ հաստատություն ID-ն պետք է լինի ամբողջ թիվ:',
+            'school_id.exists'      => 'Նշված ուս․ հաստատություն ID-ն գոյություն չունի:',
 
-            'student_id.required' => 'Աշակերտը պարտադիր է:',
-            'student_id.integer'  => 'Աշակերտը պետք է լինի թվային նույնացուցիչ:',
-            'student_id.exists'   => 'Ընտրված Աշակերտ չի գտնվել:',
+            'group_id.required'     => 'Խումբը պարտադիր է:',
+            'group_id.integer'      => 'Խումբը պետք է լինի թվային նույնացուցիչ:',
+            'group_id.exists'       => 'Ընտրված խումբ չի գտնվել:',
 
-            'paid_at.required'    => 'Վճարման ամսաթիվը պարտադիր է:',
-            'paid_at.date_format' => 'Ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օր.` 06.08.2025):',
+            'student_id.required'   => 'Աշակերտը պարտադիր է:',
+            'student_id.integer'    => 'Աշակերտը պետք է լինի թվային նույնացուցիչ:',
+            'student_id.exists'     => 'Ընտրված Աշակերտ չի գտնվել:',
 
-            'amount.required' => 'Գումարը պարտադիր է:',
-            'amount.numeric'  => 'Գումարը պետք է լինի թիվ:',
-            'amount.min'      => 'Գումարը չի կարող լինել բացասական:',
+            'paid_at.required'      => 'Վճարման ամսաթիվը պարտադիր է:',
+            'paid_at.date_format'   => 'Ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օր.` 06.08.2025):',
 
-            'method.required' => 'Վճարման տարբերակը պարտադիր է:',
-            'method.in'       => 'Վճարման տարբերակը պետք է լինի՝ կանխիկ կամ անկանխիկ:',
+            'amount.required'       => 'Գումարը պարտադիր է:',
+            'amount.numeric'        => 'Գումարը պետք է լինի թիվ:',
+            'amount.min'            => 'Գումարը չի կարող լինել բացասական:',
 
-            'status.required' => 'Կարգավիճակը պարտադիր է:',
-            'status.in'       => 'Կարգավիճակը պետք է լինի՝ վճարված կամ սպասման մեջ:',
+            'method.required'       => 'Վճարման տարբերակը պարտադիր է:',
+            'method.in'             => 'Վճարման տարբերակը պետք է լինի՝ կանխիկ կամ անկանխիկ:',
 
-            'comment.string'  => 'Մեկնաբանությունը պետք է լինի տեքստային:',
-            'comment.max'     => 'Մեկնաբանությունը չի կարող գերազանցել 255 նիշը:',
+            'status.required'       => 'Կարգավիճակը պարտադիր է:',
+            'status.in'             => 'Կարգավիճակը պետք է լինի՝ վճարված կամ սպասման մեջ:',
+
+            'comment.string'        => 'Մեկնաբանությունը պետք է լինի տեքստային:',
+            'comment.max'           => 'Մեկնաբանությունը չի կարող գերազանցել 255 նիշը:',
         ];
     }
 

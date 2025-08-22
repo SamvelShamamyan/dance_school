@@ -503,7 +503,7 @@ $(function () {
         { data: 'total', className: 'text-end font-weight-bold', render: v => money(v) },
         {
           data: 'id', orderable: false, searchable: false, className: 'text-center',
-          render: (id, t, row) => `<button class="btn btn-sm btn-light view-history" data-id="${id}" data-name="${row.full_name}" title="Պատմություն">&#8942;</button>`
+          render: (id, t, row) => `<button class="btn btn-sm btn-light view-history" data-id="${id}" data-school-id="${row.school_id ?? ''}" data-name="${row.full_name}" title="Պատմություն">&#8942;</button>`
         }
       ],
       createdRow: function(row, data){
