@@ -124,7 +124,7 @@
 
           <div class="form-group mb-2">
             <label>Խումբ</label>
-            <select name="group_id" class="form-control" id="groups" {{ Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') ? 'disbled' : '' }} >
+            <select name="group_id" class="form-control" id="groups" {{ Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') ? 'disabled' : '' }} >
               <option value="" disabled selected>Ընտրել</option>
             </select>
             <small class="error_group_id text-danger"></small>
@@ -132,7 +132,7 @@
 
           <div class="form-group mb-2">
             <label>Աշակերտ</label>
-            <select name="student_id" class="form-control" id="students_list">
+            <select name="student_id" class="form-control" id="students_list" {{ Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') ? 'disabled' : 'disabled' }}>
               <option value="" disabled selected>Ընտրել</option>
             </select>
             <small class="error_student_id text-danger"></small>
