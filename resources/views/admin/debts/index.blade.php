@@ -69,7 +69,7 @@
     <table class="table table-striped table-bordered dtTbl" style="width:100%" id="debtTbl">
     <thead>
       <tr>
-        <th rowspan="2">Ուսանող</th>
+        <th rowspan="2">Աշակերտ</th>
         <th colspan="3" class="text-center">Հուն</th>
         <th colspan="3" class="text-center">Փետ</th>
         <th colspan="3" class="text-center">Մար</th>
@@ -97,20 +97,20 @@
       </tr>
     </thead>
       <tbody></tbody>
-      <tfoot>
-  <tr>
-    <th>Ընդհանուր</th>
-    @for ($i = 1; $i <= 12; $i++)
-      <th class="text-end" id="sum_due_{{ $i }}">-</th>
-      <th class="text-end" id="sum_paid_{{ $i }}">-</th>
-      <th class="text-end" id="sum_rem_{{ $i }}">-</th>
-    @endfor
-    <th class="text-end" id="sum_total_due">-</th>
-    <th class="text-end" id="sum_total_paid">-</th>
-    <th class="text-end" id="sum_total_rem">-</th>
-    <th></th> 
-  </tr>
-</tfoot>
+    <tfoot>
+      <tr>
+        <th>Ընդհանուր</th>
+        @for ($i = 1; $i <= 12; $i++)
+          <th class="text-end" id="sum_due_{{ $i }}">-</th>
+          <th class="text-end" id="sum_paid_{{ $i }}">-</th>
+          <th class="text-end" id="sum_rem_{{ $i }}">-</th>
+        @endfor
+        <th class="text-end" id="sum_total_due">-</th>
+        <th class="text-end" id="sum_total_paid">-</th>
+        <th class="text-end" id="sum_total_rem">-</th>
+        <th></th> 
+      </tr>
+    </tfoot>
     </table>
   </div>
 </div>
