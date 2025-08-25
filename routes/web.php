@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\StudentHistoryController;
 use App\Http\Controllers\Admin\StudentsDebtHistoryController;
+use App\Http\Controllers\Admin\DeletedStudentController;
 
 
 
@@ -124,6 +125,12 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::get('/', [StudentsDebtHistoryController::class, 'index'])->name('admin.debts.index');
         Route::get('/filters', [StudentsDebtHistoryController::class, 'filters']);
         Route::post('/getData', [StudentsDebtHistoryController::class, 'getData']);
+    });
+
+
+    Route::group(['prefix'=>'deleted_student','middleware' => ['role:school-admin|super-admin']], function(){
+        Route::get('/', [DeletedStudentController::class, 'index'])->name('admin.deleted.students.index');
+        Route::post('/getData', [DeletedStudentController::class, 'getSudentData'])->name('admin.deleted.students.data');
     });
 
 });

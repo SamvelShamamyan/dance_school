@@ -31,9 +31,14 @@ class StudentsDebtHistoryService
         $start   = (int)$request->input('start', 0);
         $length  = (int)$request->input('length', 10);
 
-        $students = Student::query()
+        // $students = Student::query()
+        //     ->leftJoin('groups as g', 'g.id', '=', 'students.group_id')
+        //     ->leftJoin('school_names as sn', 'sn.id', '=', 'students.school_id');
+
+        $students = Student::withTrashed()
             ->leftJoin('groups as g', 'g.id', '=', 'students.group_id')
             ->leftJoin('school_names as sn', 'sn.id', '=', 'students.school_id');
+
 
         if (!$isSuper) {
             $students->where('students.school_id', Auth::user()->school_id);
@@ -87,11 +92,19 @@ class StudentsDebtHistoryService
              UNION ALL SELECT 9 UNION ALL SELECT 10 UNION ALL SELECT 11 UNION ALL SELECT 12) as mo
         '));
 
+        // $studentsBase = $students->select([
+        //     'students.id as student_id',
+        //     DB::raw("CONCAT(COALESCE(students.last_name,''),' ',COALESCE(students.first_name,''),' ',COALESCE(students.father_name,'')) as full_name"),
+        //     'students.school_id'
+        // ]);
+
         $studentsBase = $students->select([
             'students.id as student_id',
             DB::raw("CONCAT(COALESCE(students.last_name,''),' ',COALESCE(students.first_name,''),' ',COALESCE(students.father_name,'')) as full_name"),
-            'students.school_id'
+            'students.school_id',
+            'students.deleted_at',
         ]);
+
 
         $outer = DB::query()
             ->fromSub($studentsBase, 's')
@@ -134,6 +147,9 @@ class StudentsDebtHistoryService
             GREATEST(SUM(IFNULL(d.due_sum,0)) - SUM(IFNULL(p.paid_sum,0)), 0) as total_rem
         ");
 
+        $selects[] = DB::raw("MAX(CASE WHEN s.deleted_at IS NULL THEN 0 ELSE 1 END) as is_deleted");
+
+
         $rows = $outer
             ->select($selects)
             ->groupBy('s.student_id', 's.full_name', 's.school_id')
@@ -150,6 +166,7 @@ class StudentsDebtHistoryService
                 'id'        => (int) $r->student_id,
                 'full_name' => (string) $r->full_name,
                 'school_id' => (int) $r->school_id,
+                'deleted'   => (bool) ($r->is_deleted ?? 0),
             ];
 
             $total_due  = 0.0;

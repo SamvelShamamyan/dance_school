@@ -4,8 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
+
 class Student extends Model
 {
+    use SoftDeletes;
     protected $table = 'students';
     protected $fillable = [
         'first_name',
@@ -21,14 +25,16 @@ class Student extends Model
         'group_date',
     ];
 
-     protected $dates = ['deleted_at'];
+    protected $casts = [
+        'deleted_at' => 'datetime',
+    ];
 
     public function school(){
-        return $this->belongsTo(\App\Models\SchoolName::class, 'school_id');
+        return $this->belongsTo(SchoolName::class, 'school_id');
     }
 
     public function group(){
-        return $this->belongsTo(\App\Models\Group::class, 'group_id');
+        return $this->belongsTo(Group::class, 'group_id');
     }
 
     public function files(){

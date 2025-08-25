@@ -84,6 +84,14 @@
             </a>
           </li>
 
+          <li class="nav-item">
+            <a href="{{route('admin.deleted.students.index')}}"
+               class="nav-link {{ request()->routeIs('admin.deleted.students.index') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-archive"></i> 
+              <p>Հեռացված աշակերտներ</p>
+            </a>
+          </li>
+
         @endrole
 
       </ul>

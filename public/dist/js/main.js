@@ -663,12 +663,21 @@ $(function () {
         // if (status !== '') d.status = status;
 
         if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') {
-          d.school_id = $('#school_id').val();
+            d.school_id = $('#school_id').val();
         }
       }
     };
 
-    const cols = [{ data: 'full_name', name: 'full_name' }];
+    const cols = [{ 
+      data: 'full_name', 
+      name: 'full_name',
+      render: (v, _t, row) => {
+        if (row.deleted) {
+          return `${v} <span class="badge bg-danger ms-1 badge-deleted">Հեռացված</span>`;
+        }
+        return v;
+      } 
+    }];
     for (let m = 1; m <= 12; m++) {
       const s = String(m).padStart(2,'0');
       cols.push(
@@ -699,7 +708,12 @@ $(function () {
       serverSide: true,
       ajax: ajaxCfg,
       columns: cols,
-      order: [[0, 'asc']]
+      order: [[0, 'asc']],
+       createdRow: function (row, data) {
+        if (data.deleted) {
+          $(row).addClass('is-deleted');
+        }
+      }
     });
 
     // $('#debtTbl').off('xhr.dt.main').on('xhr.dt.main', function(){  });
@@ -714,4 +728,71 @@ $(function () {
   $(document).one('debts:filtersLoaded', initDebtTable);
 
   if ($('#year option').length) initDebtTable();
+});
+
+
+
+$(function() {
+    let studentTbl = $("#deletedStudentTbl").DataTable({
+        language: lang,
+        processing: true,
+        serverSide: true,
+
+        searchDelay: 700, 
+
+        ajax: {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "/admin/deleted_student/getData",
+            type: 'post',
+            data: function(d) {
+                if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterStudentSchool').val() || '';}
+            }
+        },
+        columns: [  
+            {
+                data: 'id',
+                name: 'id'
+            },
+            {
+                data: 'full_name',
+                name: 'last_name',
+                orderable: false,
+                searchable: false,
+            },
+            {
+                data: 'address',
+                name: 'address'
+            },
+            {
+                data: 'birth_date',
+                name: 'birth_date'
+            },
+            // {
+            //     data: 'created_date',
+            //     name: 'created_date'
+            // },
+            {
+                data: 'email',
+                name: 'email'
+            },
+            {
+                data: 'soc_number',
+                name: 'soc_number'
+            },
+            // {
+            //     data: 'school_name',
+            //     name: 'school_names.name'
+            // },
+        ]  
+    });
+    if (window.currentUserRole === 'super-admin') {
+        $('#filterStudentSchool').on('change', function () {
+            const $select = $(this); 
+            const name = $select.find('option:selected').data('name');
+            $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
+            studentTbl.ajax.reload();
+        });
+    }
 });
