@@ -124,17 +124,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::get('/', [StudentsDebtHistoryController::class, 'index'])->name('admin.debts.index');
         Route::get('/filters', [StudentsDebtHistoryController::class, 'filters']);
         Route::post('/getData', [StudentsDebtHistoryController::class, 'getData']);
-        // Route::post('/upsert-due', [StudentsDebtHistoryController::class, 'upsertDue']);
-
     });
-
-    // Route::prefix('/debts')->middleware(['auth'])->group(function(){
-    //     Route::get('/', [StudentsDebtHistoryController::class, 'index'])->name('admin.debts.index');
-    //     Route::get('/filters', [StudentsDebtHistoryController::class, 'filters']);
-    //     Route::post('/getData', [StudentsDebtHistoryController::class, 'getData']);
-    //     Route::post('/upsert-due', [StudentsDebtHistoryController::class, 'upsertDue']); // опционально
-    // });
-
 
 });
 
