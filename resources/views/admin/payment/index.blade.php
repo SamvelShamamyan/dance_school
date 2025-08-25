@@ -36,7 +36,7 @@
     <div class="row align-items-end">
 
       @role('super-admin|super-accountant')
-        <div class="col-4 col-md-4 mb-3">
+        <div class="col-12 col-md-3 mb-3">
           <label class="form-label d-block">Դպրոց</label>
           <select id="school_id" class="form-control">
             <option value="" selected>Բոլորը</option>
@@ -44,17 +44,17 @@
         </div>
       @endrole
       
-      <div class="col-4 col-md-4 mb-3">
+      <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Տարի</label>
         <select id="year" class="form-control"></select>
       </div>
 
-      <div class="col-4 col-md-4 mb-3">
+      <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Խումբ</label>
         <select id="group_id" class="form-control"></select>
       </div>
 
-      <div class="col-4 col-md-4 mb-3">
+      <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Վճարման կարգավիճակ</label>
         <select id="status" class="form-control"></select>
       </div>

@@ -285,7 +285,8 @@ class GroupController extends Controller
     public function addStaff(GroupStaffStoreRequest $request){
         try {
             $validated = $request->validated();
-            $result = $this->groupStaffService->addStaff($validated);
+            $result = $this->groupStaffService->addStaff($validated, $request);
+
 
             $added   = $result['added_count'] ?? 0;
             $already = $result['already_count'] ?? 0;

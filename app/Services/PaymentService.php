@@ -201,6 +201,7 @@ class PaymentService
         } else if (!empty($schoolId)) {
             $yearsQuery->where('school_id', $schoolId);
         }
+        
         $years = $yearsQuery->selectRaw('DISTINCT YEAR(paid_at) as y')
             ->orderByDesc('y')
             ->pluck('y')

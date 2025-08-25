@@ -92,7 +92,7 @@ $(function () {
   moment.locale('hy');
 
   const birthDate = $('#birth_date').val();
-  const studentDate = $('#student_date').val();
+  const studentDate = $('#created_date').val();
 
   $('#studentBirthDatePicker').datetimepicker({
     format: 'DD.MM.YYYY',
@@ -196,3 +196,11 @@ $(document).on('click', '.js-mark-remove-st', function () {
     card.addClass('border-danger bg-light');
   }
 });
+
+
+// $('#yearpicker').datepicker({
+//     format: "yyyy",
+//     viewMode: "years",
+//     minViewMode: "years",
+//     autoclose: true
+// });

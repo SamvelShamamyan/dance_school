@@ -40,7 +40,7 @@ class StudentUpdateRequest extends FormRequest
                 'date_format:d.m.Y',
                 // 'after_or_equal:today'
             ],
-            'student_date' => [
+            'created_date' => [
                 'required',
                 'date_format:d.m.Y',
                 // 'after_or_equal:today'
@@ -82,9 +82,9 @@ class StudentUpdateRequest extends FormRequest
             'birth_date.date_format'  => 'Ծննդյան ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
             // 'birth_date.before_or_equal' => 'Ծննդյան ամսաթիվը չի կարող լինել ապագայում:',
 
-            'student_date.required'     => 'Ուսուցման ընդունման ամսաթիվը պարտադիր է:',
-            'student_date.date_format'  => 'Ուսուցման ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
-            // 'student_date.after_or_equal' => 'Ուսուցման ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
+            'created_date.required'     => 'Ուսուցման ընդունման ամսաթիվը պարտադիր է:',
+            'created_date.date_format'  => 'Ուսուցման ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
+            // 'created_date.after_or_equal' => 'Ուսուցման ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
         ];
     }
 }

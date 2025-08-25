@@ -158,10 +158,8 @@ if (window.currentUserRole === 'super-admin') {
     $(document).on('click', '#staffGroupModalBtn', function () {   
         let groupId = $(this).data('group-id');
         let schoolId = $(this).data('school-id');
-
-        $('#school_id').val(schoolId);
-        $('#group_staff_id').val(groupId);
-    
+        $('#StaffGroupModalForm').find('#school_id').val(schoolId);
+        $('#StaffGroupModalForm').find('#group_staff_id').val(groupId);  
         $.ajax({
             headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
             url: `/admin/group/getStaff`,

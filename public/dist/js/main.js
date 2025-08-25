@@ -636,3 +636,89 @@ $(function () {
   $(document).one('payment:filtersLoaded', initStudentPaymentTable);
   if ($('#year option').length) initStudentPaymentTable();
 });
+
+
+// === Debts page ===
+$(function () {
+  if (!$('#debtTbl').length) return;
+
+  // локальные хелперы (как в payments-секции main.js)
+  const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
+  const renderZeroAsMuted = v => (Number(v || 0) === 0 ? '<span class="text-muted">0</span>' : money(v));
+
+  let debtTbl = null;
+
+  function initDebtTable(){
+    if (debtTbl) return;
+
+    // Конфиг ajax (аналогично payments, но для /admin/debts/getData)
+    const ajaxCfg = {
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url: `/admin/debts/getData`,
+      type: 'post',
+      data: function(d) {
+        d.year     = $('#year').val();
+        d.group_id = $('#group_id').val();
+        // d.status   = $('#status').val();
+
+        // const status = $('#status').val();
+        // if (status !== '') d.status = status;
+
+        if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') {
+          d.school_id = $('#school_id').val();
+        }
+      }
+    };
+
+    // Колонки: 1 (ФИО) + 12×(due/paid/rem) + 3 итога + действие
+    const cols = [{ data: 'full_name', name: 'full_name' }];
+    for (let m = 1; m <= 12; m++) {
+      const s = String(m).padStart(2,'0');
+      cols.push(
+        { data: 'due_m'  + s, className: 'text-end', render: renderZeroAsMuted },
+        { data: 'paid_m' + s, className: 'text-end', render: renderZeroAsMuted },
+        { data: 'rem_m'  + s, className: 'text-end',
+          render: v => {
+            const n = Number(v || 0);
+            const cls = n > 0 ? 'text-danger' : 'text-success';
+            return `<span class="${cls}">${money(n)}</span>`;
+          }
+        },
+      );
+    }
+    cols.push(
+      { data: 'total_due',  className: 'text-end', render: v => money(v) },
+      { data: 'total_paid', className: 'text-end', render: v => money(v) },
+      { data: 'total_rem',  className: 'text-end', render: v => `<b>${money(v || 0)}</b>` }
+    );
+    cols.push({
+      data: 'id', orderable: false, searchable: false, className: 'text-center',
+      render: (id, t, row) => `<button class="btn btn-sm btn-light view-history" data-id="${id}" data-school-id="${row.school_id ?? ''}" title="Պատմություն">&#8942;</button>`
+    });
+
+    debtTbl = $("#debtTbl").DataTable({
+      language: lang,
+      processing: true,
+      serverSide: true,
+      ajax: ajaxCfg,
+      columns: cols,
+      order: [[0, 'asc']]
+    });
+
+    // как у payments — summary подтягиваем на xhr (обработчик уже в debts.js)
+    $('#debtTbl').off('xhr.dt.main').on('xhr.dt.main', function(){ /* noop, обработка в debts.js */ });
+
+    // как у payments — простые перезагрузчики на основные фильтры (дублирует в debts.js; не мешает)
+    $('#btnRefresh, #year, #group_id, #status').off('change.debtsMain click.debtsMain').on('change.debtsMain click.debtsMain', function(){
+      if ($.fn.DataTable.isDataTable('#debtTbl')) {
+        $('#debtTbl').DataTable().ajax.reload();
+      }
+    });
+  }
+
+  // Создаём таблицу, когда фильтры загрузились (аналог payment:filtersLoaded)
+  $(document).one('debts:filtersLoaded', initDebtTable);
+
+  // Если список лет уже есть — сразу инициализируем
+  if ($('#year option').length) initDebtTable();
+});

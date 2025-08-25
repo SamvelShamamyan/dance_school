@@ -96,9 +96,14 @@ public function getStaffListData(Request $request, $groupId)
     }
 
 
-    public function addStaff(array $validated){
+    public function addStaff(array $validated, $request){
         
         $schoolId = Auth::user()->school_id;
+
+        if (Auth::user()->hasRole('super-admin')) {
+            $schoolId = $request->school_id;
+        }   
+
         $groupId  = (int) $validated['group_id'];
         $ids      = array_map('intval', $validated['add_staff'] ?? []);
 

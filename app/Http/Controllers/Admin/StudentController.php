@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use App\Models\Student;
 use App\Models\StudentFile;
 use App\Models\SchoolName;
+use App\Models\StudentMonthlyDues;
 use App\Services\StudentService;
 use Throwable;
 
@@ -60,7 +61,7 @@ class StudentController extends Controller
 
             $validated = $request->validated();
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
-            $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['student_date'])->format('Y-m-d');
+            $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
             $student = Student::create([
                 'first_name'    => $validated['first_name'],       
                 'last_name'     => $validated['last_name'],
@@ -86,6 +87,25 @@ class StudentController extends Controller
                     ]);
                 }
             }
+
+            $studentId  = $student->id;
+            $year       = $year = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->year;
+            $amount     = $validated['amount'];
+
+            $data = array_map(function ($m) use ($schoolId, $studentId, $year, $amount) {
+                return [
+                    'school_id'  => $schoolId,
+                    'student_id' => $studentId,
+                    'year'       => $year,
+                    'month'      => $m,
+                    'amount_due' => $amount,
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+            }, range(1, 12));
+
+
+            StudentMonthlyDues::insert($data);
 
             return response()->json(['status' => 1, 'message' => 'Պահպանված է']); 
 
@@ -131,7 +151,7 @@ class StudentController extends Controller
             $student = Student::findOrFail($id);
 
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
-            $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['student_date'])->format('Y-m-d');
+            $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
             $student->update([
                 'first_name'    => $validated['first_name'],
                 'last_name'     => $validated['last_name'],

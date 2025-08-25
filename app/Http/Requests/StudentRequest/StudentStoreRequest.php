@@ -31,12 +31,13 @@ class StudentStoreRequest extends FormRequest
             'address'     => 'required|string|max:25',
             'soc_number'  => 'required|string|max:25',
             'email'       => 'required|email|unique:students,email',
+            'amount'      => 'required|numeric|min:0',
             'birth_date' => [
                 'required',
                 'date_format:d.m.Y',
                 // 'after_or_equal:today'
             ],
-            'student_date' => [
+            'created_date' => [
                 'required',
                 'date_format:d.m.Y',
                 // 'after_or_equal:today'
@@ -83,9 +84,9 @@ class StudentStoreRequest extends FormRequest
             'birth_date.date_format'  => 'Ծննդյան ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
             // 'birth_date.before_or_equal' => 'Ծննդյան ամսաթիվը չի կարող լինել ապագայում:',
 
-            'student_date.required'     => 'Ուսուցման ընդունվելու ամսաթիվը պարտադիր է:',
-            'student_date.date_format'  => 'Ուսուցման ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
-            // 'student_date.after_or_equal' => 'Ուսուցման ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
+            'created_date.required'     => 'Ուսուցման ընդունվելու ամսաթիվը պարտադիր է:',
+            'created_date.date_format'  => 'Ուսուցման ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
+            // 'created_date.after_or_equal' => 'Ուսուցման ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
 
             'school_id.required'        => 'Ուս․ հաստատություն պարտադիր է:',
             'school_id.integer'         => 'Ուս․ հաստատություն ID-ն պետք է լինի ամբողջ թիվ:',

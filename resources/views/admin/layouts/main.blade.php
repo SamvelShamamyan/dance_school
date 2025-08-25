@@ -37,6 +37,9 @@
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css">
 <link rel="stylesheet" href="{{ asset('dist\css\main.css') }}">
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
+
+
 <!-- CURRENT START_3 -->
 
 </head>
@@ -65,6 +68,11 @@
   <!-- /.navbar -->
 
   <!-- Main Sidebar Container -->
+
+  <div id="preloader">
+  <div class="spinner"></div>
+  <div class="loader-text">Բեռնվում է...</div>
+</div>
 
     @include('admin.includes.sidebar')
     
@@ -168,6 +176,8 @@
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
 <script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
+
 
 <!-- CURRENT START_2 -->
 <script src="{{ asset('dist/js/helper.js') }}"></script>
@@ -183,6 +193,10 @@ if (window.Dropzone) { Dropzone.autoDiscover = false; }
 <script src="{{ asset('dist/js/student.js') }}?v=2"></script>
 <!-- <script src="{{ asset('dist/js/payment.js') }}"></script> -->
 <!-- <script src="{{ asset('dist/js/payment.student.js') }}"></script> -->
+
+<script src="{{ asset('dist/js/settings.js') }}"></script>
+
+
 <!-- CURRENT END_2 -->
 
 

@@ -118,6 +118,19 @@
                     </div>
 
                     <div class="form-group">
+                        <label>Վճարման ենթակա գումար</label>
+                        <input type="number" name="amount" class="form-control" min="0" step="1000" placeholder="Օրինակ` 50000">
+                        <small class="error_amount text-danger"></small>
+                    </div>
+
+                    <!-- <div class="form-group">
+                        <label>**************_____****************</label>
+                       <input type="text" name="amount_year" id="ampuntYearPicker" class="form-control" placeholder="Ընտրել տարի">
+                        <small class="error_amount_year text-danger"></small>
+                    </div> -->
+
+        
+                    <div class="form-group">
                         <label for="group_date">Ծննդյան Ամսաթիվ</label>
                         <div class="input-group date" id="studentBirthDatePicker" data-target-input="nearest">
                             <input type="text"
@@ -139,7 +152,7 @@
                         <div class="input-group date" id="studentDatePicker" data-target-input="nearest">
                             <input type="text"
                                 id="student_date"
-                                name="student_date"
+                                name="created_date"
                                 value="{{ old('created_date', isset($student->created_date) ? \Carbon\Carbon::parse($student->created_date)->format('d.m.Y') : '') }}"
                                 class="form-control datetimepicker-input"
                                 data-target="#studentDatePicker"
@@ -148,7 +161,7 @@
                             <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
                         </div>
-                        <small class="error_student_date text-danger"></small>
+                        <small class="error_created_date text-danger"></small>
                     </div>
 
 

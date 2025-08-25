@@ -75,6 +75,15 @@
               <p>Վճարումներ</p>
             </a>
           </li>
+
+          <li class="nav-item">
+            <a href="{{route('admin.debts.index')}}"
+               class="nav-link {{ request()->routeIs('admin.debts.index') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-hand-holding-usd"></i> 
+              <p>Պարքեր</p>
+            </a>
+          </li>
+
         @endrole
 
       </ul>
