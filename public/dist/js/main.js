@@ -642,7 +642,6 @@ $(function () {
 $(function () {
   if (!$('#debtTbl').length) return;
 
-  // локальные хелперы (как в payments-секции main.js)
   const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
   const renderZeroAsMuted = v => (Number(v || 0) === 0 ? '<span class="text-muted">0</span>' : money(v));
 
@@ -651,7 +650,6 @@ $(function () {
   function initDebtTable(){
     if (debtTbl) return;
 
-    // Конфиг ajax (аналогично payments, но для /admin/debts/getData)
     const ajaxCfg = {
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
       url: `/admin/debts/getData`,
@@ -670,7 +668,6 @@ $(function () {
       }
     };
 
-    // Колонки: 1 (ФИО) + 12×(due/paid/rem) + 3 итога + действие
     const cols = [{ data: 'full_name', name: 'full_name' }];
     for (let m = 1; m <= 12; m++) {
       const s = String(m).padStart(2,'0');
@@ -705,10 +702,8 @@ $(function () {
       order: [[0, 'asc']]
     });
 
-    // как у payments — summary подтягиваем на xhr (обработчик уже в debts.js)
-    $('#debtTbl').off('xhr.dt.main').on('xhr.dt.main', function(){ /* noop, обработка в debts.js */ });
+    // $('#debtTbl').off('xhr.dt.main').on('xhr.dt.main', function(){  });
 
-    // как у payments — простые перезагрузчики на основные фильтры (дублирует в debts.js; не мешает)
     $('#btnRefresh, #year, #group_id, #status').off('change.debtsMain click.debtsMain').on('change.debtsMain click.debtsMain', function(){
       if ($.fn.DataTable.isDataTable('#debtTbl')) {
         $('#debtTbl').DataTable().ajax.reload();
@@ -716,9 +711,7 @@ $(function () {
     });
   }
 
-  // Создаём таблицу, когда фильтры загрузились (аналог payment:filtersLoaded)
   $(document).one('debts:filtersLoaded', initDebtTable);
 
-  // Если список лет уже есть — сразу инициализируем
   if ($('#year option').length) initDebtTable();
 });

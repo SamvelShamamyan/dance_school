@@ -21,6 +21,8 @@ class Student extends Model
         'group_date',
     ];
 
+     protected $dates = ['deleted_at'];
+
     public function school(){
         return $this->belongsTo(\App\Models\SchoolName::class, 'school_id');
     }

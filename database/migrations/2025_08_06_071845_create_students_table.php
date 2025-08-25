@@ -25,6 +25,7 @@ return new class extends Migration
             $table->unsignedBigInteger('group_id')->nullable();
             $table->date('group_date')->nullable();
             $table->timestamps();
+            $table->softDeletes();
 
             $table->index('school_id', 'school_name_idx');
             $table->foreign('school_id')->references('id')->on('school_names')->nullOnDelete();
