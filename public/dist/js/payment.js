@@ -156,7 +156,7 @@ if (window.__PAYMENT_JS_LOADED__) {
         type: 'GET',
         success: function (schools) {
           const $modalSchool = $('#addPaymentModal').find('#school_id');
-          $modalSchool.empty().append('<option value="" selected>Բոլորը</option>');
+          $modalSchool.empty().append('<option value="" selected disabled>Ընտրել</option>');
           (schools || []).forEach(school => $modalSchool.append(`<option value="${school.id}">${school.name}</option>`));
 
         }

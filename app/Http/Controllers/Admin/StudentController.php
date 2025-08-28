@@ -14,7 +14,6 @@ use Carbon\Carbon;
 use App\Models\Student;
 use App\Models\StudentFile;
 use App\Models\SchoolName;
-use App\Models\StudentMonthlyDues;
 use App\Services\StudentService;
 use Throwable;
 
@@ -87,25 +86,6 @@ class StudentController extends Controller
                     ]);
                 }
             }
-
-            $studentId  = $student->id;
-            $year       = $year = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->year;
-            $amount     = $validated['amount'];
-
-            $data = array_map(function ($m) use ($schoolId, $studentId, $year, $amount) {
-                return [
-                    'school_id'  => $schoolId,
-                    'student_id' => $studentId,
-                    'year'       => $year,
-                    'month'      => $m,
-                    'amount_due' => $amount,
-                    'created_at' => now(),
-                    'updated_at' => now(),
-                ];
-            }, range(1, 12));
-
-
-            StudentMonthlyDues::insert($data);
 
             return response()->json(['status' => 1, 'message' => 'Պահպանված է']); 
 

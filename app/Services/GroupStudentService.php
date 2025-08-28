@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Models\Student;
-use App\Models\StudentMonthlyDues;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -116,9 +115,6 @@ class GroupStudentService
                 'group_id'   => $groupId,
                 'group_date' => Carbon::now()->format('Y-m-d'),
             ]);
-
-        StudentMonthlyDues::whereIn('student_id', $ids)
-            ->update(['group_id' => $groupId]);
 
         return $result;
     }

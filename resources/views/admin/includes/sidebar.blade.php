@@ -77,17 +77,9 @@
           </li>
 
           <li class="nav-item">
-            <a href="{{route('admin.debts.index')}}"
-               class="nav-link {{ request()->routeIs('admin.debts.index') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-hand-holding-usd"></i> 
-              <p>Պարքեր</p>
-            </a>
-          </li>
-
-          <li class="nav-item">
             <a href="{{route('admin.deleted.students.index')}}"
                class="nav-link {{ request()->routeIs('admin.deleted.students.index') ? 'active' : '' }}">
-              <i class="nav-icon fas fa-archive"></i> 
+              <i class="nav-icon fas fa-trash"></i> 
               <p>Հեռացված աշակերտներ</p>
             </a>
           </li>

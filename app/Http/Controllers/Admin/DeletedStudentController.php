@@ -4,17 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Http\Requests\StudentRequest\StudentStoreRequest;
-use App\Http\Requests\StudentRequest\StudentUpdateRequest;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
-use Carbon\Carbon;
-use App\Models\Student;
-use App\Models\StudentFile;
+
 use App\Models\SchoolName;
-use App\Models\StudentMonthlyDues;
 use App\Services\DeletedStudentService;
 use Throwable;
 
