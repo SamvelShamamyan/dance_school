@@ -501,7 +501,7 @@ class PaymentService
             'recordsFiltered' => $recordsFiltered,
             'data'            => $rows,
             'summary'         => $summary,
-            'meta'            => ['year'=>$year, 'method' => $method, 'status'=>$status, 'student_id'=>$studentId],
+            'meta'            => ['year'=>$year, 'method' =>$method, 'status'=>$status, 'student_id'=>$studentId],
         ];
     }
 }
