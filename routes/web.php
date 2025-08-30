@@ -14,21 +14,9 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\StudentHistoryController;
 use App\Http\Controllers\Admin\DeletedStudentController;
 
-
-
-// Route::get('/', function () {
-//     return view('welcome');
-// });
-
-
 Route::get('/', [AuthController::class, 'index']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
-
-
-
-// Route::get('/dashboard', [DashboardController::class, 'index'])->middleware('auth')->name('dashboard');
-
 
 Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], function(){
    
