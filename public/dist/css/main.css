@@ -60,3 +60,18 @@
     right: 2rem;
     top: .7rem;
 }
+
+
+  .user-panel .image { display:flex; align-items:center; }
+  .user-panel .avatar-square{
+    width:36px; height:36px !important;
+    display:inline-flex; align-items:center; justify-content:center !important;
+    border-radius:8px !important;               
+    line-height:1; user-select:none !important;
+    font-weight:700 !important;
+    color:#fff !important;
+    background:linear-gradient(135deg,#ff7a00 0%,#ff006a 100%)!important;
+    box-shadow:0 6px 14px rgba(0,0,0,.18) !important;
+  }
+  .user-panel .info { min-width:0; }
+  .user-panel .info .d-block { max-width:180px; }

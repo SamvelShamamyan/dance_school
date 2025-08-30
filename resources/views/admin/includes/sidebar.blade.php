@@ -2,22 +2,45 @@
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
   <!-- Brand Logo -->
-  <a href="{{ route('admin.dashboard') }}" class="brand-link">
+  <!-- <a href="{{ route('admin.dashboard') }}" class="brand-link">
     <img src="{{asset('dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo"
          class="brand-image img-circle elevation-3" style="opacity: .8">
-    <span class="brand-text font-weight-light">TMBLY TASHI</span>
-  </a>
+    <span class="brand-text font-weight-light">Sofi Devoyan's Dance School </span>
+  </a> -->
+
+<a href="{{ route('admin.dashboard') }}" class="brand-link d-flex align-items-center py-2">
+  <img src="{{ asset('dist/img/backgroud_iamge.jpg') }}"
+       alt="Logo"
+       class="brand-image img-circle elevation-3 mr-2"
+       style="width:36px;height:36px;object-fit:cover;opacity:.9">
+  <div class="d-flex flex-column lh-1">
+    <span class="font-weight-bold" style="font-size:.95rem;">Sofi Devoyan</span>
+    <small class="text-white-50">Dance School</small>
+  </div>
+</a>
+
 
   <!-- Sidebar -->
   <div class="sidebar">
 
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+    @php
+        $user = Auth::user();
+        $first = trim((string)($user->first_name ?? ''));
+        $last  = trim((string)($user->last_name  ?? ''));
+        $initials = mb_strtoupper(
+            mb_substr($first, 0, 1) . mb_substr($last, 0, 1),
+            'UTF-8'
+        );
+    @endphp
+
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex align-items-center">
       <div class="image">
-        <img src="{{ asset('../../dist/img/user2-160x160.jpg') }}"
-             class="img-circle elevation-2" alt="User Image">
+        <span class="avatar-square mr-2">{{ $initials }}</span>
       </div>
       <div class="info">
-        <a href="#" class="d-block">{{ Auth::user()->first_name }} {{ Auth::user()->last_name }}</a>
+        <a href="#" class="d-block text-truncate" title="{{ $first }} {{ $last }}" >
+          {{ $first }} {{ $last }}
+        </a>
       </div>
     </div>
 

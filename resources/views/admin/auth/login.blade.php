@@ -78,12 +78,12 @@
   </div> -->
 
 <div class="login-logo fancy-logo">
-  <a href="#" class="brand-link">
+  <div class="brand-link">
     <span class="logo-badge"><i class="fas fa-cube"></i></span>
     <span class="brand-text">
       <strong>CRM</strong><span>Համակարգ</span>
     </span>
-  </a>
+  </div>
 
   <div class="decor-line" aria-hidden="true"></div>
   <small class="brand-subtitle">Դպրոցի կառավարման վահանակ</small>
