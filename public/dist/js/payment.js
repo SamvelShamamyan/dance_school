@@ -4,7 +4,7 @@ if (window.__PAYMENT_JS_LOADED__) {
   window.__PAYMENT_JS_LOADED__ = true;
 
   window.statusMap   ||= { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
-  window.methodMap   ||= { cash:'Կանխիկ',  card:'Անկանխիկ',      online:'Առցանց' };
+  window.methodMap   ||= { cash:'Կանխիկ',  card:'Անկանխիկ', online:'Առցանց' };
   window.monthShortHY ||= ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
   window.money       ||= (n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 }));
 
@@ -45,7 +45,7 @@ if (window.__PAYMENT_JS_LOADED__) {
         if (response.status === 1) {
           swal("success", "Գործողությունը կատարված է", true, true);
           $('#singlePaymentForm')[0].reset();
-          $('.text-danger').text('');
+          // $('.text-danger').text('');
           $('#singlePaymentBtn').prop('disabled', true);
           if ($.fn.DataTable.isDataTable('#paymentTbl')) {
             $('#paymentTbl').DataTable().ajax.reload(null, false);
@@ -113,6 +113,10 @@ if (window.__PAYMENT_JS_LOADED__) {
         // === Խումբ ===
         const $group = $('#group_id').empty().append('<option value="">Բոլորը</option>');
         (res.groups || []).forEach(g => $group.append(`<option value="${g.id}">${g.name}</option>`));
+
+        // === Վճարման տարբերակ ===
+        const $method = $('#method').empty().append('<option value="">Բոլորը</option>');
+        (res.methods || []).forEach(s => $method.append(`<option value="${s}">${methodMap[s] || s}</option>`));
 
         // === Վճարման կարգավիճակ ===
         const $status = $('#status').empty().append('<option value="">Բոլորը</option>');
@@ -196,6 +200,32 @@ if (window.__PAYMENT_JS_LOADED__) {
       });
   });
 
+  $(document).on('change', '#addPaymentModal #students_list', function () {
+      const studId = $(this).val();
+      $.ajax({
+        headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+        url: `/admin/payment/getStudentData/${studId}`,
+        type: 'GET',
+        dataType: 'json',
+        success: function (response) {
+          let amount = 0;        
+           if (response.student_debts && Number(response.student_debts) > 0) {
+              amount = Number(response.student_debts);
+            }
+
+          $('#singlePaymentForm').find('#amount').val(amount); 
+          if(response.student_prepayment > 0){
+            $('#singlePaymentForm').find('#infoBlock').css('display', 'block');
+            $('#singlePaymentForm').find('#infoBlockContent').text(`Տվյալ ուսանողը ունի հավելավճար՝ ${money(response.student_prepayment).toLocaleString('hy-AM')} դրամ`);
+          }else{
+             $('#singlePaymentForm').find('#infoBlock').css('display', 'none');
+          }
+        }
+      });
+  });
+
+
+
   $(document).off('change.payment', '#groups').on('change.payment', '#groups', function () {
     const groupId = $(this).val();
     $.ajax({
@@ -238,6 +268,10 @@ if (window.__PAYMENT_JS_LOADED__) {
     } else {
       $m.find('#paid_at').val('');
     }
+
+    $('#singlePaymentForm').find('#infoBlock').css('display', 'none');
+    $('#singlePaymentForm').find('#infoBlockContent').text('');
+
   });
 
   $('#paymentTbl').off('xhr.dt.payment').on('xhr.dt.payment', function (_e, _settings, json) {

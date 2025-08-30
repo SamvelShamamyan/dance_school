@@ -55,3 +55,8 @@
     font-family: 'Segoe UI', sans-serif;
 }
 
+.nav-sidebar .nav-link>.right, .nav-sidebar .nav-link>p>.right {
+    position: absolute;
+    right: 2rem;
+    top: .7rem;
+}

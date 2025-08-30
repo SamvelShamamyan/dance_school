@@ -87,7 +87,11 @@ class StaffController extends Controller
                 }
             }
 
-            return response()->json(['status' => 1, 'message' => 'Պահպանված է', 'id' => $staff->id]);
+            return response()->json([
+                'status' => 1,
+                'message' => 'Պահպանված է',
+                'redirect'=> route('admin.staff.index'),
+                'id' => $staff->id]);
 
         } catch (Throwable $e) {
             return response()->json([
@@ -181,7 +185,11 @@ class StaffController extends Controller
             } 
 
             DB::commit();
-            return response()->json(['status' => 1, 'message' => 'Թարմացվել է']);
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Թարմացվել է',
+                'redirect' => route('admin.staff.edit', ['id' => $staff->id]),
+            ]);
 
         } catch (Throwable $e) {
             DB::rollBack();

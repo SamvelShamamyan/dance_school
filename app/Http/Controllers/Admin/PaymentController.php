@@ -8,6 +8,8 @@ use App\Http\Requests\PaymentRequest\PaymentStoreRequest;
 use App\Http\Requests\PaymentRequest\PaymentUpdateRequest;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+
 use Carbon\Carbon;
 use App\Models\SchoolName;
 use App\Models\Payment;
@@ -28,39 +30,65 @@ class PaymentController extends Controller
         return view('admin.payment.index');
     }
 
-
-    // PaymentStoreRequest
     public function add(PaymentStoreRequest $request){
-        try{
-            
-           $schoolId = Auth::user()->school_id;
+        try {
+            $schoolId = Auth::user()->school_id;
             if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
-                $schoolId = $request->input('school_id');       
+                $schoolId = $request->input('school_id');
             }
 
             $validated = $request->validated();
-            $formattedPaidDate = Carbon::createFromFormat('d.m.Y', $validated['paid_at'])->format('Y-m-d');
-            Payment::create([
-                'school_id'     => $schoolId,
-                'group_id'      => $validated['group_id'],
-                'student_id'    => $validated['student_id'],
-                'created_by'    => Auth::user()->id,
-                'amount'        => $validated['amount'],                  
-                'paid_at'       => $formattedPaidDate,
-                'method'        => $validated['method'],
-                'status'        => $validated['status'],
-                'comment'       => $validated['comment'],
-            ]);   
+            $paidAt = Carbon::createFromFormat('d.m.Y', $validated['paid_at'])->format('Y-m-d');
 
-            return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']); 
+            DB::transaction(function () use ($schoolId, $validated, $paidAt) {
 
-        }catch(Throwable $e){
+                $payment = Payment::create([
+                    'school_id'  => $schoolId,
+                    'group_id'   => $validated['group_id'],
+                    'student_id' => $validated['student_id'],
+                    'created_by' => Auth::id(),
+                    'amount'     => $validated['amount'],
+                    'paid_at'    => $paidAt, 
+                    'method'     => $validated['method'],
+                    // 'status'     => $validated['status'],
+                    'comment'    => $validated['comment'],
+                ]);
+
+                
+                $student = Student::lockForUpdate()->findOrFail($payment->student_id);
+
+                $y = (int) Carbon::parse($payment->paid_at)->format('Y');
+                $m = (int) Carbon::parse($payment->paid_at)->format('m');
+                $paidThisMonth = Payment::where('student_id', $student->id)
+                    ->whereYear('paid_at', $y)
+                    ->whereMonth('paid_at', $m)
+                    ->sum('amount');
+
+                $T = (float) ($student->student_debts ?? 0.0);       
+                $R = (float) ($student->student_prepayment ?? 0.0);
+                $A = (float) $payment->amount;                       
+
+                $payToDebt = min($A, $T);
+                $T_after   = $T - $payToDebt;
+       
+                $leftover  = $A - $payToDebt;
+                $R_after   = $R + max(0.0, $leftover);
+
+                Student::whereKey($student->id)->update([
+                    'student_transactions' => $paidThisMonth, 
+                    'student_prepayment'   => $R_after,      
+                    'student_debts'        => $T_after,     
+                ]);
+            });
+
+            return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']);
+        } catch (Throwable $e) {
             return response()->json([
-                'status' => 0,
+                'status'  => 0,
                 'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
-                'error' => $e->getMessage(), 
+                'error'   => $e->getMessage(),
             ], 500);
-        }  
+        }
     }
 
     public function getPaymentData(Request $request){  
@@ -116,9 +144,9 @@ class PaymentController extends Controller
         try {
             $rows = $this->paymentService->getStudentHistory(
                 (int)$request->student_id,
-                $request->year,
-                $request->group_id,
-                $request->status,
+                $request->input('year'),
+                $request->input('group_id'),
+                $request->input('status'),
                 5, 
                 $request
             );
@@ -255,6 +283,22 @@ class PaymentController extends Controller
                 ->get();
 
             return response()->json($groups);
+        } catch (Throwable $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Չհաջողվեց բեռնել խմբերը',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+
+    public function getStudentData($studentId){
+        try{
+
+            $student = Student::findOrFail($studentId);
+            return response()->json($student);
+
         } catch (Throwable $e) {
             return response()->json([
                 'status' => 0,

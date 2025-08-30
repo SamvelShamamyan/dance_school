@@ -59,19 +59,25 @@ class StudentController extends Controller
             }
 
             $validated = $request->validated();
+            
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
+            $student_expected_payments = $validated['student_expected_payments'];
             $student = Student::create([
-                'first_name'    => $validated['first_name'],       
-                'last_name'     => $validated['last_name'],
-                'father_name'   => $validated['father_name'],
-                'email'         => $validated['email'], 
-                'address'       => $validated['address'],  
-                'soc_number'    => $validated['soc_number'],  
-                'birth_date'    => $formattedBirthDate,
-                'created_date'  => $formattedStudentDate, 
-                'school_id'     => $schoolId,  
-            ]);   
+                'first_name' => $validated['first_name'],       
+                'last_name' => $validated['last_name'],
+                'father_name' => $validated['father_name'],
+                'email' => $validated['email'], 
+                'student_expected_payments' => $student_expected_payments, 
+                'student_debts' => $student_expected_payments,
+                'address' => $validated['address'],  
+                'soc_number' => $validated['soc_number'],  
+                'birth_date' => $formattedBirthDate,
+                'created_date' => $formattedStudentDate, 
+                'school_id' => $schoolId,  
+            ]); 
+            
+            
 
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
@@ -79,15 +85,19 @@ class StudentController extends Controller
 
                     StudentFile::create([
                         'student_id' => $student->id,
-                        'path'     => $path,
-                        'url'      => Storage::disk('public')->url($path),
-                        'name'     => $file->getClientOriginalName(),
-                        'size'     => $file->getSize(),
+                        'path' => $path,
+                        'url' => Storage::disk('public')->url($path),
+                        'name' => $file->getClientOriginalName(),
+                        'size' => $file->getSize(),
                     ]);
                 }
             }
 
-            return response()->json(['status' => 1, 'message' => 'Պահպանված է']); 
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Պահպանված է',
+                'redirect'=> route('admin.student.index'),
+            ]); 
 
         }catch(Throwable $e){
             return response()->json([
@@ -109,11 +119,11 @@ class StudentController extends Controller
             ]);
 
             return [
-                'id'   => $f->id,
+                'id' => $f->id,
                 'name' => $f->name ?? basename($f->path),
                 'size' => (int) ($f->size ?? 0),
                 'url'  => $url,
-                'thumb'=> $isImage ? $url : null, 
+                'thumb' => $isImage ? $url : null, 
             ];
         })->values();
 
@@ -132,15 +142,18 @@ class StudentController extends Controller
 
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
+            $student_expected_payments = $validated['student_expected_payments'];
             $student->update([
-                'first_name'    => $validated['first_name'],
-                'last_name'     => $validated['last_name'],
-                'father_name'   => $validated['father_name'],
-                'email'         => $validated['email'],
-                'address'       => $validated['address'],
-                'soc_number'    => $validated['soc_number'],
-                'birth_date'    => $formattedBirthDate,
-                'created_date'  => $formattedStudentDate,
+                'first_name' => $validated['first_name'],
+                'last_name' => $validated['last_name'],
+                'father_name' => $validated['father_name'],
+                'email' => $validated['email'],
+                'student_expected_payments' => $student_expected_payments,
+                'student_debts' => $student_expected_payments, 
+                'address' => $validated['address'],
+                'soc_number' => $validated['soc_number'],
+                'birth_date' => $formattedBirthDate,
+                'created_date' => $formattedStudentDate,
             ]);
 
             $removeIds = (array) $request->input('removed_files', []);
@@ -169,23 +182,27 @@ class StudentController extends Controller
 
                     StudentFile::create([
                         'student_id' => $student->id,
-                        'path'     => $path,
-                        'url'      => Storage::disk('public')->url($path),
-                        'name'     => $file->getClientOriginalName(),
-                        'size'     => $file->getSize(),
+                        'path' => $path,
+                        'url' => Storage::disk('public')->url($path),
+                        'name' => $file->getClientOriginalName(),
+                        'size' => $file->getSize(),
                     ]);
                 }
             } 
 
             DB::commit();
-            return response()->json(['status' => 1, 'message' => 'Թարմացվել է']);
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Թարմացվել է',
+                'redirect' => route('admin.student.edit', ['id' => $student->id]),
+            ]);
 
         } catch (Throwable $e) {
             DB::rollBack();
             return response()->json([
-                'status'  => 0,
+                'status' => 0,
                 'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
-                'error'   => $e->getMessage(),
+                'error' => $e->getMessage(),
             ], 500);
         }
     }

@@ -24,6 +24,12 @@ return new class extends Migration
             $table->unsignedBigInteger('school_id')->nullable();
             $table->unsignedBigInteger('group_id')->nullable();
             $table->date('group_date')->nullable();
+
+             $table->decimal('student_expected_payments', 12, 2);   
+             $table->decimal('student_transactions', 12, 2)->nullable();   
+             $table->decimal('student_prepayment', 12, 2)->nullable();   
+             $table->decimal('student_debts', 12, 2)->nullable();   
+
             $table->timestamps();
             $table->softDeletes();
 

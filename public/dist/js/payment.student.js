@@ -112,6 +112,10 @@ $(function () {
       years.forEach(y => $year.append(new Option(y, y)));
       $year.val(years[0]); 
 
+      const methodMap = { cash:'Կանխիկ',  card:'Անկանխիկ', online:'Առցանց' };
+      const $method = $('#method').empty().append(new Option('Բոլորը',''));
+      (response.methods || []).forEach(s => $method.append(new Option(methodMap[s] || s, s)));
+
       const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
       const $status = $('#status').empty().append(new Option('Բոլորը',''));
       (response.statuses || []).forEach(s => $status.append(new Option(statusMap[s] || s, s)));
@@ -120,7 +124,7 @@ $(function () {
     }
   });
 
-  $('#btnRefresh, #year, #status').on('change click', function(){
+  $('#btnRefresh, #year, #status, #method').on('change click', function(){
     if ($.fn.DataTable.isDataTable('#studentPaymentTbl')) {
       $('#studentPaymentTbl').DataTable().ajax.reload();
     }

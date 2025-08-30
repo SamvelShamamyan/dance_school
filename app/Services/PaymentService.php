@@ -33,6 +33,7 @@ class PaymentService
 
         $year    = (int)($request->input('year') ?: now()->year);
         $groupId = $request->input('group_id');
+        $method  = $request->input('method');
         $status  = $request->input('status');
 
         // DataTables
@@ -58,6 +59,7 @@ class PaymentService
         // Սուպեր դերի դեպքում + դատարկ school_id => չսահմանափակել (բոլոր դպրոցները)
 
         if (!empty($groupId)) $base->where('payments.group_id', $groupId);
+        if (!empty($method))  $base->where('payments.method',   $method);
         if (!empty($status))  $base->where('payments.status',   $status);
 
         // ====== Ամփոփում ամիսներով (առանց որոնումը հաշվի առնելու) ======
@@ -122,6 +124,7 @@ class PaymentService
             ->selectRaw("
                 payments.student_id,
                 MAX(COALESCE(payments.school_id, s.school_id)) as school_id,
+                MAX(CASE WHEN s.deleted_at IS NULL THEN 0 ELSE 1 END) as is_deleted,
                 {$monthSums},
                 SUM(payments.amount) as total,
                 CONCAT(COALESCE(s.last_name,''),' ',COALESCE(s.first_name,''),' ',COALESCE(s.father_name,'')) as full_name
@@ -160,7 +163,8 @@ class PaymentService
             return array_merge([
                 'id'        => (int)$r->student_id,
                 'full_name' => (string)$r->full_name,
-                'school_id'  => (int)($r->school_id ?? 0), //← ավելացրել ենք
+                'school_id'  => (int)($r->school_id ?? 0), 
+                'is_deleted' => (int)$r->is_deleted === 1,   
             ], $months, ['total'=>$total]);
         })->values()->toArray();
 
@@ -173,6 +177,7 @@ class PaymentService
             'meta'            => [
                 'year'      => $year,
                 'group_id'  => $groupId,
+                'method'    => $method,
                 'status'    => $status,
                 'school_id' => $schoolId, // null = բոլոր դպրոցները (super-ի համար)
             ],
@@ -217,6 +222,15 @@ class PaymentService
         }
         $groups = $groupsQuery->orderBy('name')->get(['id','name']);
 
+        // Method
+        $methodQuery = Payment::query();
+        if (!$isSuper) {
+            $methodQuery->where('school_id', $schoolId);
+        } else if (!empty($schoolId)) {
+            $methodQuery->where('school_id', $schoolId);
+        }
+        $methods = $methodQuery->select('method')->distinct()->pluck('method')->values();
+
         // Statuses
         $statusesQuery = Payment::query();
         if (!$isSuper) {
@@ -229,6 +243,7 @@ class PaymentService
         return [
             'years'    => $years,    // [2025, 2024, ...]
             'groups'   => $groups,   // [{id,name}]
+            'methods'   => $methods,
             'statuses' => $statuses, // ['paid','pending',...]
         ];
     }
@@ -321,7 +336,6 @@ class PaymentService
                 'payments.id',
                 'payments.paid_at',
                 'payments.amount',
-                'payments.method',
                 'payments.status',
                 'payments.comment',
             ])
@@ -330,7 +344,6 @@ class PaymentService
                     'id'      => (int) $p->id,
                     'paid_at' => Carbon::parse($p->paid_at)->toDateString(),
                     'amount'  => (int)$p->amount,
-                    'method'  => (string)$p->method,
                     'status'  => (string)$p->status,
                     'comment' => (string)($p->comment ?? ''),
                 ];
@@ -352,6 +365,7 @@ class PaymentService
         }
 
         $yearsQuery = Payment::query()->where('student_id', $studentId);
+        $methodsQuery = Payment::query()->where('student_id', $studentId);
         $statusesQuery = Payment::query()->where('student_id', $studentId);
         $groupsQuery = Payment::query()
             ->where('payments.student_id', $studentId)
@@ -360,10 +374,12 @@ class PaymentService
 
         if (!$isSuper) {
             $yearsQuery->where('school_id', $schoolId);
+            $methodsQuery->where('school_id', $schoolId);
             $statusesQuery->where('school_id', $schoolId);
             $groupsQuery->where('payments.school_id', $schoolId);
         } else if (!empty($schoolId)) {
             $yearsQuery->where('school_id', $schoolId);
+            $methodsQuery->where('school_id', $schoolId);
             $statusesQuery->where('school_id', $schoolId);
             $groupsQuery->where('payments.school_id', $schoolId);
         }
@@ -374,12 +390,14 @@ class PaymentService
             ->map(fn($y)=>(int)$y)
             ->values();
 
+        $methods = $methodsQuery->select('method')->distinct()->pluck('method')->values();
         $statuses = $statusesQuery->select('status')->distinct()->pluck('status')->values();
 
         $groups = $groupsQuery->select('g.id', 'g.name')->distinct()->orderBy('g.name')->get();
 
         return [
             'years'    => $years,
+            'methods'  => $methods,
             'statuses' => $statuses,
             'groups'   => $groups,
         ];
@@ -399,6 +417,7 @@ class PaymentService
         }
 
         $year   = (int)($request->input('year') ?: now()->year);
+        $method = $request->input('method');
         $status = $request->input('status');
 
         $draw   = (int)$request->input('draw', 1);
@@ -415,6 +434,7 @@ class PaymentService
         }
 
         if (!empty($year))   $base->whereYear('paid_at', $year);
+        if (!empty($method)) $base->where('method', $method);
         if (!empty($status)) $base->where('status', $status);
 
         $summaryRow = (clone $base)->selectRaw("
@@ -481,7 +501,7 @@ class PaymentService
             'recordsFiltered' => $recordsFiltered,
             'data'            => $rows,
             'summary'         => $summary,
-            'meta'            => ['year'=>$year, 'status'=>$status, 'student_id'=>$studentId],
+            'meta'            => ['year'=>$year, 'method' => $method, 'status'=>$status, 'student_id'=>$studentId],
         ];
     }
 }

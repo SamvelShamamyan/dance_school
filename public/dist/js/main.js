@@ -215,17 +215,14 @@ $(function() {
 
 
 $(function() {
+    const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
     let studentTbl = $("#studentTbl").DataTable({
         language: lang,
         processing: true,
         serverSide: true,
-
         searchDelay: 700, 
-
         ajax: {
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: "/admin/student/getData",
             type: 'post',
             data: function(d) {
@@ -262,6 +259,27 @@ $(function() {
             {
                 data: 'soc_number',
                 name: 'soc_number'
+            },
+            {
+                data: 'student_expected_payments',
+                name: 'student_expected_payments',
+                render: function(data, type, row) {
+                    return money(data);
+                }
+            },
+            {
+                data: 'student_prepayment',
+                name: 'student_prepayment',
+                render: function(data, type, row) {
+                    return money(data);
+                }
+            },
+            {
+                data: 'student_debts',
+                name: 'student_debts',
+                render: function(data, type, row) {
+                    return money(data);
+                }
             },
             // {
             //     data: 'school_name',
@@ -478,6 +496,7 @@ $(function () {
         data: function(d) {
           d.year     = $('#year').val();
           d.group_id = $('#group_id').val();
+          d.method   = $('#method').val();
           d.status   = $('#status').val();
 
           if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') {
@@ -487,7 +506,16 @@ $(function () {
         }
       },
       columns: [
-        { data: 'full_name', name: 'full_name' },
+        { 
+            data: 'full_name', 
+            name: 'full_name',
+            render: (v, t, row) => {
+            if (row.is_deleted) {
+                return `${v} <span class="badge badge-danger ml-2">Հեռացված</span>`;
+            }
+            return v;
+            }
+        },
         { data: 'm01', className: 'text-end', render: renderMonth },
         { data: 'm02', className: 'text-end', render: renderMonth },
         { data: 'm03', className: 'text-end', render: renderMonth },
@@ -520,7 +548,7 @@ $(function () {
       if (json && Array.isArray(json.summary)) renderSummary(json.summary);
     });
 
-    $('#btnRefresh, #year, #group_id, #status').on('change click', function(){
+    $('#btnRefresh, #year, #group_id, #status, #method').on('change click', function(){
       if ($.fn.DataTable.isDataTable('#paymentTbl')) {
         paymentTbl.ajax.reload();
       }
@@ -589,6 +617,7 @@ $(function () {
         type: 'post',
         data: function(d) {
           d.year   = $('#year').val();
+          d.method   = $('#method').val();
           d.status = $('#status').val();
         }
       },
@@ -612,10 +641,10 @@ $(function () {
                     data-amount="${row.amount}"
                     data-method="${row.method}"
                     data-status="${row.status}"
-                    data-comment="${(row.comment||'').replace(/"/g,'&quot;')}">
+                    data-comment="${(row.comment||'').replace(/"/g,'&quot;')}" disabled>
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn btn-sm btn-outline-danger act-del" data-id="${id}">
+            <button class="btn btn-sm btn-outline-danger act-del" data-id="${id}" disabled>
               <i class="fas fa-trash"></i>
             </button>`
         }
@@ -626,7 +655,7 @@ $(function () {
       if (json && Array.isArray(json.summary)) renderSummary(json.summary);
     });
 
-    $('#btnRefresh, #year, #status').on('change click', function(){
+    $('#btnRefresh, #year, #status, #method').on('change click', function(){
       if ($.fn.DataTable.isDataTable('#studentPaymentTbl')) {
         studentPaymentTbl.ajax.reload();
       }
@@ -733,7 +762,7 @@ $(function () {
 
 
 $(function() {
-    let studentTbl = $("#deletedStudentTbl").DataTable({
+    let deletedStudentTbl = $("#deletedStudentTbl").DataTable({
         language: lang,
         processing: true,
         serverSide: true,
@@ -741,9 +770,7 @@ $(function() {
         searchDelay: 700, 
 
         ajax: {
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: "/admin/deleted_student/getData",
             type: 'post',
             data: function(d) {
@@ -792,7 +819,7 @@ $(function() {
             const $select = $(this); 
             const name = $select.find('option:selected').data('name');
             $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
-            studentTbl.ajax.reload();
+            deletedStudentTbl.ajax.reload();
         });
     }
 });

@@ -21,7 +21,7 @@ class PaymentStoreRequest extends FormRequest
             'paid_at'       => ['bail', 'required', 'date_format:d.m.Y'],
             'amount'        => ['bail', 'required', 'numeric', 'min:0'],
             'method'        => ['bail', 'required', Rule::in(['cash', 'card'])],
-            'status'        => ['bail', 'required', Rule::in(['paid', 'pending'])],
+            // 'status'        => ['bail', 'required', Rule::in(['paid', 'pending'])],
             'comment'       => ['nullable', 'string', 'max:255'],
         ];
     }
@@ -52,8 +52,8 @@ class PaymentStoreRequest extends FormRequest
             'method.required'       => 'Վճարման տարբերակը պարտադիր է:',
             'method.in'             => 'Վճարման տարբերակը պետք է լինի՝ կանխիկ կամ անկանխիկ:',
 
-            'status.required'       => 'Կարգավիճակը պարտադիր է:',
-            'status.in'             => 'Կարգավիճակը պետք է լինի՝ վճարված կամ սպասման մեջ:',
+            // 'status.required'       => 'Կարգավիճակը պարտադիր է:',
+            // 'status.in'             => 'Կարգավիճակը պետք է լինի՝ վճարված կամ սպասման մեջ:',
 
             'comment.string'        => 'Մեկնաբանությունը պետք է լինի տեքստային:',
             'comment.max'           => 'Մեկնաբանությունը չի կարող գերազանցել 255 նիշը:',

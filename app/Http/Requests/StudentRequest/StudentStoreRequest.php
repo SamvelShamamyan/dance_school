@@ -25,13 +25,13 @@ class StudentStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'first_name'  => 'required|string|max:25',
-            'last_name'   => 'required|string|max:25',
+            'first_name' => 'required|string|max:25',
+            'last_name' => 'required|string|max:25',
             'father_name' => 'required|string|max:25',
-            'address'     => 'required|string|max:25',
-            'soc_number'  => 'required|string|max:25',
-            'email'       => 'required|email|unique:students,email',
-            'amount'      => 'required|numeric|min:0',
+            'address' => 'required|string|max:25',
+            'soc_number' => 'required|string|max:25',
+            'email' => 'required|email|unique:students,email',
+            'student_expected_payments' => 'required|numeric|min:0',
             'birth_date' => [
                 'required',
                 'date_format:d.m.Y',
@@ -42,7 +42,7 @@ class StudentStoreRequest extends FormRequest
                 'date_format:d.m.Y',
                 // 'after_or_equal:today'
             ],
-            'files.*'    => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'], // 10 МБ
+            'files.*' => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'], // 10 МБ
              'school_id' => Auth::user()->hasRole('super-admin')
                 ? 'required|integer|exists:school_names,id'
                 : 'nullable',
@@ -79,6 +79,10 @@ class StudentStoreRequest extends FormRequest
             'email.required'       => 'Էլ. փոստը պարտադիր է:',
             'email.email'          => 'Էլ. փոստի ձևաչափը սխալ է:',
             'email.unique'         => 'Այս էլ. փոստը արդեն օգտագործվում է:',
+
+            'student_expected_payments.required'       => 'Գումարը պարտադիր է:',
+            'student_expected_payments.numeric'        => 'Գումարը պետք է լինի թիվ:',
+            'student_expected_payments.min'            => 'Գումարը չի կարող լինել բացասական:',
 
             'birth_date.required'     => 'Ծննդյան ամսաթիվը պարտադիր է:',
             'birth_date.date_format'  => 'Ծննդյան ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',

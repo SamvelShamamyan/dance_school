@@ -55,9 +55,14 @@
       </div>
 
       <div class="col-6 col-md-3 mb-3">
+        <label class="form-label d-block">Վճարման տաբերակ</label>
+        <select id="method" class="form-control"></select>
+      </div>
+
+      <!-- <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Վճարման կարգավիճակ</label>
         <select id="status" class="form-control"></select>
-      </div>
+      </div> -->
 
     </div>
   </div>
@@ -112,6 +117,24 @@
         </div>
         <div class="modal-body">
 
+          <div id="infoBlock" style="display:none;">
+            <div class="alert shadow-sm border-0 rounded-3 d-flex align-items-start p-3 mb-3" 
+                style="background-color:#fff8e5; color:#5a4636;" role="alert">
+              
+              <div class="flex-shrink-0 mr-2">
+                <i class="bi bi-exclamation-triangle-fill me-3" 
+                  style="color:#e69500; font-size:2.5rem;"></i>
+              </div>
+
+              <div class="flex-grow-1">
+                <div id="infoBlockContent" class="fw-semibold mb-1" style="color:#3d2c1d;"></div>
+                <small class="d-block" style="color:#7a6a58;">
+                  Հավելավճարը ամեն ամսվա սկզբում ինքնաշխատ կերպով կգանձվի որպես ընփթացիկ ամսվա վճար:
+                </small>
+              </div>
+            </div>
+          </div>
+
           @role('super-admin|super-accountant')
             <div class="form-group mb-2">
               <label class="form-label d-block">Դպրոց</label>
@@ -137,6 +160,7 @@
             </select>
             <small class="error_student_id text-danger"></small>
           </div>
+          
           <div class="form-row">
             <div class="form-group col-6">
               <label for="group_date">Վճարման ամսաթիվ</label>
@@ -155,16 +179,15 @@
               <small class="error_paid_at text-danger"></small>
             </div>
 
-
             <div class="form-group col-6">
               <label>Վճարման ենթակա գումար</label>
-              <input type="number" name="amount" class="form-control" min="0" step="1000" placeholder="Օրինակ` 50000">
+              <input type="number" name="amount" class="form-control" min="0" step="1000" placeholder="Օրինակ` 50000" id="amount">
               <small class="error_amount text-danger"></small>
             </div>
 
           </div>
           <div class="form-row">
-            <div class="form-group col-6">
+            <div class="form-group col-12">
               <label>Վճարման տաբերակ</label>
               <select name="method" class="form-control" id="pay_method">
                 <option value="" disabled selected>Ընտրել</option>
@@ -173,7 +196,7 @@
               </select>
               <small class="error_method text-danger"></small>
             </div>
-            <div class="form-group col-6">
+            <!-- <div class="form-group col-6">
               <label>Վճարման կարգավիճակ</label>
               <select name="status" class="form-control" id="pay_status">
                 <option value="" disabled selected>Ընտրել</option>
@@ -181,7 +204,7 @@
                 <option value="pending">Սպասման մեջ</option>
               </select>
               <small class="error_status text-danger"></small>
-            </div>
+            </div> -->
           </div>
           <div class="form-group mt-2">
             <label>Մեկնաբանություն</label>

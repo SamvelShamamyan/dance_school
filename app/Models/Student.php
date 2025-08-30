@@ -23,6 +23,10 @@ class Student extends Model
         'school_id',
         'group_id',
         'group_date',
+        'student_expected_payments',
+        'student_transactions',
+        'student_debts',
+        'student_month_debt',
     ];
 
     protected $casts = [

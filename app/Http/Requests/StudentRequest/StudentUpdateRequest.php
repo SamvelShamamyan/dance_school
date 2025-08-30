@@ -35,6 +35,9 @@ class StudentUpdateRequest extends FormRequest
                 'email',
                 Rule::unique('students', 'email')->ignore($this->route('id'))
             ],
+
+            'student_expected_payments' => 'required|numeric|min:0',
+            
             'birth_date' => [
                 'required',
                 'date_format:d.m.Y',
@@ -77,6 +80,10 @@ class StudentUpdateRequest extends FormRequest
             'email.required'       => 'Էլ. փոստը պարտադիր է:',
             'email.email'          => 'Էլ. փոստի ձևաչափը սխալ է:',
             'email.unique'         => 'Այս էլ. փոստը արդեն օգտագործվում է:',
+
+            'student_expected_payments.required'       => 'Գումարը պարտադիր է:',
+            'student_expected_payments.numeric'        => 'Գումարը պետք է լինի թիվ:',
+            'student_expected_payments.min'            => 'Գումարը չի կարող լինել բացասական:',
 
             'birth_date.required'     => 'Ծննդյան ամսաթիվը պարտադիր է:',
             'birth_date.date_format'  => 'Ծննդյան ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',

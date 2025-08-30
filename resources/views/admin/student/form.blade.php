@@ -119,16 +119,9 @@
 
                     <div class="form-group">
                         <label>Վճարման ենթակա գումար</label>
-                        <input type="number" name="amount" class="form-control" min="0" step="1000" placeholder="Օրինակ` 50000">
-                        <small class="error_amount text-danger"></small>
+                        <input type="number" name="student_expected_payments" value="{{ old('student_expected_payments', $student->student_expected_payments ?? '') }}" class="form-control" min="0" step="1000" placeholder="Օրինակ` 50000">
+                        <small class="error_student_expected_payments text-danger"></small>
                     </div>
-
-                    <!-- <div class="form-group">
-                        <label>**************_____****************</label>
-                       <input type="text" name="amount_year" id="ampuntYearPicker" class="form-control" placeholder="Ընտրել տարի">
-                        <small class="error_amount_year text-danger"></small>
-                    </div> -->
-
         
                     <div class="form-group">
                         <label for="group_date">Ծննդյան Ամսաթիվ</label>
@@ -231,9 +224,6 @@
                         </div>
                         <small class="error_file text-danger"></small>
                     </div>
-
-
-
                 </div>
                 <div class="card-footer  text-right">
                     <button type="button" class="btn btn-primary" id="studentBtn">Պահպանել</button>

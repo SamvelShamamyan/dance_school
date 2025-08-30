@@ -30,6 +30,16 @@
   </div>
 </div> -->
 
+@if ($student->trashed())
+  <div class="card bg-danger text-white shadow-sm mb-4">
+    <div class="card-body">
+        <i class="fas fa-exclamation-triangle me-2"></i>
+        Աշակերտը հեռացված է :
+    </div>
+  </div>
+@endif
+
+
 <div class="card shadow-sm mb-4 border-0">
     <div class="card-body">
         <div class="row align-items-center">
@@ -47,11 +57,13 @@
                     <span class="badge badge-secondary ml-1">ID: {{ $student->id }}</span>
                 </nav>
             </div>
-            <div class="col-auto">
-                <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal">
-                  <i class="fas fa-plus"></i> Ավելացնել վճարում
-                </button>
-            </div>
+            @if (!$student->trashed())
+              <div class="col-auto">
+                  <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal">
+                    <i class="fas fa-plus"></i> Ավելացնել վճարում
+                  </button>
+              </div>
+            @endif
         </div>
     </div>
 </div>
@@ -59,11 +71,18 @@
 <div class="card mb-3">
   <div class="card-body">
     <div class="row">
+
       <div class="col-6 col-md-3 mb-2">
         <label class="form-label d-block">Տարի</label>
         <select id="year" class="form-control"></select>
       </div>
-      <div class="col-6 col-md-3 mb-2">
+
+      <div class="col-6 col-md-3 mb-3">
+        <label class="form-label d-block">Վճարման տաբերակ</label>
+        <select id="method" class="form-control"></select>
+      </div>
+
+      <!-- <div class="col-6 col-md-3 mb-2">
         <label class="form-label d-block">Կարգավիճակ</label>
         <select id="status" class="form-control">
           <option value="">Բոլորը</option>
@@ -72,7 +91,8 @@
           <option value="refunded">Վերադարձված</option>
           <option value="failed">Սխալ</option>
         </select>
-      </div>
+      </div> -->
+
     </div>
   </div>
 </div>
@@ -147,7 +167,7 @@
             </div>
           </div>
           <div class="form-row">
-            <div class="form-group col-6">
+            <div class="form-group col-12">
               <label>Վճարման տաբերակ</label>
               <select name="method" class="form-control" id="pay_method">
                 <option value="" disabled selected>Ընտրել</option>
@@ -156,7 +176,7 @@
               </select>
               <small class="error_method text-danger"></small>
             </div>
-            <div class="form-group col-6">
+            <!-- <div class="form-group col-6">
               <label>Վճարման կարգավիճակ</label>
               <select name="status" class="form-control" id="pay_status">
                 <option value="" disabled selected>Ընտրել</option>
@@ -164,7 +184,7 @@
                 <option value="pending">Սպասման մեջ</option>
               </select>
               <small class="error_status text-danger"></small>
-            </div>
+            </div> -->
           </div>
           <div class="form-group mt-2">
             <label>Մեկնաբանություն</label>

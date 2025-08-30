@@ -14,13 +14,14 @@ function saveStudent() {
         processData: false,
         type: 'POST',
         dataType: 'json',
-        success: function(response) {
-
+        success: async function(response) {
             if (response.status === 1) {
-                swal("success", "Գործողությունը կատարված է", true, true);
+                await swal("success", "Գործողությունը կատարված է", true, true);
+                $('.text-danger').text('');
                 $('#StudentForm')[0].reset();
                 $('.text-danger').text('');
-                $('#studentBtn').prop('disabled', true)
+                $('#studentBtn').prop('disabled', true);
+                window.location.href = response.redirect;
             }
         },
         error: function(xhr) {
@@ -110,21 +111,112 @@ $(function () {
 });
 
 
+// $(function () {
+//   const dzElStud   = document.getElementById('student-dropzone');
+//   const formEl = document.getElementById('StudentForm');
+//   const saveBtn = document.getElementById('studentBtn');
+
+//   if (!dzElStud || !formEl || !saveBtn) return;
+//   if (typeof Dropzone === 'undefined') { console.error('Dropzone not loaded'); return; }
+
+//   const dzStud = new Dropzone(dzElStud, {
+//     url: formEl.action,
+//     paramName: "files",           
+//     uploadMultiple: true,
+//     parallelUploads: 5,
+//     autoProcessQueue: false,
+//     maxFilesize: 10,               // MB
+//     maxFiles: 5,
+//     acceptedFiles: "image/*,.pdf",
+//     addRemoveLinks: true,
+//     clickable: '#student-dropzone',
+//     previewsContainer: '#student-dropzone',
+//     hiddenInputContainer: document.body,
+//     headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
+//     dictRemoveFile: 'Հեռացնել',
+//   });
+
+//   dzStud.on("sendingmultiple", function (files, xhr, formData) {
+//     $('#StudentForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
+//     $('.text-danger').text('');
+//     $('#studentBtn').prop('disabled', true);
+//   });
+
+//   dzStud.on("successmultiple", function (files, response) {
+//     const res = (typeof response === 'string') ? JSON.parse(response) : response;
+
+//     if (res && res.status === 1) {
+//       (async () => {
+//         await swal("success", "Գործողությունը կատարված է", true, true);
+//         if (res.redirect) {
+//           window.location.href = res.redirect;  
+//         }
+//       })();
+
+//       formEl.reset();
+//       dzStud.removeAllFiles(true);
+//       $('#removed-files').empty();
+//       $('#studentBtn').prop('disabled', true);
+//     } else {
+//       $('#studentBtn').prop('disabled', false);
+//       swal("error", "Something went wrong!", true, true);
+//     }
+//   });
+
+
+//   dzStud.on("errormultiple", function (files, xhrResp, xhr) {
+//     $('#studentBtn').prop('disabled', false);
+//     try {
+//       const res = xhr && xhr.response ? JSON.parse(xhr.response) : xhrResp;
+//       if (xhr && xhr.status === 422 && res && res.errors) {
+//         for (const field in res.errors) $(`.error_${field}`).text(res.errors[field][0]);
+//       } else {
+//         swal("error", (res && res.message) ? res.message : "Upload failed", true, true);
+//       }
+//     } catch {
+//       swal("error", "Upload failed", true, true);
+//     }
+//   });
+
+//   saveBtn.addEventListener('click', function () {
+//     if (dzStud.getAcceptedFiles().length > 0) {
+//       dzStud.processQueue();         
+//     } else {
+//       saveStudent();              
+//     }
+//   });
+// });
+
+
 $(function () {
-  const dzElStud   = document.getElementById('student-dropzone');
-  const formEl = document.getElementById('StudentForm');
-  const saveBtn= document.getElementById('studentBtn');
+  const dzElStud = document.getElementById('student-dropzone');
+  const formEl   = document.getElementById('StudentForm');
+  const saveBtn  = document.getElementById('studentBtn');
 
   if (!dzElStud || !formEl || !saveBtn) return;
   if (typeof Dropzone === 'undefined') { console.error('Dropzone not loaded'); return; }
 
+  function normalizeDzError(errorMessage, xhr) {
+    if (xhr && xhr.response) {
+      try {
+        const res = JSON.parse(xhr.response);
+        if (res?.errors) return Object.values(res.errors).flat().join('\n');
+        if (res?.message) return res.message;
+      } catch (_) {}
+    }
+    if (typeof errorMessage === 'object' && errorMessage) {
+      return errorMessage.message || 'Սխալ վավերացման ժամանակ';
+    }
+    return String(errorMessage || 'Upload failed');
+  }
+
   const dzStud = new Dropzone(dzElStud, {
     url: formEl.action,
-    paramName: "files",           
+    paramName: "files",
     uploadMultiple: true,
     parallelUploads: 5,
     autoProcessQueue: false,
-    maxFilesize: 10,               // MB
+    maxFilesize: 10,
     maxFiles: 5,
     acceptedFiles: "image/*,.pdf",
     addRemoveLinks: true,
@@ -142,40 +234,84 @@ $(function () {
   });
 
   dzStud.on("successmultiple", function (files, response) {
-    if (response && response.status === 1) {
-      swal("success", "Գործողությունը կատարված է", true, true);
-      formEl.reset();
-      dzStud.removeAllFiles(true);
-      $('#removed-files').empty(); 
-      $('#studentBtn').prop('disabled', true);
+    const res = (typeof response === 'string') ? JSON.parse(response) : response;
+
+    if (res && res.status === 1) {
+      (async () => {
+        await swal("success", "Գործողությունը կատարված է", true, true);
+        if (res.redirect) {
+          window.location.href = res.redirect;  
+          return; 
+        }
+        formEl.reset();
+        dzStud.removeAllFiles(true);
+        $('#removed-files').empty();
+        $('#studentBtn').prop('disabled', true);
+      })();
     } else {
       $('#studentBtn').prop('disabled', false);
       swal("error", "Something went wrong!", true, true);
     }
   });
 
-  dzStud.on("errormultiple", function (files, xhrResp, xhr) {
+  dzStud.on('error', function (file, errorMessage, xhr) {
+    const msg = normalizeDzError(errorMessage, xhr);
+    const el = file.previewElement?.querySelector('[data-dz-errormessage]');
+    if (el) el.textContent = msg;
+  });
+
+  dzStud.on("errormultiple", function (files, errorMessage, xhr) {
     $('#studentBtn').prop('disabled', false);
+
     try {
-      const res = xhr && xhr.response ? JSON.parse(xhr.response) : xhrResp;
-      if (xhr && xhr.status === 422 && res && res.errors) {
-        for (const field in res.errors) $(`.error_${field}`).text(res.errors[field][0]);
-      } else {
-        swal("error", (res && res.message) ? res.message : "Upload failed", true, true);
+      const res = xhr && xhr.response ? JSON.parse(xhr.response) : null;
+      if (xhr?.status === 422 && res?.errors) {
+        for (const field in res.errors) {
+          $(`.error_${field}`).text(res.errors[field][0]);
+        }
       }
-    } catch {
-      swal("error", "Upload failed", true, true);
+    } catch (_) {}
+
+    if (xhr && xhr.status === 422) {
+      files.forEach(f => {
+        f.status = Dropzone.QUEUED;
+        if (f.previewElement) {
+          f.previewElement.classList.remove('dz-error');
+          const msgEl = f.previewElement.querySelector('[data-dz-errormessage]');
+          if (msgEl) msgEl.textContent = '';
+        }
+      });
+      return;
     }
+
+    const msg = normalizeDzError(errorMessage, xhr);
+    files.forEach(f => {
+      const el = f.previewElement?.querySelector('[data-dz-errormessage]');
+      if (el) el.textContent = msg;
+    });
+    swal("error", msg, true, true);
   });
 
   saveBtn.addEventListener('click', function () {
+    $('.text-danger').text('');
+
+    dzStud.getFilesWithStatus(Dropzone.ERROR).forEach(f => {
+      f.status = Dropzone.QUEUED;
+      if (f.previewElement) {
+        f.previewElement.classList.remove('dz-error');
+        const el = f.previewElement.querySelector('[data-dz-errormessage]');
+        if (el) el.textContent = '';
+      }
+    });
+
     if (dzStud.getAcceptedFiles().length > 0) {
-      dzStud.processQueue();         
+      dzStud.processQueue();
     } else {
-      saveStudent();              
+      saveStudent();
     }
   });
 });
+
 
 
 
