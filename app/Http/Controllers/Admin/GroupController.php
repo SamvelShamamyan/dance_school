@@ -296,10 +296,10 @@ class GroupController extends Controller
 
             if ($added > 0 && $already > 0) {
                 $status  = 2;
-                $message = 'Մասամբ պահպանվեց. Որոշ աշխատակիցներ արդեն կային խմբում';
+                $message = 'Մասամբ պահպանվեց. Որոշ աշխատակիցներ արդեն կան խմբում';
             } elseif ($added === 0 && $already > 0) {
                 $status  = 3;
-                $message = 'Ընտրված աշխատակիցները արդեն կային խմբում';
+                $message = 'Ընտրված աշխատակիցները արդեն կան խմբում';
             } elseif ($added === 0 && $already === 0) {
                 $status  = 3;
                 $message = 'Չկա նոր տվյալ պահպանելու համար';
