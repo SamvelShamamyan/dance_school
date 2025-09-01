@@ -22,7 +22,7 @@ class StudentService
 
     $query = Student::with('school');
 
-    if (Auth::user()->hasRole('super-admin')) {
+    if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-accountant')) {
         $schoolId = $request->input('school_id');
         if ($schoolId !== null && $schoolId !== '') {
             $query->where('school_id', $schoolId);
@@ -68,12 +68,19 @@ class StudentService
 
     $data = $query->skip($start)->take($length)->get();
 
-    $data->transform(function ($item) {
+    $data->transform(function ($item, $schoolId) {
+
+        $viewHistory = ''; 
+
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-accountant')) {
+         $viewHistory = '<button class="btn btn-sm btn-light view-history" data-id="'.$item->id.'" data-school-id="'.$item->school_id.'" title="Պատմություն">&#8942;</button>'; 
+        }
         $item->full_name = $item->last_name . ' ' . $item->first_name . ' ' . $item->father_name;
         $item->school_name = $item->school->name ?? '';
         $item->action = '
             <button class="btn btn-info btn-edit-student" data-id="'.$item->id.'" title="Խմբագրել"><i class="fas fa-edit"></i></button>
             <button class="btn btn-danger btn-delete-student" data-id="'.$item->id.'" title="Հեռացնել"><i class="fas fa-trash-alt"></i></button>
+            '.$viewHistory.'
         ';
         return $item;
     });

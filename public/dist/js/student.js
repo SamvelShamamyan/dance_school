@@ -340,3 +340,15 @@ $(document).on('click', '.js-mark-remove-st', function () {
 //     minViewMode: "years",
 //     autoclose: true
 // });
+
+
+
+  $(document).off('click.payment', '#studentTbl .view-history').on('click.payment', '#studentTbl .view-history', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      const id  = $(this).data('id');
+      const sid = $(this).data('school-id') ?? currentSchoolId();
+      const base = `/admin/payment/student/${encodeURIComponent(id)}`;
+      const url  = sid ? `${base}?school_id=${encodeURIComponent(sid)}` : base;
+      window.location.assign(url);
+    });
