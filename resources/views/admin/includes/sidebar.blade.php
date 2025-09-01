@@ -1,24 +1,30 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
-  <!-- Brand Logo -->
-  <!-- <a href="{{ route('admin.dashboard') }}" class="brand-link">
-    <img src="{{asset('dist/img/AdminLTELogo.png')}}" alt="AdminLTE Logo"
-         class="brand-image img-circle elevation-3" style="opacity: .8">
-    <span class="brand-text font-weight-light">Sofi Devoyan's Dance School </span>
-  </a> -->
-
-<a href="{{ route('admin.dashboard') }}" class="brand-link d-flex align-items-center py-2">
-  <img src="{{ asset('dist/img/backgroud_iamge.jpg') }}"
-       alt="Logo"
-       class="brand-image img-circle elevation-3 mr-2"
-       style="width:36px;height:36px;object-fit:cover;opacity:.9">
-  <div class="d-flex flex-column lh-1">
-    <span class="font-weight-bold" style="font-size:.95rem;">Sofi Devoyan</span>
-    <small class="text-white-50">Dance School</small>
+<a href="{{ route('admin.dashboard') }}" class="brand-link p-0" style="background-color: #1e1e2f;">
+  <div style="
+      background-image: url('{{ asset('dist/img/backgroud_iamge.jpg') }}');
+      background-size: cover;
+      background-position: center;
+      height: 100px;
+      position: relative;
+  ">
+    <div style="
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        padding: 0.4rem 1rem;
+        display: flex;
+        align-items: center; /* 🛠 ВЫРАВНИВАЕТ ПО ВЕРТИКАЛИ */
+        gap: 0.5rem;
+    ">
+      <div class="text-white" style="font-size: 1rem; font-weight: bold;">Sofi Devoyan</div>
+      <div class="text-white-50" style="font-size: -0.2rem; line-height: 1;">Dance School</div>
+    </div>
   </div>
 </a>
-
 
   <!-- Sidebar -->
   <div class="sidebar">
