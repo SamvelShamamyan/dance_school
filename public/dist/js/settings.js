@@ -17,7 +17,7 @@
 //     function resetTimer() {
 //         clearTimeout(timeout);
 //         // timeout = setTimeout(logoutUser, 15 * 60 * 1000);
-//         // timeout = setTimeout(logoutUser, 10 * 1000); // ⏱ 10 секунд
+//         timeout = setTimeout(logoutUser, 10 * 1000); // ⏱ 10 sec
 //     }
 
 //     window.onload = resetTimer;
