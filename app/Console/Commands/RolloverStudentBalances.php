@@ -9,7 +9,6 @@ use App\Models\Student;
 class RolloverStudentBalances extends Command
 {
     protected $signature = 'balances:rollover {--month=}';
-    protected $description = 'Добавляет норму месяца в долг и покрывает её из депозита, обнуляет транзакции на новый месяц';
 
     public function handle()
     {
@@ -55,7 +54,7 @@ class RolloverStudentBalances extends Command
                 });
             });
 
-        $this->info("Готово. Обновлено студентов: {$updated} (ролловер {$y}-{$mm})");
+        $this->info("Success: {$updated} (rollover {$y}-{$mm})");
         return self::SUCCESS;
     }
 }
