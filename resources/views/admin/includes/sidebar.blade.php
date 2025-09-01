@@ -17,7 +17,7 @@
         background: rgba(0, 0, 0, 0.6);
         padding: 0.4rem 1rem;
         display: flex;
-        align-items: center; /* 🛠 ВЫРАВНИВАЕТ ПО ВЕРТИКАЛИ */
+        align-items: center;
         gap: 0.5rem;
     ">
       <div class="text-white" style="font-size: 1rem; font-weight: bold;">Sofi Devoyan</div>
