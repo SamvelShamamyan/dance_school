@@ -1,30 +1,15 @@
 <!-- Main Sidebar Container -->
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
 
-<a href="{{ route('admin.dashboard') }}" class="brand-link p-0" style="background-color: #1e1e2f;">
-  <div style="
-      background-image: url('{{ asset('dist/img/backgroud_iamge.jpg') }}');
-      background-size: cover;
-      background-position: center;
-      height: 100px;
-      position: relative;
-  ">
-    <div style="
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background: rgba(0, 0, 0, 0.6);
-        padding: 0.4rem 1rem;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    ">
-      <div class="text-white" style="font-size: 1rem; font-weight: bold;">Sofi Devoyan</div>
-      <div class="text-white-50" style="font-size: -0.2rem; line-height: 1;">Dance School</div>
+<a href="{{ route('admin.dashboard') }}" class="brand-link p-0 brand-custom">
+  <div class="brand-bg">
+    <div class="brand-overlay d-flex align-items-center">
+      <div class="brand-title">Sofi Devoyan</div>
+      <div class="brand-subtitle">Dance School</div>
     </div>
   </div>
 </a>
+
 
   <!-- Sidebar -->
   <div class="sidebar">

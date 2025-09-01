@@ -1,3 +1,37 @@
+.brand-custom {
+    background-color: #1e1e2f;
+}
+
+.brand-bg {
+    background-image: url('/dist/img/backgroud_iamge.jpg'); 
+    background-size: cover;
+    background-position: center;
+    height: 100px;
+    position: relative;
+}
+
+.brand-overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 0.4rem 1rem;
+    gap: 0.5rem;
+}
+
+.brand-title {
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.brand-subtitle {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.85rem;  
+    line-height: 1;
+}
+
 .btn-icon {
     width: 30px;   
     height: 24px; 
