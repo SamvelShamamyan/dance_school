@@ -69,7 +69,10 @@
   <!-- icheck bootstrap -->
   <link rel="stylesheet" href="../../plugins/icheck-bootstrap/icheck-bootstrap.min.css">
   <!-- Theme style -->
-  <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+  <link rel="stylesheet" href="{{ asset('../../dist/css/adminlte.min.css') }}">
+
+  <link rel="stylesheet" href="{{ asset('dist\css\main.css') }}">
+
 </head>
 <body class="hold-transition login-page">
 <div class="login-box">
@@ -127,7 +130,7 @@
             </div>
           </div>
           <div class="col-4">
-            <button type="submit" class="btn btn-primary btn-block">Մուտք</button>
+            <button type="submit" class="btn-gradient">Մուտք</button>
           </div>
         </div>
       </form>

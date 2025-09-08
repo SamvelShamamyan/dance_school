@@ -65,7 +65,7 @@
     <ul class="navbar-nav ml-auto">
         <form method="POST" action="{{ route('logout') }}">
             @csrf
-            <button class="btn btn-block bg-gradient-primary" type="submit">Ելք</button>
+            <button class="btn-gradient" type="submit">Ելք</button>
         </form>
     </ul>
   </nav>
