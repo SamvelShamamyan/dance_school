@@ -44,7 +44,6 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{id}/delete', [UserController::class, 'delete'])->name('admin.user.delete');
     });
 
-
     Route::group(['prefix'=>'group','middleware' => ['role:super-admin|school-admin']], function(){
         Route::get('/', [GroupController::class, 'index'])->name('admin.group.index');
         Route::post('/getData',  [GroupController::class, 'getGroupData'])->name('admin.group.data');
@@ -78,7 +77,6 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{id}/delete', [StaffController::class, 'delete'])->name('admin.staff.delete');
     });
 
-
     Route::group(['prefix'=>'student','middleware' => ['role:super-admin|school-admin']], function(){
         Route::get('/', [StudentController::class, 'index'])->name('admin.student.index');
         Route::post('/getData', [StudentController::class, 'getSudentData'])->name('admin.student.data');
@@ -89,7 +87,6 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{id}/delete', [StudentController::class, 'delete'])->name('admin.student.delete');
         Route::post('/{student}/groupHistory', action: [StudentHistoryController::class, 'groupHistoryData'])->name('admin.student.groupHistoryData');
     });
-
 
     Route::group(['prefix'=>'payment','middleware' => ['role:super-admin|super-accountant|school-accountant']], function(){
         Route::get('/', [PaymentController::class, 'index'])->name('admin.payment.index');
