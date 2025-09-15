@@ -129,7 +129,7 @@
               <div class="flex-grow-1">
                 <div id="infoBlockContent" class="fw-semibold mb-1" style="color:#3d2c1d;"></div>
                 <small class="d-block" style="color:#7a6a58;">
-                  Հավելավճարը ամեն ամսվա սկզբում ինքնաշխատ կերպով կգանձվի որպես ընփթացիկ ամսվա վճար:
+                  Հավելավճարը ամեն ամսվա սկզբում ինքնաշխատ կերպով կգանձվի որպես ընթացիկ ամսվա վճար:
                 </small>
               </div>
             </div>
