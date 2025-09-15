@@ -57,7 +57,7 @@
           </li>
         @endrole
 
-        @role('school-admin|super-admin')
+        @role('super-admin|school-admin')
           <li class="nav-item">
             <a href="{{route('admin.group.index')}}"
                class="nav-link {{ request()->routeIs('admin.group.index') ? 'active' : '' }}">
@@ -79,9 +79,16 @@
               <p>Աշակերտներ</p>
             </a>
           </li>
+          <li class="nav-item">
+            <a href="{{route('admin.room.index')}}"
+               class="nav-link {{ request()->routeIs('admin.room.index') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-door-open"></i> 
+              <p>Դահլիճներ</p>
+            </a>
+          </li>
         @endrole
 
-        @role('super-admin|super-accountant|school-admin|school-accountant')
+        @role('super-admin|super-accountant')
           <li class="nav-item">
             <a href="{{route('admin.payment.index')}}"
                class="nav-link {{ request()->routeIs('admin.payment.index') ? 'active' : '' }}">
@@ -89,7 +96,9 @@
               <p>Վճարումներ</p>
             </a>
           </li>
+        @endrole 
 
+        @role('super-admin|super-accountant|school-admin|school-accountant')
           <li class="nav-item">
             <a href="{{route('admin.deleted.students.index')}}"
                class="nav-link {{ request()->routeIs('admin.deleted.students.index') ? 'active' : '' }}">
@@ -97,7 +106,6 @@
               <p>Հեռացված աշակերտներ</p>
             </a>
           </li>
-
         @endrole 
 
       </ul>

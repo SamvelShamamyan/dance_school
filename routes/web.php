@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\StudentController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\StudentHistoryController;
 use App\Http\Controllers\Admin\DeletedStudentController;
+use App\Http\Controllers\Admin\RoomController;
 
 Route::get('/', [AuthController::class, 'index']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -112,6 +113,16 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     Route::group(['prefix'=>'deleted_student','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){
         Route::get('/', [DeletedStudentController::class, 'index'])->name('admin.deleted.students.index');
         Route::post('/getData', [DeletedStudentController::class, 'getSudentData'])->name('admin.deleted.students.data');
+    });
+
+    Route::group(['prefix'=>'room','middleware' => ['role:super-admin|school-admin']], function(){
+        Route::get('/', [RoomController::class, 'index'])->name('admin.room.index');
+        Route::post('/getData', [RoomController::class, 'getRoomData'])->name('admin.room.data');
+        Route::get('/create', [RoomController::class, 'create'])->name('admin.room.create');
+        Route::post('/add', [RoomController::class, 'add'])->name('admin.room.add');
+        Route::get('/{id}/edit', [RoomController::class, 'edit'])->name('admin.room.edit');
+        Route::post('/{id}/update', [RoomController::class, 'update'])->name('admin.room.update');
+        Route::post('/{id}/delete', [RoomController::class, 'delete'])->name('admin.room.delete'); 
     });
 
 });

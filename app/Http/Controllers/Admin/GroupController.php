@@ -87,7 +87,7 @@ class GroupController extends Controller
 
     public function edit($id) {
         $group = Group::findOrFail($id);
-         $schools = [];
+        $schools = [];
         if (Auth::user()->hasRole('super-admin')) {
             $schools = SchoolName::get();
         }

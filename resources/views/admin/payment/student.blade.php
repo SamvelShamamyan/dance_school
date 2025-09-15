@@ -10,26 +10,6 @@
 </style>
 @endpush
 
-<!-- <div class="d-flex justify-content-between align-items-center mb-3">
-  <div class="d-flex align-items-center">
-    <a href="{{ url()->previous() }}" class="btn btn-light btn-sm mr-2" title="Հետ վերադարձ">
-      <i class="fas fa-arrow-left"></i>
-    </a>
-    <h3 class="mb-0">
-      Վճարումներ — {{ $student->last_name }} {{ $student->first_name }} {{ $student->father_name }}
-    </h3>
-    @if(optional($student->group)->name)
-      <span class="badge badge-info ml-2">{{ $student->group->name }}</span>
-    @endif
-    <span class="badge badge-secondary ml-1">ID: {{ $student->id }}</span>
-  </div>
-  <div class="btn-group">
-    <button class="btn btn-success" data-toggle="modal" data-target="#addPaymentModal">
-      <i class="fas fa-plus"></i> Ավելացնել վճարում
-    </button>
-  </div>
-</div> -->
-
 @if ($student->trashed())
   <div class="card bg-danger text-white shadow-sm mb-4">
     <div class="card-body">
@@ -44,7 +24,7 @@
     <div class="card-body">
         <div class="row align-items-center">
             <div class="col d-flex align-items-center">
-                <a href="{{ url()->previous() }}" 
+                <a href="{{ route('admin.payment.index') }}" 
                    class="btn btn-outline-secondary btn-sm mr-3 btn-icon" 
                    title="Հետ վերադարձ">
                     <i class="fas fa-arrow-left"></i>
@@ -81,18 +61,6 @@
         <label class="form-label d-block">Վճարման տաբերակ</label>
         <select id="method" class="form-control"></select>
       </div>
-
-      <!-- <div class="col-6 col-md-3 mb-2">
-        <label class="form-label d-block">Կարգավիճակ</label>
-        <select id="status" class="form-control">
-          <option value="">Բոլորը</option>
-          <option value="paid">Վճարված</option>
-          <option value="pending">Սպասման մեջ</option>
-          <option value="refunded">Վերադարձված</option>
-          <option value="failed">Սխալ</option>
-        </select>
-      </div> -->
-
     </div>
   </div>
 </div>
@@ -176,15 +144,6 @@
               </select>
               <small class="error_method text-danger"></small>
             </div>
-            <!-- <div class="form-group col-6">
-              <label>Վճարման կարգավիճակ</label>
-              <select name="status" class="form-control" id="pay_status">
-                <option value="" disabled selected>Ընտրել</option>
-                <option value="paid">Վճարված</option>
-                <option value="pending">Սպասման մեջ</option>
-              </select>
-              <small class="error_status text-danger"></small>
-            </div> -->
           </div>
           <div class="form-group mt-2">
             <label>Մեկնաբանություն</label>

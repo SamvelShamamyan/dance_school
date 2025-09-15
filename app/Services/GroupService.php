@@ -33,8 +33,6 @@ class GroupService
         $query->where('school_id', Auth::user()->school_id);
     }
 
-    
-    // $query = Group::with('school')->whereNotNull('school_id')->where('school_id', Auth::user()->school_id);
 
     $recordsTotal = $query->count();
 
