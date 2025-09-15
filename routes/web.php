@@ -44,7 +44,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     });
 
 
-    Route::group(['prefix'=>'group','middleware' => ['role:school-admin|super-admin']], function(){
+    Route::group(['prefix'=>'group','middleware' => ['role:super-admin|school-admin']], function(){
         Route::get('/', [GroupController::class, 'index'])->name('admin.group.index');
         Route::post('/getData',  [GroupController::class, 'getGroupData'])->name('admin.group.data');
         Route::get('/create', [GroupController::class, 'create'])->name('admin.group.create');
@@ -67,7 +67,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
        
     });
 
-    Route::group(['prefix'=>'staff','middleware' => ['role:school-admin|super-admin']], function(){
+    Route::group(['prefix'=>'staff','middleware' => ['role:super-admin|school-admin']], function(){
         Route::get('/', [StaffController::class, 'index'])->name('admin.staff.index');
         Route::post('/getData', [StaffController::class, 'getStaffData'])->name('admin.staff.data');
         Route::get('/create', [StaffController::class, 'create'])->name('admin.staff.create');
@@ -78,7 +78,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     });
 
 
-    Route::group(['prefix'=>'student','middleware' => ['role:school-admin|super-admin']], function(){
+    Route::group(['prefix'=>'student','middleware' => ['role:super-admin|school-admin']], function(){
         Route::get('/', [StudentController::class, 'index'])->name('admin.student.index');
         Route::post('/getData', [StudentController::class, 'getSudentData'])->name('admin.student.data');
         Route::get('/create', [StudentController::class, 'create'])->name('admin.student.create');
@@ -90,7 +90,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     });
 
 
-    Route::group(['prefix'=>'payment','middleware' => ['role:school-accountant|super-admin|super-accountant']], function(){
+    Route::group(['prefix'=>'payment','middleware' => ['role:super-admin|super-accountant|school-accountant']], function(){
         Route::get('/', [PaymentController::class, 'index'])->name('admin.payment.index');
         Route::post('/getData', [PaymentController::class, 'getPaymentData'])->name('admin.payment.data');
         Route::get('/filters', [PaymentController::class,'filters'])->name('admin.payment.filters');
@@ -109,7 +109,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         
     });
 
-    Route::group(['prefix'=>'deleted_student','middleware' => ['role:school-admin|super-admin']], function(){
+    Route::group(['prefix'=>'deleted_student','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){
         Route::get('/', [DeletedStudentController::class, 'index'])->name('admin.deleted.students.index');
         Route::post('/getData', [DeletedStudentController::class, 'getSudentData'])->name('admin.deleted.students.data');
     });

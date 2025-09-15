@@ -22,7 +22,7 @@ class DeletedStudentService
     // $query = Student::with('school');
     $query = Student::onlyTrashed()->with('school');
 
-    if (Auth::user()->hasRole('super-admin')) {
+    if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-admin') || Auth::user()->hasRole('school-accountant')) {
         $schoolId = $request->input('school_id');
         if ($schoolId !== null && $schoolId !== '') {
             $query->where('school_id', $schoolId);
