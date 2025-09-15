@@ -279,39 +279,52 @@ if (window.__PAYMENT_JS_LOADED__) {
   $('#addPaymentModal').off('hidden.bs.modal.payment').on('hidden.bs.modal.payment', function () {
     const $m = $(this);
     const f = $m.find('#singlePaymentForm')[0];
-
-    const $dp = $m.find('#paymentDatePicker');
-    const dtp = $dp.data('DateTimePicker'); 
-    let savedDate = null;
-
-    if (dtp) {
-      const d = dtp.date();
-      savedDate = d ? d.clone() : null;
-    } else {
-      savedDate = $m.find('#paid_at').val();
-    }
-
     if (f) f.reset();
-
-    if (dtp) {
-      if (savedDate) dtp.date(savedDate);
-    } else {
-      if (savedDate) $m.find('#paid_at').val(savedDate);
-    }
-
     $m.find('.text-danger').empty();
     $m.find('#groups').val('');
-    $m.find('#students_list')
-      .prop('disabled', true)
-      .empty()
-      .append('<option value="" disabled selected>Ընտրել</option>');
+    $m.find('#students_list').prop('disabled', true).empty().append('<option value="" disabled selected>Ընտրել</option>');
     $m.find('#pay_method').val('');
     $m.find('#pay_status').val('');
-
+  
     $('#singlePaymentForm').find('#infoBlock').css('display', 'none');
     $('#singlePaymentForm').find('#infoBlockContent').text('');
+
   });
 
+  if ($('#paymentDatePicker').length){
+    $('#paymentDatePicker').datetimepicker({
+      format: 'DD.MM.YYYY',
+      locale: 'hy',
+      showTodayButton: true,
+      useCurrent: false
+    });
+  }
+
+  $('#addPaymentModal').on('hidden.bs.modal', function(){
+    const f = $('#singlePaymentForm')[0];
+    if (f) f.reset();
+
+    $('.text-danger').text('');
+
+    const $dpWrap = $('#paymentDatePicker');
+    const dp = $dpWrap.data('DateTimePicker');
+    const today = moment();
+
+    if (dp) dp.date(today);
+    $dpWrap.find('input').val(today.format('DD.MM.YYYY'));
+  });
+
+  $('#addPaymentModal').on('shown.bs.modal', function () {
+    const $dpWrap = $('#paymentDatePicker');
+    const dp = $dpWrap.data('DateTimePicker');
+
+    const $input = $dpWrap.find('input');
+    if (!$input.val()) {
+      const today = moment();
+      if (dp) dp.date(today);
+      $input.val(today.format('DD.MM.YYYY'));
+    }
+  });
 
   $('#paymentTbl').off('xhr.dt.payment').on('xhr.dt.payment', function (_e, _settings, json) {
     if (json && Array.isArray(json.summary)) renderSummary(json.summary);
