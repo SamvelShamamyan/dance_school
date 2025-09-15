@@ -193,10 +193,38 @@ $(document).on('click', '.act-del', function () {
     });
 });
 
+if ($('#paymentDatePicker').length){
+  $('#paymentDatePicker').datetimepicker({
+    format: 'DD.MM.YYYY',
+    locale: 'hy',
+    showTodayButton: true,
+    useCurrent: false
+  });
+}
+
 $('#addPaymentModal').on('hidden.bs.modal', function(){
   const f = $('#singlePaymentForm')[0];
   if (f) f.reset();
+
   $('.text-danger').text('');
-  const dp = $('#paymentDatePicker').data('DateTimePicker');
-  if (dp) dp.date(moment());
+
+  const $dpWrap = $('#paymentDatePicker');
+  const dp = $dpWrap.data('DateTimePicker');
+  const today = moment();
+
+  if (dp) dp.date(today);
+  $dpWrap.find('input').val(today.format('DD.MM.YYYY'));
+});
+
+
+$('#addPaymentModal').on('shown.bs.modal', function () {
+  const $dpWrap = $('#paymentDatePicker');
+  const dp = $dpWrap.data('DateTimePicker');
+
+  const $input = $dpWrap.find('input');
+  if (!$input.val()) {
+    const today = moment();
+    if (dp) dp.date(today);
+    $input.val(today.format('DD.MM.YYYY'));
+  }
 });

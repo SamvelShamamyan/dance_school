@@ -91,6 +91,8 @@ if (window.__PAYMENT_JS_LOADED__) {
     });
   });
 
+
+
   function loadFiltersAndMaybeInitTables() {
     const schoolId = currentSchoolId(); 
     $.ajax({
@@ -242,47 +244,84 @@ if (window.__PAYMENT_JS_LOADED__) {
   });
 
   $(document).off('click.payment', '#paymentTbl .view-history').on('click.payment', '#paymentTbl .view-history', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-      const id  = $(this).data('id');
-      const sid = $(this).data('school-id') ?? currentSchoolId();
-      const base = `/admin/payment/student/${encodeURIComponent(id)}`;
-      const url  = sid ? `${base}?school_id=${encodeURIComponent(sid)}` : base;
-      window.location.assign(url);
-    });
+    e.preventDefault();
+    e.stopPropagation();
+    const id  = $(this).data('id');
+    const sid = $(this).data('school-id') ?? currentSchoolId();
+    const base = `/admin/payment/student/${encodeURIComponent(id)}`;
+    const url  = sid ? `${base}?school_id=${encodeURIComponent(sid)}` : base;
+    window.location.assign(url);
+  });
+
+  // $('#addPaymentModal').off('hidden.bs.modal.payment').on('hidden.bs.modal.payment', function () {
+  //   const $m = $(this);
+  //   const f = $m.find('#singlePaymentForm')[0];
+  //   if (f) f.reset();
+  //   $m.find('.text-danger').empty();
+  //   $m.find('#groups').val('');
+  //   $m.find('#students_list').prop('disabled', true).empty().append('<option value="" disabled selected>Ընտրել</option>');
+  //   $m.find('#pay_method').val('');
+  //   $m.find('#pay_status').val('');
+
+  //   const $dp = $m.find('#paymentDatePicker');
+  //   if ($dp.data('DateTimePicker')) {
+  //     $dp.data('DateTimePicker').clear();
+  //     $dp.data('DateTimePicker').date(moment());
+  //   } else {
+  //     $m.find('#paid_at').val('');
+  //   }
+
+  //   $('#singlePaymentForm').find('#infoBlock').css('display', 'none');
+  //   $('#singlePaymentForm').find('#infoBlockContent').text('');
+
+  // });
 
   $('#addPaymentModal').off('hidden.bs.modal.payment').on('hidden.bs.modal.payment', function () {
     const $m = $(this);
     const f = $m.find('#singlePaymentForm')[0];
+
+    const $dp = $m.find('#paymentDatePicker');
+    const dtp = $dp.data('DateTimePicker'); 
+    let savedDate = null;
+
+    if (dtp) {
+      const d = dtp.date();
+      savedDate = d ? d.clone() : null;
+    } else {
+      savedDate = $m.find('#paid_at').val();
+    }
+
     if (f) f.reset();
+
+    if (dtp) {
+      if (savedDate) dtp.date(savedDate);
+    } else {
+      if (savedDate) $m.find('#paid_at').val(savedDate);
+    }
+
     $m.find('.text-danger').empty();
     $m.find('#groups').val('');
-    $m.find('#students_list').prop('disabled', true).empty().append('<option value="" disabled selected>Ընտրել</option>');
+    $m.find('#students_list')
+      .prop('disabled', true)
+      .empty()
+      .append('<option value="" disabled selected>Ընտրել</option>');
     $m.find('#pay_method').val('');
     $m.find('#pay_status').val('');
 
-    const $dp = $m.find('#paymentDatePicker');
-    if ($dp.data('DateTimePicker')) {
-      $dp.data('DateTimePicker').clear();
-      $dp.data('DateTimePicker').date(moment());
-    } else {
-      $m.find('#paid_at').val('');
-    }
-
     $('#singlePaymentForm').find('#infoBlock').css('display', 'none');
     $('#singlePaymentForm').find('#infoBlockContent').text('');
-
   });
+
 
   $('#paymentTbl').off('xhr.dt.payment').on('xhr.dt.payment', function (_e, _settings, json) {
     if (json && Array.isArray(json.summary)) renderSummary(json.summary);
   });
 
   $('#btnRefresh, #year, #group_id, #status').off('change.payment click.payment').on('change.payment click.payment', function(){
-      if ($.fn.DataTable.isDataTable('#paymentTbl')) {
-        $('#paymentTbl').DataTable().ajax.reload();
-      }
-    });
+    if ($.fn.DataTable.isDataTable('#paymentTbl')) {
+      $('#paymentTbl').DataTable().ajax.reload();
+    }
+  });
 
   $(function(){
     if (!$('#year option').length) {
@@ -294,4 +333,5 @@ if (window.__PAYMENT_JS_LOADED__) {
       }
     }
   });
+
 }
