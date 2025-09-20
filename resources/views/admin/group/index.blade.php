@@ -36,23 +36,27 @@
     </div>
 </div>
 
-
 @if(Auth::user()->hasRole('super-admin'))
-  <div class="card mb-3">
-      <div class="card-body">
-          <div class="form-inline">
-              <label for="filterSchoolGroup" class="mr-2 mb-0">Ընտրել ուս․ հաստատություն</label>
-              <select id="filterSchoolGroup" class="form-control">
-                  <option value="" selected >Բոլորը</option>
-                  @foreach($schools as $school)
-                      <option value="{{ $school->id }}" data-name="{{ $school->name }}">{{ $school->name }}</option>
-                  @endforeach
-              </select>
-          </div>
-      </div>
-  </div>
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="row"> 
+                <div class="col-md-3"> 
+                    <div class="form-group">
+                        <label for="filterSchoolGroup" class="mr-2">Ընտրել ուս․ հաստատություն</label>
+                        <select id="filterSchoolGroup" class="form-control">
+                            <option value="" selected>Բոլորը</option>
+                            @foreach($schools as $school)
+                                <option value="{{ $school->id }}" data-name="{{ $school->name }}">
+                                    {{ $school->name }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endif
-
 
 <div class="card shadow-sm">
     <div class="card-body bg-white">

@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Admin\StudentHistoryController;
 use App\Http\Controllers\Admin\DeletedStudentController;
 use App\Http\Controllers\Admin\RoomController;
+use App\Http\Controllers\Admin\ScheduleGroupController;
 
 Route::get('/', [AuthController::class, 'index']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -107,7 +108,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         
     });
 
-    Route::group(['prefix'=>'deleted_student','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){
+    Route::group(['prefix'=>'deletedStudent','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){
         Route::get('/', [DeletedStudentController::class, 'index'])->name('admin.deleted.students.index');
         Route::post('/getData', [DeletedStudentController::class, 'getSudentData'])->name('admin.deleted.students.data');
     });
@@ -121,6 +122,18 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{id}/update', [RoomController::class, 'update'])->name('admin.room.update');
         Route::post('/{id}/delete', [RoomController::class, 'delete'])->name('admin.room.delete'); 
     });
+
+    Route::group(['prefix'=>'scheduleGroup','middleware' => ['role:super-admin|school-admin']], function(){
+        Route::get('/', [ScheduleGroupController::class, 'index'])->name('admin.schedule.group.index');
+
+        Route::get('list', [ScheduleGroupController::class, 'getEvents']);            // ?week_start=YYYY-MM-DD
+        Route::post('add', [ScheduleGroupController::class, 'add']);
+        Route::put('edit/{id}', [ScheduleGroupController::class, 'edit']);
+        Route::delete('delete/{id}', [ScheduleGroupController::class, 'delete']);
+        Route::get('/getGroupsRoomsBySchool/{schoolId?}', [ScheduleGroupController::class, 'getGroupsBySchool']);
+
+    });
+
 
 });
 

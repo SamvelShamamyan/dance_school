@@ -771,7 +771,7 @@ $(function() {
 
         ajax: {
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            url: "/admin/deleted_student/getData",
+            url: "/admin/deletedStudent/getData",
             type: 'post',
             data: function(d) {
                 if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterStudentSchool').val() || '';}

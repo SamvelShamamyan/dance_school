@@ -9,11 +9,8 @@
     </div>
   </div>
 </a>
-
-
   <!-- Sidebar -->
   <div class="sidebar">
-
     @php
         $user = Auth::user();
         $first = trim((string)($user->first_name ?? ''));
@@ -104,6 +101,15 @@
                class="nav-link {{ request()->routeIs('admin.deleted.students.index') ? 'active' : '' }}">
               <i class="nav-icon fas fa-archive"></i> 
               <p>Հեռացված աշակերտներ</p>
+            </a>
+          </li>
+        @endrole 
+        @role('super-admin|super-accountant|school-admin|school-accountant')
+          <li class="nav-item">
+            <a href="{{route('admin.schedule.group.index')}}"
+               class="nav-link {{ request()->routeIs('admin.schedule.group.index') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-calendar"></i> 
+              <p>Դասացուցակ</p>
             </a>
           </li>
         @endrole 

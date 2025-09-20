@@ -207,10 +207,6 @@ class PaymentController extends Controller
 
 
     public function studentFilters(Request $request, Student $student){
-         //^-^// -> to change
-        // if ($student->school_id !== Auth::user()->school_id) {
-        //     abort(403);
-        // }
 
         if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
         $schoolId = (int) $request->query('school_id');

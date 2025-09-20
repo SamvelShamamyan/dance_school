@@ -1,0 +1,92 @@
+:root{
+  --time-col:80px;
+  --slot-px:30px;
+  --navbar-h: 0px;  /* навбара нет */
+  --head-h: 40px;
+}
+@media (max-width: 576px){
+  :root{ --time-col:64px; --slot-px:24px; }
+}
+* { box-sizing: border-box; }
+body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Arial; }
+
+.calendar-wrap { height: calc(100dvh - var(--navbar-h)); overflow: auto; }
+.calendar { display:grid; grid-template-rows:auto 1fr; min-width:0; position: relative; z-index: 0; }
+
+.day-head {
+  display:grid;
+  grid-template-columns: var(--time-col) repeat(7,1fr);
+  border-bottom:1px solid #dee2e6;
+  position:sticky; top:0; background:#fff; z-index:3; min-width:0;
+  overflow: visible; /* важно для видимости .grip */
+}
+.day-head > div { padding:.5rem; font-weight:600; border-left:1px solid #dee2e6; position:relative; }
+.day-head > div:first-child { border-left:none; }
+
+.grid { display:grid; grid-template-columns: var(--time-col) repeat(7,1fr); overflow:visible; position:relative; min-width:0; }
+.times { border-right:1px solid #dee2e6; }
+.time-cell { height: var(--slot-px); padding:2px 6px; color:#6c757d; font-size:.75rem; }
+
+.day { border-left:1px solid #dee2e6; background:repeating-linear-gradient(to bottom,#fff,#fff calc(var(--slot-px) - 1px),#f8f9fa var(--slot-px)); position:relative; overflow:hidden; min-width:0; }
+.day-body { position:relative; height:100%; }
+.day-body:hover { background: repeating-linear-gradient(to bottom, #fff, #fff calc(var(--slot-px) - 1px), #eef2f7 var(--slot-px)); }
+
+.event { position:absolute; border-radius:.5rem; padding:.35rem .5rem; color:#fff; font-size:.82rem; overflow:hidden; box-shadow:0 4px 12px rgba(0,0,0,.08); cursor:pointer; white-space:nowrap; text-overflow:ellipsis; }
+.event.blue{background:#0d6efd;} .event.green{background:#198754;} .event.purple{background:#6f42c1;} .event.orange{background:#fd7e14;}
+
+.now-line { position:absolute; left:var(--time-col); right:0; height:0; border-top:2px solid #dc3545; z-index:2; display:none; }
+
+/* ручки ресайза колонок */
+.grip {
+  position:absolute; top:6px; bottom:6px; right:-6px;
+  width:12px; cursor:col-resize; z-index:5; background:transparent;
+}
+.grip::before{ content:''; position:absolute; top:20%; bottom:20%; left:2px; right:2px; border-radius:6px; background: rgba(0,0,0,.06); opacity:.0; transition:.15s; }
+.grip::after{ content:''; position:absolute; top:0; bottom:0; left:50%; width:2px; transform:translateX(-1px); background:#adb5bd; border-radius:1px; }
+.grip:hover::before{ opacity:1; } .grip:hover::after{ background:#6c757d; }
+
+@media (max-width: 420px){ .event{ font-size:.75rem; } }
+
+/* Mobile one-day mode */
+.calendar.mobile { --mobile-gap: 0px; }
+.calendar.mobile .grid, .calendar.mobile .day-head { grid-template-columns: var(--time-col) 1fr !important; }
+.calendar.mobile .grid .day { display:none; }
+.calendar.mobile .grid .day.show { display:block; }
+.calendar.mobile .day-head > div { display:none; }
+.calendar.mobile .day-head > div:first-child { display:block; }
+.calendar.mobile.show-col-1 .day-head > div:nth-child(2),
+.calendar.mobile.show-col-2 .day-head > div:nth-child(3),
+.calendar.mobile.show-col-3 .day-head > div:nth-child(4),
+.calendar.mobile.show-col-4 .day-head > div:nth-child(5),
+.calendar.mobile.show-col-5 .day-head > div:nth-child(6),
+.calendar.mobile.show-col-6 .day-head > div:nth-child(7),
+.calendar.mobile.show-col-7 .day-head > div:nth-child(8) { display:block; }
+
+/* Табы дней — по умолчанию скрыты, показываем через JS (не через соседский селектор) */
+.day-tabs {
+  position: sticky;
+  top: var(--head-h);
+  z-index:3;
+  background:#fff;
+  border-bottom:1px solid #dee2e6;
+  padding:.35rem .5rem;
+  gap:.25rem;
+  overflow:auto;
+  white-space:nowrap;
+  display:none; /* управляется из JS */
+}
+.day-tabs .btn { padding:.25rem .5rem; border-radius:999px; }
+.day-tabs .btn.active { color:#fff; background:#0d6efd; border-color:#0d6efd; }
+
+@media (max-width: 576px){
+  .event { font-size:.78rem; padding:.3rem .45rem; border-radius:.4rem; }
+  .time-cell { font-size:.7rem; padding:2px 6px; }
+  .container-fluid { padding-left:8px; padding-right:8px; }
+  .card { border-radius:12px; }
+}
+
+/* уровни z-index */
+.event { z-index: 1; } .event:hover { z-index: 10; } .event.is-dragging { z-index: 20; }
+.now-line { z-index: 2; }
+.day-head { z-index: 3; }
+.grip { z-index: 5; }

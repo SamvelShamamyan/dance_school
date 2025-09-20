@@ -19,7 +19,6 @@ class DeletedStudentService
 
     $schoolId = Auth::user()->school_id;
 
-    // $query = Student::with('school');
     $query = Student::onlyTrashed()->with('school');
 
     if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-admin') || Auth::user()->hasRole('school-accountant')) {
@@ -32,9 +31,6 @@ class DeletedStudentService
     } else {
         $query->where('school_id', $schoolId);
     }
-    
-    // $query = Student::with('school')->whereNotNull('school_id')->where('school_id', Auth::user()->school_id);
-
 
     $recordsTotal = $query->count();
 

@@ -35,7 +35,8 @@
 <link rel="stylesheet" href="{{ asset('plugins/select2/css/select2.min.css') }}">
 <link rel="stylesheet" href="{{ asset('plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css') }}">
 <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css">
-<link rel="stylesheet" href="{{ asset('dist\css\main.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/main.css') }}">
+<link rel="stylesheet" href="{{ asset('dist/css/scheduler.group.css') }}?v=2">
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/css/bootstrap-datepicker.min.css">
 
@@ -152,11 +153,12 @@
 
 <!-- CURRENT START_1 -->
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
-<script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 <!-- CURRENT END_1 -->
+
+
 
 <!-- JQVMap -->
 <script src="{{ asset('plugins/jqvmap/jquery.vmap.min.js') }}"></script>
@@ -177,8 +179,6 @@
 <script src="{{ asset('dist/js/adminlte.js') }}"></script>
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('dist/js/demo.js') }}"></script> 
-<!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-<script src="{{ asset('dist/js/pages/dashboard.js') }}"></script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js"></script>
 
@@ -198,7 +198,7 @@ if (window.Dropzone) { Dropzone.autoDiscover = false; }
 <!-- <script src="{{ asset('dist/js/payment.js') }}"></script> -->
 <!-- <script src="{{ asset('dist/js/payment.student.js') }}"></script> -->
 
-<script src="{{ asset('dist/js/settings.js') }}"></script>
+<script src="{{ asset( 'dist/js/settings.js') }}"></script>
 
 
 <!-- CURRENT END_2 -->

@@ -25,7 +25,7 @@ class DeletedStudentController extends Controller
             $schools = SchoolName::get();
         }
         $is_create = true;
-        return view('admin.deleted_student.index', compact('schools'));
+        return view('admin.deletedStudent.index', compact('schools'));
     }
 
     public function getSudentData(Request $request){
