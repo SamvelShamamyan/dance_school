@@ -64,10 +64,13 @@
     <div class="card-body">
         <div class="form-row">
             <!-- Group Select -->
-            <div class="form-group col-md-6">
+            <div class="form-group col-md-3">
                 <label for="group_id">Խումբ</label>
-                <select id="group_id" class="form-control" disabled>
+                <select id="group_id" class="form-control">
                     <option value="" selected>Բոլորը</option>
+                    @foreach($groups as $group)
+                        <option value="{{ $group->id }}" data-name="{{ $group->name }}">{{ $group->name }}</option>
+                    @endforeach
                 </select>
             </div>
         </div>
@@ -155,29 +158,61 @@
           <input id="evTitle" class="form-control" placeholder="" />
         </div>
 
-        <div class="form-group">
-          <label for="school_id" class="mr-2 mb-0">Ընտրել ուս․ հաստատություն</label>
-          <select id="school_id" class="form-control">
-              <option value="" selected >Բոլորը</option>
-              @foreach($schools as $school)
-                  <option value="{{ $school->id }}" data-name="{{ $school->name }}">{{ $school->name }}</option>
-              @endforeach
-          </select>
-        </div>
+         @if(Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant'))
+          <div class="form-group">
+            <label for="school_id" class="mr-2 mb-0">Ընտրել ուս․ հաստատություն</label>
+            <select id="school_id" class="form-control">
+                <option value="" selected >Բոլորը</option>
+                @foreach($schools as $school)
+                    <option value="{{ $school->id }}" data-name="{{ $school->name }}">{{ $school->name }}</option>
+                @endforeach
+            </select>
+            <small class="error_school_id text-danger"></small>
+          </div>
 
-        <div class="form-group">
-          <label for="group_id" class="mr-2 mb-0">Խումբ</label>
-          <select id="group_id" class="form-control" disabled>
-              <option value="" selected >Ընտրել</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label for="group_id" class="mr-2 mb-0">Խումբ</label>
+            <select id="group_id" class="form-control" disabled>
+                <option value="" selected >Ընտրել</option>
+            </select>
+            <small class="error_group_id text-danger"></small>
+          </div>
 
-        <div class="form-group">
-          <label for="room_id" class="mr-2 mb-0">Դահլիճ</label>
-          <select id="room_id" class="form-control" disabled>
-              <option value="" selected >Ընտրել</option>
-          </select>
-        </div>
+          <div class="form-group">
+            <label for="room_id" class="mr-2 mb-0">Դահլիճ</label>
+            <select id="room_id" class="form-control" disabled>
+                <option value="" selected >Ընտրել</option>
+            </select>
+            <small class="error_room_id text-danger"></small>
+          </div>
+
+          @endif
+
+          @if(Auth::user()->hasRole('school-admin'))
+            <div class="form-group">
+              <label for="group_id_s" class="mr-2 mb-0">Խումբ</label>
+              <select id="group_id_s" class="form-control" >
+                  <option value="" selected >Ընտրել</option>
+                  @foreach($groups as $group)
+                    <option value="{{ $group->id }}" data-name="{{ $group->name }}">{{ $group->name }}</option>
+                  @endforeach
+              </select>
+              <small class="error_group_id text-danger"></small>
+            </div>
+
+            <div class="form-group">
+              <label for="room_id_s" class="mr-2 mb-0">Դահլիճ</label>
+              <select id="room_id_s" class="form-control" >
+                  <option value="" selected >Ընտրել</option>
+                    @foreach($rooms as $room)
+                    <option value="{{ $room->id }}" data-name="{{ $room->name }}">{{ $room->name }}</option>
+                  @endforeach
+              </select>
+              <small class="error_room_id text-danger"></small>
+            </div>
+          @endif
+
+
 
         <div class="mb-2">
           <label class="form-label d-block">Մեկնաբանություն</label>
@@ -205,4 +240,8 @@
 
 @endsection
 
+<script>
+    window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
+    window.currentUserRoleSchoolId = @json(Auth::user()->school_id ?? null);
+</script>
 <script src="{{ asset( 'dist/js/scheduler.group.js') }}" defer></script>

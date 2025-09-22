@@ -35,4 +35,8 @@ class ScheduleGroup extends Model
     public function group(){
         return $this->belongsTo(Group::class, 'group_id');
     }
+
+    public function room(){
+        return $this->belongsTo(Room::class, 'room_id');
+    }
 }

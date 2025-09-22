@@ -59,6 +59,25 @@
     return bm - am;
   };
 
+  /**
+   * Собирает query string из DOM-фильтра #schedulerGroupFilter
+   * ?school_id=...&group_id=...
+   */
+  function buildFilterQuery() {
+    const $wrap = $('#schedulerGroupFilter');
+    if ($wrap.length === 0) return '';              // нет фильтров в DOM
+
+    const schoolId = $wrap.find('#school_id').val() || '';
+    const groupId  = $wrap.find('#group_id').val()  || '';
+
+    const qp = new URLSearchParams();
+    if (schoolId) qp.append('school_id', schoolId);
+    if (groupId)  qp.append('group_id',  groupId);
+
+    const s = qp.toString();
+    return s ? `?${s}` : '';
+  }
+
   async function apiFetch(url, opts={}){
     const headers = { 'Accept': 'application/json' };
     if(opts.method && opts.method !== 'GET'){
@@ -75,7 +94,11 @@
     return await res.json();
   }
 
-  async function apiGetEvents(weekStartISO) { return apiFetch(`${API.list}?week_start=${encodeURIComponent(weekStartISO)}`); }
+  // ==== ВАЖНО: GET с фильтрами ====
+  async function apiGetEvents() {
+    const qs = buildFilterQuery();
+    return apiFetch(`${API.list}${qs}`);
+  }
   async function apiCreateEvent(payload) { return apiFetch(API.create, { method:'POST', body: JSON.stringify(payload) }); }
   async function apiUpdateEvent(id, payload) { return apiFetch(API.update(id), { method:'PUT', body: JSON.stringify(payload) }); }
   async function apiDeleteEvent(id) { return apiFetch(API.delete(id), { method:'DELETE' }); }
@@ -92,20 +115,50 @@
   const head = qs('#dayHead');
   const grid = qs('#grid');
   const dayTabs  = qs('#dayTabs');
-  const nowLine = qs('#nowLine');
+  const nowLine = qs('#nowLine') || null; // FIX: guard
   const addBtn = qs('#addBtn');
+  const wrap = qs('#calWrap');
 
   /* ===========================
-     Sticky vars (без navbar)
+     Layout helpers (sticky, footer)
   ============================*/
   function measureOffsets(){
     const headEl = document.getElementById('dayHead');
-    const headH   = headEl ? headEl.getBoundingClientRect().height : 40;
+    const footer = document.querySelector('.main-footer');
+
+    const headH   = headEl ? Math.round(headEl.getBoundingClientRect().height) : 40;
+    const footerH = footer ? Math.round(footer.getBoundingClientRect().height) : 0;
+
     document.documentElement.style.setProperty('--navbar-h', `0px`);
-    document.documentElement.style.setProperty('--head-h',   `${Math.round(headH)}px`);
+    document.documentElement.style.setProperty('--head-h',   `${headH}px`);
+    document.documentElement.style.setProperty('--footer-h', `${footerH}px`);
+
+    fitCalendarToViewport();
   }
-  measureOffsets();
-  window.addEventListener('resize', measureOffsets);
+
+  function fitCalendarToViewport(){
+    if (!wrap) return;
+    const footer = document.querySelector('.main-footer');
+    const footerH = footer ? Math.round(footer.getBoundingClientRect().height) : 0;
+    const top = wrap.getBoundingClientRect().top;
+    const available = Math.max(160, Math.floor(window.innerHeight - footerH - top));
+    wrap.style.maxHeight = available + 'px';
+  }
+
+  window.addEventListener('resize', () => {
+    measureOffsets();
+    if (!calendar.classList.contains('mobile')) {
+      applyColWidths();
+    }
+    applyMobileMode();
+  });
+
+  document.addEventListener('shown.lte.pushmenu', () => {
+    setTimeout(() => { measureOffsets(); applyColWidths(); }, 300);
+  });
+  document.addEventListener('collapsed.lte.pushmenu', () => {
+    setTimeout(() => { measureOffsets(); applyColWidths(); }, 300);
+  });
 
   /* ===========================
      Build time labels
@@ -131,9 +184,9 @@
     for(let i=1;i<=7;i++){
       const dISO = addDays(weekStartISO, i-1);
       const d = new Date(dISO+"T00:00:00Z");
-      const map = {1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri',6:'Sat',7:'Sun'};
+      const map = {1:'Երկուշաբթի',2:'Երեքշաբթի',3:'Չորեքշաբթի',4:'Հինգշաբթի',5:'ՈՒրբաթ',6:'Շաբաթ',7:'Կիրակի'};
       const el = qs(`[data-head-day="${i}"]`);
-      if(el) el.textContent = `${map[i]} ${d.getUTCDate()}.${String(d.getUTCMonth()+1).padStart(2,'0')}`;
+      if(el) el.textContent = `${map[i]}`;
     }
   }
 
@@ -202,8 +255,8 @@
         div.style.left   = leftPx + 'px';
         div.style.width  = widthPx + 'px';
 
-        const titleText = (ev.title && ev.title.trim()) ? ev.title.trim() : `${ev.start}–${ev.end}`;
-        const subLine   = ev.title ? `${ev.start}–${ev.end}${ev.note?(' · '+ev.note):''}` : (ev.note || '');
+        const titleText = `${ev.school_name ? ev.school_name + ' · ' : ''}${ev.title || ''}${ev.group_name ? ' (' + ev.group_name + ')' : ''}`;
+        const subLine   = `${ev.start}–${ev.end}${ev.note ? ' · ' + ev.note : ''}`;
 
         div.innerHTML = `<strong>${titleText}</strong><div class="small">${subLine}</div>`;
         div.addEventListener('click', (e)=>{ e.stopPropagation(); openEditor(ev); });
@@ -217,6 +270,7 @@
      Now line
   ============================*/
   function updateNowLine(){
+    if (!nowLine) return; // FIX: guard if element missing
     const today = new Date();
     const todayISO = formatISO(startOfISOWeek(today));
     const isCurrentWeek = (todayISO === weekStartISO);
@@ -234,19 +288,69 @@
   setInterval(updateNowLine, 60000);
 
   /* ===========================
-     Modal editor
+     Modal editor (FIXED)
   ============================*/
+  function resetModalHard($modal){
+    // abort pending xhr (if any)
+    const xhr = $modal.data('xhr');
+    if (xhr && xhr.readyState !== 4) { try { xhr.abort(); } catch(_){} }
+    $modal.removeData('xhr').removeData('prefGroup').removeData('prefRoom');
+
+    // reset form fields
+    const form = $modal.find('form')[0];
+    if (form) form.reset();
+
+    // reset selects
+    const $schoolSel = $modal.find('#school_id');
+    const $groupSel  = $modal.find('#group_id');
+    const $roomSel   = $modal.find('#room_id');
+
+    $schoolSel.val('');
+    $groupSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+    $roomSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+  }
+
   function openEditor(ev){
+    const $modal     = $('#eventModal');
+    const $schoolSel = $modal.find('#school_id');
+    const $groupSel  = $modal.find('#group_id');
+    const $roomSel   = $modal.find('#room_id');
+
+    // cancel previous inflight xhr (so it won't overwrite this session)
+    const prevXhr = $modal.data('xhr');
+    if (prevXhr && prevXhr.readyState !== 4) { try { prevXhr.abort(); } catch(_){} }
+    $modal.removeData('xhr');
+
+    // fill base fields
     qs('#evId').value   = ev.id || '';
     qs('#evDay').value  = ev.day;
     qs('#evStart').value= normTime(ev.start) || '';
     qs('#evEnd').value  = normTime(ev.end) || '';
     qs('#evTitle').value= ev.title||'';
-    qs('#evNote').value = ev.note||'';
+    qs('#evNote').value = ev.note ||'';
     qs('#evColor').value= ev.color||'blue';
-    qs('#deleteBtn').style.display = ev.id? 'inline-block':'none';
-    qs('#modalTitle').textContent = ev.id? 'Редактировать событие' : 'Новое событие';
-    $('#eventModal').modal('show');
+
+    if (ev.school_id) {
+      // preset preferred selections (will be applied after AJAX)
+      $modal.data('prefGroup', ev.group_id || '');
+      $modal.data('prefRoom',  ev.room_id  || '');
+
+      $schoolSel.val(String(ev.school_id));
+      $schoolSel.trigger('change'); // will fetch groups/rooms
+    } else {
+      // ADD mode: clean & disable dependent selects
+      $schoolSel.val('');
+      $groupSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+      $roomSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+      $modal.removeData('prefGroup').removeData('prefRoom');
+    }
+
+    // delete button only for edit
+    const delBtn = qs('#deleteBtn');
+    if (delBtn) delBtn.style.display = ev.id ? 'inline-block' : 'none';
+    qs('#modalTitle').textContent = ev.id ? 'Խմբագրել դասաժամը' : 'Ավելցնել դասաժամ';
+
+    $modal.modal('show');
   }
 
   // dblclick create
@@ -269,7 +373,7 @@
     openEditor({ id:null, day:Number(dayBody.dataset.day), start, end, title:'', note:'', color:'blue' });
   }, true);
 
-  // add button (если есть)
+  // add button
   if (addBtn) addBtn.addEventListener('click', ()=>{
     const day = isMobile() ? mobileDay : getTodayWeekday();
     openEditor({ id:null, day, start:'12:00', end:'13:00', title:'', note:'', color:'blue' });
@@ -286,10 +390,21 @@
       const note = qs('#evNote').value.trim();
       const color= qs('#evColor').value;
 
-      if(!start || !end){ alert('Заполните время начала и конца'); return; }
-      if((toMinutesSafe(end) ?? 0) <= (toMinutesSafe(start) ?? 0)){ alert('Время окончания должно быть позже начала'); return; }
+      const schoolId = qs('#eventModal #school_id').value ? Number(qs('#eventModal #school_id').value) : null;
+      const groupId  = qs('#eventModal #group_id').value ? Number(qs('#eventModal #group_id').value) : null;
+      const roomId   = qs('#eventModal #room_id').value ? Number(qs('#eventModal #room_id').value) : null;
 
-      const payload = { day, start, end, title, note, color, week_start: weekStartISO };
+      if(!start || !end){ showInfo("error", "Լրացրեք սկիզբը և ավարտի ժամը!", ""); return; }
+      if((toMinutesSafe(end) ?? 0) <= (toMinutesSafe(start) ?? 0)){ showInfo("error", "Ավարտի ժամը պետք է լինի ավելի ուշ, քան սկիզբը!", ""); return; }
+
+      const payload = { 
+        day, start, end, title, note, color,
+        week_start: weekStartISO, 
+        school_id: schoolId,
+        group_id:  groupId,
+        room_id:   roomId,
+      };
+
       if(id){ await apiUpdateEvent(id, payload); }
       else{
         const created = await apiCreateEvent(payload);
@@ -302,7 +417,7 @@
 
   qs('#deleteBtn').addEventListener('click', async ()=>{
     const id = qs('#evId').value; if(!id) return;
-    if(confirm('Удалить событие?')){
+    if(confirm('Ցանկանում եք հեռացնել դասաժմը?')){
       try{ await apiDeleteEvent(id); await reloadEvents(); $('#eventModal').modal('hide'); }
       catch(err){ console.error(err); alert('Ошибка удаления'); }
     }
@@ -383,22 +498,25 @@
   ============================*/
   function setMobileDay(day){
     mobileDay = day;
-    qsa('[data-day]', dayTabs).forEach(btn=> btn.classList.toggle('active', Number(btn.dataset.day)===day));
+    if (dayTabs) {
+      qsa('[data-day]', dayTabs).forEach(btn=> btn.classList.toggle('active', Number(btn.dataset.day)===day));
+    }
     qsa('.grid .day').forEach(w=>w.classList.remove('show'));
     const showBody = qs(`.day-body[data-day="${day}"]`);
     if (showBody) showBody.parentElement.classList.add('show');
+
     for (let i=1;i<=7;i++) calendar.classList.remove(`show-col-${i}`);
     calendar.classList.add(`show-col-${day}`);
     renderEvents();
   }
 
   function applyMobileMode(){
-    const wrap = document.getElementById('calWrap');
-    if (isMobile()) {
+    const mobile = isMobile();
+    if (mobile) {
       calendar.classList.add('mobile');
       setMobileDay(mobileDay || 1);
       measureOffsets();
-      wrap.style.height = `calc(100dvh - var(--navbar-h))`;
+      if (dayTabs) dayTabs.style.display = 'flex';
     } else {
       calendar.classList.remove('mobile');
       qsa('.grid .day').forEach(w=>w.classList.remove('show'));
@@ -406,10 +524,10 @@
       buildGrips();
       applyColWidths();
       measureOffsets();
-      wrap.style.height = `calc(100dvh - var(--navbar-h))`;
+      if (dayTabs) dayTabs.style.display = 'none';
     }
   }
-  window.addEventListener('resize', applyMobileMode);
+
   dayTabs?.addEventListener('click', (e)=>{
     const btn = e.target.closest('[data-day]');
     if (!btn) return;
@@ -431,7 +549,7 @@
   async function reloadEvents(){
     try{
       applyWeekHeader();
-      const list = await apiGetEvents(weekStartISO);
+      const list = await apiGetEvents(); // <— ТУТ: GET с фильтрами
 
       events = (Array.isArray(list) ? list : []).map(x => ({
         id: x.id,
@@ -441,6 +559,14 @@
         title: x.title || '',
         note:  x.note  || '',
         color: x.color || 'blue',
+        school_id: x.school_id ?? null,
+        group_id:  x.group_id  ?? null,
+        room_id:   x.room_id   ?? null,
+
+        school_name: x.school ? x.school.name : '',
+        group_name:  x.group  ? x.group.name  : '',
+        room_name:   x.room   ? x.room.name   : '',
+
       })).filter(e => e.day>=1 && e.day<=7 && e.start && e.end);
 
       applyMobileMode(); // внутри вызовет renderEvents
@@ -452,15 +578,135 @@
     }
   }
 
-  // при готовности DOM
-  window.addEventListener('DOMContentLoaded', () => {
-    if (!calendar.classList.contains('mobile')) {
-      buildGrips();
-      applyColWidths();
-    }
+  /* ===========================
+     INIT
+  ============================*/
+  document.addEventListener('DOMContentLoaded', () => {
+    measureOffsets();
+    buildGrips();
+    applyColWidths();
+    reloadEvents();
+
+    // FIX: полный сброс модалки при закрытии
+    const $modal = $('#eventModal');
+    $modal.on('hidden.bs.modal', function(){
+      resetModalHard($modal);
+    });
+
+    // реагируем на изменение фильтров (из jQuery-зоны)
+    document.addEventListener('filters:changed', () => {
+      reloadEvents();
+    });
+
+    window.addEventListener('load', measureOffsets);
   });
 
-  // Initial load
-  reloadEvents();
-
 })();
+
+/* ===========================
+   jQuery зона: зависимые селекты и фильтры
+============================ */
+$(document).ready(function(){
+  // —— Зависимые селекты в модалке (без изменений по задаче) ——
+  $('#eventModal #school_id').on('change', function(){
+    const $modal = $('#eventModal');
+    const schoolId = $(this).val();
+
+    let $groupSelect = $modal.find('#group_id');
+    let $roomSelect  = $modal.find('#room_id');
+
+    // Сразу подготовим UI: очистка и блокировка до ответа
+    $groupSelect.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+    $roomSelect.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+
+    // Отменить предыдущий запрос (если не завершён)
+    const prevXhr = $modal.data('xhr');
+    if (prevXhr && prevXhr.readyState !== 4) { try { prevXhr.abort(); } catch(_){} }
+
+    if (!schoolId) {
+      $modal.removeData('prefGroup').removeData('prefRoom').removeData('xhr');
+      return;
+    }
+
+    const xhr = $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url:  `/admin/scheduleGroup/getGroupsRoomsBySchool/${schoolId}`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(response) {
+        const wantGroupId = String($modal.data('prefGroup') || '');
+        const wantRoomId  = String($modal.data('prefRoom')  || '');
+
+        $groupSelect.empty().append('<option value="">Ընտրել</option>');
+        $roomSelect.empty().append('<option value="">Ընտրել</option>');
+
+        $.each(response.groups, function (_, group) {
+          $groupSelect.append($('<option>', { value: group.id, text: group.name }));
+        });
+        $.each(response.rooms, function (_, room) {
+          $roomSelect.append($('<option>', { value: room.id, text: room.name }));
+        });
+
+        if (wantGroupId) $groupSelect.val(wantGroupId);
+        if (wantRoomId)  $roomSelect.val(wantRoomId);
+
+        $groupSelect.prop('disabled', false);
+        $roomSelect.prop('disabled', false);
+
+        $modal.removeData('prefGroup').removeData('prefRoom');
+      },
+      error: function() { 
+        swal("error", "Ինչ-որ բան այն չէ, կրկին փորձեք!", "error");
+      },
+      complete: function(){
+        const cur = $modal.data('xhr');
+        if (cur === xhr) $modal.removeData('xhr');
+      }
+    });
+
+    $modal.data('xhr', xhr);
+  });
+
+  // —— Фильтры в хедере расписания ——
+  $('#schedulerGroupFilter #school_id').on('change', function(){
+    const schoolId = $(this).val();
+    let $select = $('#group_id');
+    
+    if (!schoolId) {
+      $select.prop('disabled', true).empty().append('<option value="">Բոլորը</option>');
+      // сразу перезагрузим события БЕЗ фильтров
+      document.dispatchEvent(new Event('filters:changed'));
+      return; 
+    }   
+
+    $.ajax({
+      headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+      url:  `/admin/scheduleGroup/getGroupsRoomsBySchool/${schoolId}`,
+      type: 'GET',
+      dataType: 'json',
+      success: function(response) {
+        $select.prop('disabled',false);
+        $select.empty().append('<option value="">Բոլորը</option>');
+        $.each(response.groups, function (index, group) {
+            $select.append(
+                $('<option>', {
+                    value: group.id,
+                    text: group.name
+                })
+            );
+        });
+        // после обновления списка групп — перерисовать события под выбранную школу (группа пока "Все")
+        document.dispatchEvent(new Event('filters:changed'));
+      },
+      error: function() { 
+        swal("error", "Ինչ-որ բան այն չէ, կրկին փորձեք!", "error");
+      },
+    });
+  });
+
+  $('#schedulerGroupFilter #group_id').on('change', function(){
+    // любое изменение group_id → обновить события
+    document.dispatchEvent(new Event('filters:changed'));
+  });
+
+});

@@ -28,7 +28,7 @@ function saveSchool() {
                     $(`.error_${field}`).text(messages[0])
                 });
             } else {
-                    swal("error", "Something went wrong!", true, true)
+                swal("error", "Something went wrong!", true, true)
             }
         }
     });
@@ -69,14 +69,14 @@ $(document).on('click', '.btn-delete-school', function () {
                     if (response && response.status === -2) {
                         swal("error", response.message);
                     } else if (response && response.status === 1) {
-                       swal("success", "Գործողությունը կատարված է", true, true);
+                       swal("success", response.message, true, true);
                         $(el).closest('tr').remove();
                     } else {
-                        Swal.fire("srror", "Չհաջողվեց ջնջել։", "error");
+                        Swal.fire("error", "Չհաջողվեց ջնջել։", "error");
                     }
                 },
                  error: function (xhr) {
-                    Swal.fire("Սխալ", "Խնդրում ենք կրկին փորձել։", "error");
+                    Swal.fire(xhr.responseJSON.message, " ", "error");
                     console.error(xhr.responseJSON);
                 }
             });

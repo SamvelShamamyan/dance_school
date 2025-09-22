@@ -1,15 +1,18 @@
 (() => {
-  'use strict';
+  'use strict'
 
-  /* ===========================
-     CONFIG
-  ============================*/
+/* =========================================================
+   A) CONFIG & CONSTANTS
+========================================================= */
   const START_TIME = "11:30", END_TIME = "23:30", SLOT_MIN = 30;
-  const SLOT_PX = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--slot-px')) || 30;
-  const GUTTER_PX = 4;
-  const TIME_COL_PX = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--time-col')) || 80;
-  const MIN_DAY_PX  = 120;
-  const isMobile = ()=> window.innerWidth <= 1500; // твой порог
+  const SLOT_PX    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--slot-px')) || 30;
+  const GUTTER_PX  = 4;
+  const TIME_COL_PX= parseInt(getComputedStyle(document.documentElement).getPropertyValue('--time-col')) || 80;
+  const MIN_DAY_PX = 120;
+  const isMobile   = () => window.innerWidth <= 1500;
+
+  const ROLE = (window.currentUserRole || '').toString();
+  const ROLE_SCHOOL_ID = window.currentUserRoleSchoolId ?? null;
 
   const API = {
     list:   '/admin/scheduleGroup/list',              // GET
@@ -18,9 +21,9 @@
     delete: id => `/admin/scheduleGroup/delete/${id}` // DELETE
   };
 
-  /* ===========================
-     HELPERS
-  ============================*/
+/* =========================================================
+   B) HELPERS (DOM, DATE/TIME, CSRF, FETCH)
+========================================================= */
   const qs  = (sel, root=document) => root.querySelector(sel);
   const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
   const pad2 = n => String(n).padStart(2,'0');
@@ -33,13 +36,15 @@
     return d;
   }
   function addDays(isoStr, n){
-    const d = new Date(isoStr+"T00:00:00Z"); d.setUTCDate(d.getUTCDate()+n); return formatISO(d);
+    const d = new Date(isoStr+"T00:00:00Z");
+    d.setUTCDate(d.getUTCDate()+n);
+    return formatISO(d);
   }
   function getCSRF(){
-    const m = document.querySelector('meta[name="csrf-token"]'); return m ? m.getAttribute('content') : '';
+    const m = document.querySelector('meta[name="csrf-token"]');
+    return m ? m.getAttribute('content') : '';
   }
 
-  // Safe time parse
   const normTime = t => {
     if (!t) return null;
     const s = String(t).trim();
@@ -59,42 +64,143 @@
     return bm - am;
   };
 
-  /**
-   * Собирает query string из DOM-фильтра #schedulerGroupFilter
-   * ?school_id=...&group_id=...
-   */
   function buildFilterQuery() {
     const $wrap = $('#schedulerGroupFilter');
-    if ($wrap.length === 0) return '';              // нет фильтров в DOM
-
+    if ($wrap.length === 0) return '';
     const schoolId = $wrap.find('#school_id').val() || '';
     const groupId  = $wrap.find('#group_id').val()  || '';
-
     const qp = new URLSearchParams();
     if (schoolId) qp.append('school_id', schoolId);
     if (groupId)  qp.append('group_id',  groupId);
-
     const s = qp.toString();
     return s ? `?${s}` : '';
   }
 
-  async function apiFetch(url, opts={}){
-    const headers = { 'Accept': 'application/json' };
-    if(opts.method && opts.method !== 'GET'){
-      headers['Content-Type'] = 'application/json';
-      const csrf = getCSRF();
-      if(csrf) headers['X-CSRF-TOKEN'] = csrf;
-    }
-    const res = await fetch(url, { credentials:'same-origin', ...opts, headers:{...headers, ...(opts.headers||{})} });
-    if(!res.ok){
-      const text = await res.text().catch(()=> '');
-      throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
-    }
-    if(res.status === 204) return null;
-    return await res.json();
+  // ======== ВАЛИДАЦИЯ (UI) ========
+  function clearAllFieldErrors(root = document) {
+    qsa('.is-invalid', root).forEach(el => el.classList.remove('is-invalid'));
+    qsa('.invalid-feedback', root).forEach(el => el.remove());
+    qsa('.error_school_id, .error_group_id, .error_room_id', root).forEach(el => el.textContent = '');
   }
 
-  // ==== ВАЖНО: GET с фильтрами ====
+  function setFieldError(selector, msg) {
+    const el = qs(selector);
+    if (!el) return;
+    el.classList.add('is-invalid');
+    const underSmall =
+      el.closest('.form-group')?.querySelector('small[class^="error_"]') || null;
+    if (underSmall) { underSmall.textContent = msg; return; }
+    const fb = document.createElement('div');
+    fb.className = 'invalid-feedback d-block';
+    fb.textContent = msg;
+    el.insertAdjacentElement('afterend', fb);
+  }
+
+  function renderValidationErrors(errors) {
+    const candidates = {
+      day:       ['#evDay'],
+      start:     ['#evStart'],
+      end:       ['#evEnd'],
+      title:     ['#evTitle'],
+      note:      ['#evNote'],
+      color:     ['#evColor'],
+      school_id: ['#eventModal #school_id'],
+      group_id:  ['#eventModal #group_id', '#eventModal #group_id_s'],
+      room_id:   ['#eventModal #room_id',  '#eventModal #room_id_s'],
+    };
+
+    clearAllFieldErrors(qs('#eventModal'));
+
+    Object.entries(errors || {}).forEach(([field, msgs]) => {
+      const msg = Array.isArray(msgs) ? msgs[0] : String(msgs || 'Սխալ');
+      const list = candidates[field] || [];
+      const sel = list.find(s => !!qs(s));
+      if (sel) setFieldError(sel, msg);
+    });
+  }
+
+  // async function apiFetch(url, opts={}){
+  //   const headers = { 'Accept': 'application/json' };
+  //   if(opts.method && opts.method !== 'GET'){
+  //     headers['Content-Type'] = 'application/json';
+  //     const csrf = getCSRF();
+  //     if(csrf) headers['X-CSRF-TOKEN'] = csrf;
+  //   }
+  //   const res = await fetch(url, { credentials:'same-origin', ...opts, headers:{...headers, ...(opts.headers||{})} });
+
+  //   if (res.status === 422) {
+  //     let data = {};
+  //     try { data = await res.json(); } catch {}
+  //     const errors = (data && data.errors) ? data.errors : {};
+  //     const message = data.message || 'Validation error';
+  //     const err = new Error(message);
+  //     err.isValidation = true;
+  //     err.status = 422;
+  //     err.errors = errors;
+  //     throw err;
+  //   }
+
+  //   if(!res.ok){
+  //     const text = await res.text().catch(()=> '');
+  //     throw new Error(`HTTP ${res.status}: ${text || res.statusText}`);
+  //   }
+  //   if(res.status === 204) return null;
+  //   return await res.json();
+  // }
+
+  async function apiFetch(url, opts = {}) {
+    const headers = { 'Accept': 'application/json' };
+    if (opts.method && opts.method !== 'GET') {
+      headers['Content-Type'] = 'application/json';
+      const csrf = getCSRF();
+      if (csrf) headers['X-CSRF-TOKEN'] = csrf;
+    }
+
+    const res = await fetch(url, {
+      credentials: 'same-origin',
+      ...opts,
+      headers: { ...headers, ...(opts.headers || {}) }
+    });
+
+    // Попробуем прочитать тело один раз
+    let raw = '';
+    let data = null;
+    try {
+      raw = await res.text();
+      data = raw ? JSON.parse(raw) : null;
+    } catch { /* игнор */ }
+
+    // Валидация (422)
+    if (res.status === 422) {
+      const errors = (data && data.errors) || {};
+      const message = (data && data.message) || 'Validation error';
+      const err = new Error(message);
+      err.isValidation = true;
+      err.status = 422;
+      err.errors = errors;
+      throw err;
+  }
+
+  // Любая не-2xx ошибка
+  if (!res.ok) {
+    const err = new Error((data && (data.message || data.error)) || res.statusText || `HTTP ${res.status}`);
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+
+  // На случай, если бэкенд вернул 200, но в теле {status:0, message:...}
+  if (data && typeof data === 'object' && data.status === 0) {
+    const err = new Error(data.message || 'Request failed');
+    err.status = 400; // или 200, если хочешь строго; главное — чтобы был статус
+    err.data = data;
+    throw err;
+  }
+
+  return data;
+}
+
+
   async function apiGetEvents() {
     const qs = buildFilterQuery();
     return apiFetch(`${API.list}${qs}`);
@@ -103,36 +209,33 @@
   async function apiUpdateEvent(id, payload) { return apiFetch(API.update(id), { method:'PUT', body: JSON.stringify(payload) }); }
   async function apiDeleteEvent(id) { return apiFetch(API.delete(id), { method:'DELETE' }); }
 
-  /* ===========================
-     STATE
-  ============================*/
+/* =========================================================
+   C) STATE & DOM REFERENCES
+========================================================= */
   let events = [];
   let weights = Array(7).fill(1/7);
   let mobileDay = getTodayWeekday();
   let weekStartISO = formatISO(startOfISOWeek(new Date()));
 
   const calendar = qs('#calendar');
-  const head = qs('#dayHead');
-  const grid = qs('#grid');
+  const head     = qs('#dayHead');
+  const grid     = qs('#grid');
   const dayTabs  = qs('#dayTabs');
-  const nowLine = qs('#nowLine') || null; // FIX: guard
-  const addBtn = qs('#addBtn');
-  const wrap = qs('#calWrap');
+  const nowLine  = qs('#nowLine') || null;
+  const addBtn   = qs('#addBtn');
+  const wrap     = qs('#calWrap');
 
-  /* ===========================
-     Layout helpers (sticky, footer)
-  ============================*/
+/* =========================================================
+   D) LAYOUT
+========================================================= */
   function measureOffsets(){
     const headEl = document.getElementById('dayHead');
     const footer = document.querySelector('.main-footer');
-
     const headH   = headEl ? Math.round(headEl.getBoundingClientRect().height) : 40;
     const footerH = footer ? Math.round(footer.getBoundingClientRect().height) : 0;
-
     document.documentElement.style.setProperty('--navbar-h', `0px`);
     document.documentElement.style.setProperty('--head-h',   `${headH}px`);
     document.documentElement.style.setProperty('--footer-h', `${footerH}px`);
-
     fitCalendarToViewport();
   }
 
@@ -152,7 +255,6 @@
     }
     applyMobileMode();
   });
-
   document.addEventListener('shown.lte.pushmenu', () => {
     setTimeout(() => { measureOffsets(); applyColWidths(); }, 300);
   });
@@ -160,9 +262,9 @@
     setTimeout(() => { measureOffsets(); applyColWidths(); }, 300);
   });
 
-  /* ===========================
-     Build time labels
-  ============================*/
+/* =========================================================
+   E) TIME SCALE
+========================================================= */
   (function buildTimes(){
     const timesEl=qs('#times');
     const rows = (minutesBetween(START_TIME,END_TIME) ?? 0)/SLOT_MIN + 1;
@@ -177,24 +279,27 @@
     }
   })();
 
-  /* ===========================
-     Week header (dates only)
-  ============================*/
+/* =========================================================
+   F) WEEK HEADER
+========================================================= */
   function applyWeekHeader(){
     for(let i=1;i<=7;i++){
       const dISO = addDays(weekStartISO, i-1);
-      const d = new Date(dISO+"T00:00:00Z");
+      void new Date(dISO+"T00:00:00Z");
       const map = {1:'Երկուշաբթի',2:'Երեքշաբթի',3:'Չորեքշաբթի',4:'Հինգշաբթի',5:'ՈՒրբաթ',6:'Շաբաթ',7:'Կիրակի'};
       const el = qs(`[data-head-day="${i}"]`);
       if(el) el.textContent = `${map[i]}`;
     }
   }
 
-  /* ===========================
-     Layout & Render
-  ============================*/
+/* =========================================================
+   G) EVENT LAYOUT
+========================================================= */
   function layoutDay(dayEvents){
-    dayEvents.sort((a,b)=> (toMinutesSafe(a.start)-toMinutesSafe(b.start)) || (toMinutesSafe(a.end)-toMinutesSafe(b.end)));
+    dayEvents.sort((a,b)=>
+      (toMinutesSafe(a.start)-toMinutesSafe(b.start)) ||
+      (toMinutesSafe(a.end)-toMinutesSafe(b.end))
+    );
     const clusters=[]; let cur=[]; let curMax=-1;
     for(const ev of dayEvents){
       const s=toMinutesSafe(ev.start), e=toMinutesSafe(ev.end);
@@ -217,6 +322,9 @@
     return pos;
   }
 
+/* =========================================================
+   H) RENDER
+========================================================= */
   function clearEvents(){ qsa('.day-body').forEach(el=>el.innerHTML=''); }
 
   function renderEvents(){
@@ -256,7 +364,7 @@
         div.style.width  = widthPx + 'px';
 
         const titleText = `${ev.school_name ? ev.school_name + ' · ' : ''}${ev.title || ''}${ev.group_name ? ' (' + ev.group_name + ')' : ''}`;
-        const subLine   = `${ev.start}–${ev.end}${ev.note ? ' · ' + ev.note : ''}`;
+        const subLine   = `${ev.start}–${ev.end}${ev.room_name ? ' · ' + ev.room_name : ''}`;
 
         div.innerHTML = `<strong>${titleText}</strong><div class="small">${subLine}</div>`;
         div.addEventListener('click', (e)=>{ e.stopPropagation(); openEditor(ev); });
@@ -266,11 +374,11 @@
     updateNowLine();
   }
 
-  /* ===========================
-     Now line
-  ============================*/
+/* =========================================================
+   I) NOW LINE
+========================================================= */
   function updateNowLine(){
-    if (!nowLine) return; // FIX: guard if element missing
+    if (!nowLine) return;
     const today = new Date();
     const todayISO = formatISO(startOfISOWeek(today));
     const isCurrentWeek = (todayISO === weekStartISO);
@@ -287,41 +395,45 @@
   }
   setInterval(updateNowLine, 60000);
 
-  /* ===========================
-     Modal editor (FIXED)
-  ============================*/
+/* =========================================================
+   J) MODAL EDITOR
+========================================================= */
   function resetModalHard($modal){
-    // abort pending xhr (if any)
     const xhr = $modal.data('xhr');
     if (xhr && xhr.readyState !== 4) { try { xhr.abort(); } catch(_){} }
     $modal.removeData('xhr').removeData('prefGroup').removeData('prefRoom');
 
-    // reset form fields
     const form = $modal.find('form')[0];
     if (form) form.reset();
 
-    // reset selects
+    // супер-админ
     const $schoolSel = $modal.find('#school_id');
     const $groupSel  = $modal.find('#group_id');
     const $roomSel   = $modal.find('#room_id');
-
     $schoolSel.val('');
     $groupSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
     $roomSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+
+    // school-admin
+    const $groupSelS = $modal.find('#group_id_s');
+    const $roomSelS  = $modal.find('#room_id_s');
+    if ($groupSelS.length) $groupSelS.val('');
+    if ($roomSelS.length)  $roomSelS.val('');
   }
 
   function openEditor(ev){
     const $modal     = $('#eventModal');
+    clearAllFieldErrors($modal[0]);
+
     const $schoolSel = $modal.find('#school_id');
     const $groupSel  = $modal.find('#group_id');
     const $roomSel   = $modal.find('#room_id');
 
-    // cancel previous inflight xhr (so it won't overwrite this session)
     const prevXhr = $modal.data('xhr');
     if (prevXhr && prevXhr.readyState !== 4) { try { prevXhr.abort(); } catch(_){} }
     $modal.removeData('xhr');
 
-    // fill base fields
+    // base fields
     qs('#evId').value   = ev.id || '';
     qs('#evDay').value  = ev.day;
     qs('#evStart').value= normTime(ev.start) || '';
@@ -330,22 +442,33 @@
     qs('#evNote').value = ev.note ||'';
     qs('#evColor').value= ev.color||'blue';
 
-    if (ev.school_id) {
-      // preset preferred selections (will be applied after AJAX)
-      $modal.data('prefGroup', ev.group_id || '');
-      $modal.data('prefRoom',  ev.room_id  || '');
+    if (ROLE === 'super-admin' || ROLE === 'super-accountant') {
+      // target school: сначала из ev.school_id (edit), иначе из фильтра (add)
+      let targetSchoolId = ev.school_id != null ? String(ev.school_id) : '';
+      if (!targetSchoolId && !ev.id) {
+        const filterSchool = $('#schedulerGroupFilter #school_id').val();
+        if (filterSchool) targetSchoolId = String(filterSchool);
+      }
 
-      $schoolSel.val(String(ev.school_id));
-      $schoolSel.trigger('change'); // will fetch groups/rooms
-    } else {
-      // ADD mode: clean & disable dependent selects
-      $schoolSel.val('');
-      $groupSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
-      $roomSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
-      $modal.removeData('prefGroup').removeData('prefRoom');
+      if (ev.group_id) $modal.data('prefGroup', String(ev.group_id));
+      if (ev.room_id)  $modal.data('prefRoom',  String(ev.room_id));
+
+      if (targetSchoolId) {
+        $schoolSel.val(targetSchoolId);
+        $schoolSel.trigger('change'); // ajax подгрузит списки и выставит pref*
+      } else {
+        $schoolSel.val('');
+        $groupSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+        $roomSel.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
+        $modal.removeData('prefGroup').removeData('prefRoom');
+      }
+    } else if (ROLE === 'school-admin') {
+      const gs = $modal.find('#group_id_s');
+      const rs = $modal.find('#room_id_s');
+      if (gs.length) gs.val(ev.group_id ? String(ev.group_id) : '');
+      if (rs.length) rs.val(ev.room_id  ? String(ev.room_id)  : '');
     }
 
-    // delete button only for edit
     const delBtn = qs('#deleteBtn');
     if (delBtn) delBtn.style.display = ev.id ? 'inline-block' : 'none';
     qs('#modalTitle').textContent = ev.id ? 'Խմբագրել դասաժամը' : 'Ավելցնել դասաժամ';
@@ -353,7 +476,9 @@
     $modal.modal('show');
   }
 
-  // dblclick create
+/* =========================================================
+   K) USER INTERACTIONS
+========================================================= */
   qs('#grid').addEventListener('dblclick', (e)=>{
     const dayBody = e.target.closest('.day-body');
     if(!dayBody) return;
@@ -373,15 +498,29 @@
     openEditor({ id:null, day:Number(dayBody.dataset.day), start, end, title:'', note:'', color:'blue' });
   }, true);
 
-  // add button
   if (addBtn) addBtn.addEventListener('click', ()=>{
     const day = isMobile() ? mobileDay : getTodayWeekday();
-    openEditor({ id:null, day, start:'12:00', end:'13:00', title:'', note:'', color:'blue' });
+    const filterSchool = $('#schedulerGroupFilter #school_id').val();
+    openEditor({
+      id: null,
+      day,
+      start:'12:00',
+      end:'13:00',
+      title:'',
+      note:'',
+      color:'blue',
+      // хинт школе для super-admin при создании
+      school_id: filterSchool ? Number(filterSchool) : null
+    });
   });
 
-  // save/delete
+/* =========================================================
+   L) SAVE / DELETE
+========================================================= */
   qs('#saveBtn').addEventListener('click', async ()=>{
     try{
+      clearAllFieldErrors(qs('#eventModal'));
+
       const id   = qs('#evId').value || null;
       const day  = Number(qs('#evDay').value);
       const start= normTime(qs('#evStart').value);
@@ -390,42 +529,122 @@
       const note = qs('#evNote').value.trim();
       const color= qs('#evColor').value;
 
-      const schoolId = qs('#eventModal #school_id').value ? Number(qs('#eventModal #school_id').value) : null;
-      const groupId  = qs('#eventModal #group_id').value ? Number(qs('#eventModal #group_id').value) : null;
-      const roomId   = qs('#eventModal #room_id').value ? Number(qs('#eventModal #room_id').value) : null;
+      let schoolId = null, groupId = null, roomId = null;
 
-      if(!start || !end){ alert('Заполните время начала и конца'); return; }
-      if((toMinutesSafe(end) ?? 0) <= (toMinutesSafe(start) ?? 0)){ alert('Время окончания должно быть позже начала'); return; }
+      if (ROLE === 'super-admin' || ROLE === 'super-accountant') {
+        schoolId = qs('#eventModal #school_id')?.value ? Number(qs('#eventModal #school_id').value) : null;
+        groupId  = qs('#eventModal #group_id')?.value  ? Number(qs('#eventModal #group_id').value)  : null;
+        roomId   = qs('#eventModal #room_id')?.value   ? Number(qs('#eventModal #room_id').value)   : null;
 
-      const payload = { 
+        if (!schoolId) {
+          setFieldError('#eventModal #school_id', 'Ընտրել ուս․ հաստատություն պարտադիր է');
+          return;
+        }
+      } else if (ROLE === 'school-admin') {
+        schoolId = ROLE_SCHOOL_ID ? Number(ROLE_SCHOOL_ID) : null;
+        groupId  = qs('#eventModal #group_id_s')?.value ? Number(qs('#eventModal #group_id_s').value) : null;
+        roomId   = qs('#eventModal #room_id_s')?.value  ? Number(qs('#eventModal #room_id_s').value)  : null;
+      } else {
+        groupId  = qs('#eventModal #group_id_s')?.value ? Number(qs('#eventModal #group_id_s').value) : null;
+        roomId   = qs('#eventModal #room_id_s')?.value  ? Number(qs('#eventModal #room_id_s').value)  : null;
+      }
+
+      if(!start){ setFieldError('#evStart','Պարտադիր դաշտ'); return; }
+      if(!end){ setFieldError('#evEnd','Պարտադիր դաշտ'); return; }
+      if((toMinutesSafe(end) ?? 0) <= (toMinutesSafe(start) ?? 0)){
+        setFieldError('#evEnd','Ավարտը պետք է լինի ավելի ուշ, քան սկիզբը');
+        return;
+      }
+
+      const payload = {
         day, start, end, title, note, color,
-        week_start: weekStartISO, 
+        week_start: weekStartISO,
         school_id: schoolId,
         group_id:  groupId,
         room_id:   roomId,
       };
 
-      if(id){ await apiUpdateEvent(id, payload); }
-      else{
-        const created = await apiCreateEvent(payload);
-        if(created && created.id) payload.id = created.id;
+      if(id){
+        await apiUpdateEvent(id, payload);
+        swal("success", 'Գործողությունը կատարված է։');
+      } else {
+        await apiCreateEvent(payload);
+        swal("success", 'Գործողությունը կատարված է։');
       }
+
       await reloadEvents();
       $('#eventModal').modal('hide');
-    }catch(err){ console.error(err); alert('Ошибка сохранения события'); }
-  });
+    }catch(err){
+      const msg = err?.data?.message || err?.message || "Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին próbել։";
 
-  qs('#deleteBtn').addEventListener('click', async ()=>{
-    const id = qs('#evId').value; if(!id) return;
-    if(confirm('Ցանկանում եք հեռացնել դասաժմը?')){
-      try{ await apiDeleteEvent(id); await reloadEvents(); $('#eventModal').modal('hide'); }
-      catch(err){ console.error(err); alert('Ошибка удаления'); }
+      if (err.status === 409 || err?.data?.status === 0) {
+        showInfo("info", msg, "");
+        return;
+      }
+
+      if (err?.isValidation && err.status === 422) {
+        renderValidationErrors(err.errors);
+        return;
+      }
+      swal("error", "Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։");
     }
   });
 
-  /* ===========================
-     Column resize (desktop)
-  ============================*/
+  // qs('#deleteBtn').addEventListener('click', async ()=>{
+  //   const id = qs('#evId').value; if(!id) return;
+  //   if(confirm('Ցանկանում եք հեռացնել դասաժմը?')){
+  //     try{
+  //       await apiDeleteEvent(id);
+  //       await reloadEvents();
+  //       $('#eventModal').modal('hide');
+  //     }catch(err){
+  //       console.error(err);
+  //       swal("error", "Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել:", true, true)
+  //     }
+  //   }
+  // });
+
+  qs('#deleteBtn').addEventListener('click', async () => {
+    const id = qs('#evId').value;
+    if (!id) return;
+
+    const result = await Swal.fire({
+      title: "Դուք համոզված եք՞",
+      text: "",
+      icon: "danger",
+      showDenyButton: true,
+      showCancelButton: false,
+      confirmButtonText: "Այո",
+      denyButtonText: "Ոչ",
+      reverseButtons: true
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await apiDeleteEvent(id);      // DELETE /admin/scheduleGroup/delete/{id}
+      await reloadEvents();
+      $('#eventModal').modal('hide');
+
+      if (typeof swal === 'function') {
+        swal("success", "Գործողությունը կատարված է։");
+      } else {
+        Swal.fire("Պատրաստ է", "Գործողությունը կատարված է։", "success");
+      }
+    } catch (err) {
+      const msg = (err && err.data && err.data.message) || err?.message || "Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։";
+      if (typeof swal === 'function') {
+        swal("error", msg);
+      } else {
+        Swal.fire("Սխալ", msg, "error");
+      }
+    }
+  });
+
+
+/* =========================================================
+   M) DESKTOP COLUMN RESIZE
+========================================================= */
   function applyColWidths(){
     if (calendar.classList.contains('mobile')) { renderEvents(); return; }
     const total = head.clientWidth || head.getBoundingClientRect().width;
@@ -491,11 +710,11 @@
     document.body.style.cursor='';
   }
 
+/* =========================================================
+   N) MOBILE MODE
+========================================================= */
   function getTodayWeekday(){ const d=new Date(); return (d.getDay()||7); }
 
-  /* ===========================
-     Mobile one-day mode
-  ============================*/
   function setMobileDay(day){
     mobileDay = day;
     if (dayTabs) {
@@ -534,7 +753,7 @@
     setMobileDay(Number(btn.dataset.day));
   });
 
-  // переход mobile -> desktop (страховка)
+  // mobile→desktop guard
   let lastIsMobile = null;
   window.addEventListener('resize', () => {
     const isMob = calendar.classList.contains('mobile');
@@ -543,31 +762,37 @@
     lastIsMobile = isMob;
   });
 
-  /* ===========================
-     Load + render
-  ============================*/
+/* =========================================================
+   O) DATA LOAD
+========================================================= */
   async function reloadEvents(){
     try{
       applyWeekHeader();
-      const list = await apiGetEvents(); // <— ТУТ: GET с фильтрами
+      const list = await apiGetEvents(); // GET с фильтрами
 
-      events = (Array.isArray(list) ? list : []).map(x => ({
-        id: x.id,
-        day: Number(x.week_day),            // 1..7
-        start: normTime(x.start_time),
-        end:   normTime(x.end_time),
-        title: x.title || '',
-        note:  x.note  || '',
-        color: x.color || 'blue',
-        school_id: x.school_id ?? null,
-        group_id:  x.group_id  ?? null,
-        room_id:   x.room_id   ?? null,
+      events = (Array.isArray(list) ? list : []).map(x => {
+        const schoolId = x.school_id ?? (x.school && (x.school.id ?? x.school.school_id)) ?? null;
+        const groupId  = x.group_id  ?? (x.group  && (x.group.id  ?? x.group.group_id))  ?? null;
+        const roomId   = x.room_id   ?? (x.room   && (x.room.id   ?? x.room.room_id))    ?? null;
 
-        school_name: x.school ? x.school.name : '',
-        group_name:  x.group  ? x.group.name  : '',
-        room_name:   x.room   ? x.room.name   : '',
+        return {
+          id: x.id,
+          day: Number(x.week_day),            // 1..7
+          start: normTime(x.start_time),
+          end:   normTime(x.end_time),
+          title: x.title || '',
+          note:  x.note  || '',
+          color: x.color || 'blue',
 
-      })).filter(e => e.day>=1 && e.day<=7 && e.start && e.end);
+          school_id: schoolId,
+          group_id:  groupId,
+          room_id:   roomId,
+
+          school_name: (x.school && (x.school.name ?? x.school.title)) || '',
+          group_name:  (x.group  && (x.group.name  ?? x.group.title))  || '',
+          room_name:   (x.room   && (x.room.name   ?? x.room.title))   || '',
+        };
+      }).filter(e => e.day>=1 && e.day<=7 && e.start && e.end);
 
       applyMobileMode(); // внутри вызовет renderEvents
     }catch(err){
@@ -578,22 +803,21 @@
     }
   }
 
-  /* ===========================
-     INIT
-  ============================*/
+/* =========================================================
+   P) INIT
+========================================================= */
   document.addEventListener('DOMContentLoaded', () => {
     measureOffsets();
     buildGrips();
     applyColWidths();
     reloadEvents();
 
-    // FIX: полный сброс модалки при закрытии
     const $modal = $('#eventModal');
     $modal.on('hidden.bs.modal', function(){
+      clearAllFieldErrors(this);
       resetModalHard($modal);
     });
 
-    // реагируем на изменение фильтров (из jQuery-зоны)
     document.addEventListener('filters:changed', () => {
       reloadEvents();
     });
@@ -601,13 +825,14 @@
     window.addEventListener('load', measureOffsets);
   });
 
-})();
+})(); // IIFE END
 
-/* ===========================
-   jQuery зона: зависимые селекты и фильтры
-============================ */
+/* =========================================================
+   Q) jQuery ZONE: dependent selects & header filters
+========================================================= */
 $(document).ready(function(){
-  // —— Зависимые селекты в модалке (без изменений по задаче) ——
+
+  // --- Dependent selects inside modal (только для супер-ролей) ---
   $('#eventModal #school_id').on('change', function(){
     const $modal = $('#eventModal');
     const schoolId = $(this).val();
@@ -615,11 +840,9 @@ $(document).ready(function(){
     let $groupSelect = $modal.find('#group_id');
     let $roomSelect  = $modal.find('#room_id');
 
-    // Сразу подготовим UI: очистка и блокировка до ответа
     $groupSelect.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
     $roomSelect.empty().append('<option value="">Ընտրել</option>').prop('disabled', true);
 
-    // Отменить предыдущий запрос (если не завершён)
     const prevXhr = $modal.data('xhr');
     if (prevXhr && prevXhr.readyState !== 4) { try { prevXhr.abort(); } catch(_){} }
 
@@ -655,8 +878,8 @@ $(document).ready(function(){
 
         $modal.removeData('prefGroup').removeData('prefRoom');
       },
-      error: function() { 
-        swal("error", "Ինչ-որ բան այն չէ, կրկին փորձեք!", "error");
+      error: function() {
+        swal("error", "Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։", "error");
       },
       complete: function(){
         const cur = $modal.data('xhr');
@@ -667,17 +890,16 @@ $(document).ready(function(){
     $modal.data('xhr', xhr);
   });
 
-  // —— Фильтры в хедере расписания ——
+  // --- Header filter: school → groups ---
   $('#schedulerGroupFilter #school_id').on('change', function(){
     const schoolId = $(this).val();
     let $select = $('#group_id');
-    
+
     if (!schoolId) {
       $select.prop('disabled', true).empty().append('<option value="">Բոլորը</option>');
-      // сразу перезагрузим события БЕЗ фильтров
       document.dispatchEvent(new Event('filters:changed'));
-      return; 
-    }   
+      return;
+    }
 
     $.ajax({
       headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
@@ -688,24 +910,18 @@ $(document).ready(function(){
         $select.prop('disabled',false);
         $select.empty().append('<option value="">Բոլորը</option>');
         $.each(response.groups, function (index, group) {
-            $select.append(
-                $('<option>', {
-                    value: group.id,
-                    text: group.name
-                })
-            );
+          $select.append($('<option>', { value: group.id, text: group.name }));
         });
-        // после обновления списка групп — перерисовать события под выбранную школу (группа пока "Все")
         document.dispatchEvent(new Event('filters:changed'));
       },
-      error: function() { 
-        swal("error", "Ինչ-որ բան այն չէ, կրկին փորձեք!", "error");
+      error: function() {
+        swal("error", "Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։", "error");
       },
     });
   });
 
+  // --- Header filter: group change ---
   $('#schedulerGroupFilter #group_id').on('change', function(){
-    // любое изменение group_id → обновить события
     document.dispatchEvent(new Event('filters:changed'));
   });
 
