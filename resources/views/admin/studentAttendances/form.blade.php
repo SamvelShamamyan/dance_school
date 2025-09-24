@@ -67,7 +67,7 @@
                                 name="inspection_date"
                                 class="form-control datetimepicker-input"
                                 data-target="#checkAttendancesDatePicker"
-                                data-toggle="datetimepicker" />
+                                data-toggle="datetimepicker" {{ $isTrue ? '' : 'disabled' }}/>
                         <div class="input-group-append"
                             data-target="#checkAttendancesDatePicker"
                             data-toggle="datetimepicker">
@@ -79,7 +79,7 @@
                         <small class="error_inspection_date text-danger"></small>
                     </div>
 
-                    <div class="card-body dg-white shadow">
+                    <div class="card-body dg-white {{ $isTrue ? 'shadow' : '' }}">
                         <div class="table-responsive">
                         <table class="table table-bordered table-striped">
                             <thead>
@@ -91,7 +91,7 @@
                             </thead>
                             <tbody>
                             @foreach ($studentsList as $item)
-                             <input type="hidden" name="students[]" value="{{ $item->id }}"/>
+                             <input type="hidden" name="students[]" value="{{ $item->id }}" {{ $isTrue ? '' : 'disabled' }}/>
                                 <tr>
                                 <td>{{ $item->full_name }}</td>
                                 {{-- "Հյուր" --}}
@@ -99,7 +99,7 @@
                                     <div class="icheck-primary d-inline">
                                     <input type="checkbox"
                                             id="guest{{  $item->id }}"
-                                            name="attendance_guest[{{  $item->id }}]">
+                                            name="attendance_guest[{{  $item->id }}]" {{ $isTrue ? '' : 'disabled' }}>
                                     <label for="guest{{  $item->id }}"></label>
                                     </div>
                                 </td>
@@ -110,14 +110,14 @@
                                         <input type="radio"
                                             id="present{{  $item->id }}"
                                             name="attendance_check[{{  $item->id }}]"
-                                            value="1">
+                                            value="1" {{ $isTrue ? '' : 'disabled' }}>
                                         <label for="present{{ $item->id }}">Ներկա</label>
                                     </div>
                                     <div class="icheck-danger d-inline ml-3">
                                         <input type="radio"
                                             id="absent{{  $item->id }}"
                                             name="attendance_check[{{  $item->id }}]"
-                                            value="0">
+                                            value="0" {{ $isTrue ? '' : 'disabled' }}>
                                         <label for="absent{{  $item->id }}">Բացակա</label>
                                     </div>
                                     </div>
@@ -129,96 +129,111 @@
                         </div>
                     </div>
                 </div>
-                <div class="card-footer text-right">
-                    <button type="button" class="btn btn-primary" id="checkAttendancesBtn" onclick="checkAttendancesSave()">Պահպանել</button>
-                </div>
+                  <div class="card-footer text-right">
+                    @if($isTrue)
+                      <button type="button" class="btn btn-primary" id="checkAttendancesBtn" onclick="checkAttendancesSave()">Պահպանել</button>
+                    @endif
+                  </div>
             </div>
         </form>    
     </div>
 
-    <div class="col-12 col-md-12 col-lg-12 col-xl-6">
-      <div class="card card-primary">
-        <div class="card-header">
-          <!-- <h3 class="card-title">{{ isset($room) ? 'Խմբագրել դահլիճը' : 'Ավելացնել դահլիճ' }}</h3> -->
-          <h3 class="card-title">Անցկացված ստուգումների պատմեություն</h3>
-        </div>
-        <div class="card-body">
-          <div id="accordion">
-            @foreach ($checkedAttendance as $date => $items)
-              @php $collapseId = 'collapse-' . $loop->index; @endphp
-              @php $first = $items->first(); @endphp
 
-
-
-              <div class="card">
-                <div class="card-header" id="heading-{{ $loop->index }}">
-                  <h5 class="mb-0">
-                    <button class="btn btn-link"
-                            data-toggle="collapse"
-                            data-target="#{{ $collapseId }}"
-                            aria-expanded="{{ $loop->first ? 'true' : 'false' }}"
-                            aria-controls="{{ $collapseId }}">
-                      <i class="fas fa-university text-primary mr-1 fa-lg"></i> {{ $first->school_name ?? '' }} /
-                      <i class="fas fa-users text-info mr-1 fa-lg"></i> {{ $first->group_name ?? '' }} /
-                      <i class="fas fa-calendar text-success mr-1 fa-lg"></i> {{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}
-                    </button>
-                  </h5>
-                </div>
-
-                <div id="{{ $collapseId }}"
-                    class="collapse {{ $loop->first ? 'show' : '' }}"
-                    aria-labelledby="heading-{{ $loop->index }}"
-                    data-parent="#accordion">
-                  <div class="card-body">
-                    <div class="table-responsive">
-                      <table class="table table-bordered table-striped">
-                        <thead>
-                          <tr>
-                            <th>ԱԱՀ</th>
-                            <th class="text-center">Հյուր</th>
-                            <th class="text-center">Ներկա / Բացակա</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          @foreach ($items as $item)
+    @if(!$checkedAttendance->isEmpty())
+      <div class="col-12 col-md-12 col-lg-12 col-xl-6">
+        <div class="card card-primary">
+          <div class="card-header">
+            <h3 class="card-title">Անցկացված ստուգումների պատմություն</h3>
+          </div>
+          <div class="card-body">
+            <div id="accordion">
+              @foreach ($checkedAttendance as $date => $items)
+                @php $collapseId = 'collapse-' . $loop->index; @endphp
+                @php $first = $items->first(); @endphp
+                <div class="card">
+                  <div class="card-header" id="heading-{{ $loop->index }}">
+                    <h5 class="mb-0">
+                      <button class="btn btn-link"
+                              data-toggle="collapse"
+                              data-target="#{{ $collapseId }}"
+                              aria-expanded="{{ $loop->first ? 'true' : 'false' }}"
+                              aria-controls="{{ $collapseId }}">
+                        <i class="fas fa-university text-primary mr-1 fa-lg"></i> {{ $first->school_name ?? '' }} /
+                        <i class="fas fa-users text-info mr-1 fa-lg"></i> {{ $first->group_name ?? '' }} /
+                        <i class="fas fa-calendar text-success mr-1 fa-lg"></i> {{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}
+                      </button>
+                    </h5>
+                  </div>
+                  <div id="{{ $collapseId }}"
+                      class="collapse {{ $loop->first ? 'show' : '' }}"
+                      aria-labelledby="heading-{{ $loop->index }}"
+                      data-parent="#accordion">
+                    <div class="card-body">
+                      <div class="table-responsive">
+                        <table class="table table-bordered table-striped">
+                          <thead>
                             <tr>
-                              <td>{{ $item->full_name }}</td>
-
-                              {{-- "Հյուր" --}}
-                              <td class="text-center">
-                                <div class="icheck-primary d-inline">
-                                  <input type="checkbox" {{ $item->is_guest ? 'checked' : '' }} disabled>
-                                  <label></label>
-                                </div>
-                              </td>
-
-                              {{-- "Ներկա / Բացակա" --}}
-                              <td class="text-center">
-                                <div class="form-group clearfix mb-0">
-                                  <div class="icheck-success d-inline">
-                                    <input type="radio" disabled {{ (int)$item->checked_status === 1 ? 'checked' : '' }}>
-                                    <label>Ներկա</label>
-                                  </div>
-                                  <div class="icheck-danger d-inline ml-3">
-                                    <input type="radio" disabled {{ (int)$item->checked_status === 0 ? 'checked' : '' }}>
-                                    <label>Բացակա</label>
-                                  </div>
-                                </div>
-                              </td>
+                              <th>ԱԱՀ</th>
+                              <th class="text-center">Հյուր</th>
+                              <th class="text-center">Ներկա / Բացակա</th>
                             </tr>
-                          @endforeach
-                        </tbody>
-                      </table>
-                    </div> <!-- table-responsive -->
-                  </div> <!-- card-body -->
-                </div> <!-- collapse -->
-              </div> <!-- card -->
-            @endforeach
-          </div> <!-- accordion -->
-        </div> <!-- card-body -->
+                          </thead>
+                          <tbody>
+                            @foreach ($items as $item)
+                              <tr>
+                                <td>{{ $item->full_name }}</td>
+
+                                {{-- "Հյուր" --}}
+                                <td class="text-center">
+                                  <div class="icheck-primary d-inline">
+                                    <input type="checkbox" {{ $item->is_guest ? 'checked' : '' }} disabled>
+                                    <label></label>
+                                  </div>
+                                </td>
+
+                                {{-- "Ներկա / Բացակա" --}}
+                                <td class="text-center">
+                                  <div class="form-group clearfix mb-0">
+                                    <div class="icheck-success d-inline">
+                                      <input type="radio" disabled {{ (int)$item->checked_status === 1 ? 'checked' : '' }}>
+                                      <label>Ներկա</label>
+                                    </div>
+                                    <div class="icheck-danger d-inline ml-3">
+                                      <input type="radio" disabled {{ (int)$item->checked_status === 0 ? 'checked' : '' }}>
+                                      <label>Բացակա</label>
+                                    </div>
+                                  </div>
+                                </td>
+                              </tr>
+                            @endforeach
+                          </tbody>
+                        </table>
+                      </div> <!-- table-responsive -->
+                    </div> <!-- card-body -->
+                  </div> <!-- collapse -->
+                </div> <!-- card -->
+              @endforeach
+            </div> <!-- accordion -->
+          </div> <!-- card-body -->
+        </div>
       </div>
     </div>
-  </div>
+  @else
+    <div class="col-12 col-md-12 col-lg-12 col-xl-6">
+      <div class="card card-primary shadow-sm">
+        <div class="card-header">
+          <h3 class="card-title mb-0">Անցկացված ստուգումների պատմություն</h3>
+        </div>
+        <div class="card-body">
+          <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
+            <i class="fas fa-info-circle fa-lg mr-2"></i>
+            <span>Տվյալները բացակայում են</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  @endif
+  
 
 @endsection
 

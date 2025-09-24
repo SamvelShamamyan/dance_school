@@ -5,20 +5,13 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StudentAttendancesRequest\StudentAttendancesStoreRequest;
-
 use App\Services\StudentAttendancesService;
-
-
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
 use App\Models\ScheduleGroup;
 use App\Models\SchoolName;
-use App\Models\Group;
 use App\Models\StudentAttendance;
 use App\Models\Student;
-
-
 use Carbon\Carbon;
 use Throwable;
 
@@ -27,6 +20,7 @@ class StudentAttendancesController extends Controller
 {
     protected $studentAttendances;
     public function __construct(StudentAttendancesService $studentAttendances){
+        date_default_timezone_set('Asia/Yerevan');
         $this->studentAttendances = $studentAttendances;     
     }
 
@@ -44,6 +38,8 @@ class StudentAttendancesController extends Controller
     }
 
     public function checkStudentAttendances($id){
+
+        $isTrue = false;
         
         $scheduleGroupData = ScheduleGroup::find($id);
         $studentsList = Student::where('group_id', $scheduleGroupData->group_id)
@@ -68,7 +64,14 @@ class StudentAttendancesController extends Controller
             return Carbon::parse($row->inspection_date)->toDateString();
         });
 
-        return view('admin.studentAttendances.form',compact('studentsList', 'id', 'checkedAttendance'));
+        $scheduleGroupTime = ScheduleGroup::where('id', $id)->first(['start_time', 'end_time']);
+        $currentTime = Carbon::now()->format('H:i:s');       
+
+        if($currentTime >= $scheduleGroupTime->start_time && $currentTime <= $scheduleGroupTime->end_time){
+          $isTrue = true;  
+        }
+
+        return view('admin.studentAttendances.form',compact('studentsList', 'id', 'checkedAttendance', 'isTrue'));
     }
 
     public function add(StudentAttendancesStoreRequest $request){

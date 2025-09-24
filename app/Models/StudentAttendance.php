@@ -20,4 +20,8 @@ class StudentAttendance extends Model
         return $this->belongsTo(Student::class);
     }
 
+    public function scheduleGroup(){
+        return $this->belongsTo(ScheduleGroup::class);
+    }
+
 }
