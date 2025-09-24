@@ -55,7 +55,7 @@ class RoomService
         if ($orderColumnName === 'school_name') {
             $query->leftJoin('school_names', 'rooms.school_id', '=', 'school_names.id')
                   ->orderBy('rooms.name', $orderDirection)
-                  ->select('rooms.*, school'); 
+                  ->select('rooms.*, school_names.name as school_name'); 
         } else {
             $query->orderBy($orderColumnName, $orderDirection);
         }

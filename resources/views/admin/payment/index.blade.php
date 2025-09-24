@@ -77,9 +77,9 @@
 </div>
 
 
-<div class="card shadow-sm">
+<div class="card shadow-sm mb-5">
     <div class="card-body bg-white">
-      <table class="table table-striped table-bordered dtTbl" style="width:100%" id="paymentTbl">
+      <table class="table table-striped table-bordered table-responsive dtTbl" style="width:100%" id="paymentTbl">
           <thead>
               <tr>
                   <th>Աշակերտ</th>

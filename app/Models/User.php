@@ -52,6 +52,6 @@ class User extends Authenticatable
     }
 
     public function school(){
-        return $this->belongsTo(\App\Models\SchoolName::class, 'school_id');
+        return $this->belongsTo(SchoolName::class, 'school_id');
     }
 }

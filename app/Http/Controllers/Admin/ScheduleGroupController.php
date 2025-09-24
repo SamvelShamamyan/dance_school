@@ -13,7 +13,7 @@ use App\Models\Group;
 use App\Models\Room;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-
+use Carbon\Carbon;
 use Throwable;
 
 class ScheduleGroupController extends Controller
@@ -39,108 +39,6 @@ class ScheduleGroupController extends Controller
 
         }
         return View('admin.scheduleGroup.index', compact('schools', 'groups', 'rooms'));
-    }
-
-    public function add(ScheduleGroupStoreRequest $request){     
-        try{
-            $data = $request->validated();
-
-            if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
-                $schoolId =  $data['school_id'];
-            }else{
-                $schoolId = $schoolId = Auth::user()->school_id;
-            }
-
-            $start = $data['start'];
-            $end = $data['end'];
-            $day = $data['day'];
-            $roomId = $data['room_id'];
-
-            $check = DB::table('schedule_groups')
-                ->where('room_id', $roomId)
-                ->where('week_day', $day)
-                ->where(function($q) use ($start, $end) {
-                    $q->whereBetween(DB::raw("TIME(start_time)"), [$start, $end])
-                    ->orWhereBetween(DB::raw("TIME(end_time)"), [$start, $end])
-                    ->orWhere(function($sub) use ($start, $end) {
-                        $sub->where(DB::raw("TIME(start_time)"), '<', $start)
-                            ->where(DB::raw("TIME(end_time)"), '>', $end);
-                    });
-                })
-                ->exists();
-
-            if ($check) {
-                return response()->json([
-                    'status' => 0,
-                    'message' => 'Այս ժամին տվյալ դահլիճում արդեն դասաժամ կա։'
-                ], 409);
-            }
-
-            $ev = ScheduleGroup::create([
-                'week_day'   => $data['day'], 
-                'start_time' => $data['start'] . ':00',
-                'end_time'   => $data['end']   . ':00',
-                'title'      => $data['title'] ?? '',
-                'school_id'  => $schoolId,
-                'group_id'   => $data['group_id'],
-                'room_id'    => $data['room_id'],
-                'note'       => $data['note']  ?? null,
-                'color'      => $data['color'] ?? 'blue',
-            ]);
-
-            return response()->json(['id' => $ev->id], 201);
-            
-        }catch(Throwable $e){
-            return response()->json([
-                'status' => 0,
-                'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։'
-            ], 500);
-        }  
-    }
-
-
-
-     public function edit($id, ScheduleGroupUpdateRequest $request)
-    {
-        // $data = $request->validate([
-        //     'day'        => ['required','integer','between:1,7'],
-        //     'start'      => ['required','date_format:H:i'],
-        //     'end'        => ['required','date_format:H:i','after:start'],
-        //     'school_id'  => ['required'],
-        //     'group_id'   => ['required'],
-        //     'room_id'    => ['required'],
-        //     'title'      => ['nullable','string','max:255'],
-        //     'note'       => ['nullable','string','max:255'],
-        //     // 'color'      => ['nullable','string','max:32', Rule::in(['blue','green','purple','orange'])],
-        //     'color'      => ['nullable','string','max:32'],
-        // ]);
-
-
-        $data = $request->validated();
-
-        $ev = ScheduleGroup::findOrFail($id);
-
-        $ev->update([
-            'week_day'   => $data['day'],
-            'start_time' => $data['start'] . ':00',
-            'end_time'   => $data['end']   . ':00',
-            'title'      => $data['title'] ?? '',
-            'school_id'  => $data['school_id'],
-            'group_id'   => $data['group_id'],
-            'room_id'    => $data['room_id'],
-            'note'       => $data['note']  ?? null,
-            'color'      => $data['color'] ?? 'blue',
-        ]);
-
-        return response()->noContent();
-    }
-
-
-     public function delete($id)
-    {
-        $ev = ScheduleGroup::findOrFail($id);
-        $ev->delete();
-        return response()->noContent();
     }
 
 
@@ -175,6 +73,131 @@ class ScheduleGroupController extends Controller
         return response()->json($events);
     }
 
+    public function add(ScheduleGroupStoreRequest $request){     
+        try{
+            $data = $request->validated();
+
+            if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
+                $schoolId =  $data['school_id'];
+            }else{
+                $schoolId = $schoolId = Auth::user()->school_id;
+            }
+
+            $start = Carbon::createFromFormat('H:i', $data['start'])->format('H:i:s');
+            $end   = Carbon::createFromFormat('H:i', $data['end'])->format('H:i:s');
+
+            if ($start >= $end) {
+                return response()->json([
+                    'status' => 0,
+                    'message' => 'Սկիզբը պետք է փոքր լինի ավարտից։'
+                ], 422);
+            }
+
+            $day    = $data['day'];
+            $roomId = $data['room_id'];
+
+            $check = DB::table('schedule_groups')
+                ->where('room_id', $roomId)
+                ->where('week_day', $day)
+                ->where('start_time', '<', $end) 
+                ->where('end_time',   '>', $start)
+                ->exists();
+
+            if ($check) {
+                return response()->json([
+                    'status'  => 0,
+                    'message' => 'Այս ժամին տվյալ դահլիճում արդեն դասաժամ կա։'
+                ], 409);
+            }
+
+            $ev = ScheduleGroup::create([
+                'week_day'   => $data['day'], 
+                'start_time' => $data['start'] . ':00',
+                'end_time'   => $data['end']   . ':00',
+                'title'      => $data['title'] ?? '',
+                'school_id'  => $schoolId,
+                'group_id'   => $data['group_id'],
+                'room_id'    => $data['room_id'],
+                'note'       => $data['note']  ?? null,
+                'color'      => $data['color'] ?? 'blue',
+            ]);
+
+            return response()->json(['id' => $ev->id], 201);
+            
+        }catch(Throwable $e){
+            return response()->json([
+                'status' => 0,
+                'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։'
+            ], 500);
+        }  
+    }
+
+
+
+    public function edit($id, ScheduleGroupUpdateRequest $request){
+        $data = $request->validated();
+        $ev = ScheduleGroup::findOrFail($id);
+
+        if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
+            $schoolId =  $data['school_id'];
+        }else{
+            $schoolId = $schoolId = Auth::user()->school_id;
+        }
+
+        $startInput = $data['start'] ?? substr($ev->start_time, 0, 5); 
+        $endInput   = $data['end']   ?? substr($ev->end_time,   0, 5); 
+
+        $start = Carbon::createFromFormat('H:i', $startInput)->format('H:i:s');
+        $end   = Carbon::createFromFormat('H:i', $endInput)->format('H:i:s');
+
+        if ($start >= $end) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Սկիզբը պետք է փոքր լինի ավարտից։'
+            ], 422);
+        }
+
+        $day    = $data['day']     ?? $ev->week_day;
+        $roomId = $data['room_id'] ?? $ev->room_id;
+
+        $check = DB::table('schedule_groups')
+            ->where('room_id', $roomId)
+            ->where('week_day', $day)
+            ->where('id', '!=', $id)                  
+            ->where('start_time', '<', $end)       
+            ->where('end_time',   '>', $start)
+            ->exists();
+
+        if ($check) {
+            return response()->json([
+                'status'  => 0,
+                'message' => 'Այս ժամին տվյալ դահլիճում արդեն դասաժամ կա։'
+            ], 409);
+        }
+
+        $ev->update([
+            'week_day'   => $day,
+            'start_time' => $start,
+            'end_time'   => $end,
+            'title'      => $data['title'] ?? $ev->title,
+            'school_id'  => $schoolId,
+            'group_id'   => $data['group_id'] ?? $ev->group_id,
+            'room_id'    => $roomId,
+            'note'       => $data['note']  ?? $ev->note,
+            'color'      => $data['color'] ?? $ev->color,
+        ]);
+
+        return response()->noContent();
+    }
+
+
+
+     public function delete($id)
+    {
+        $ev = ScheduleGroup::findOrFail($id);
+        $ev->delete();
+        return response()->noContent();
+    }
 
 
     public function getGroupsBySchool(int $schoolId = null){

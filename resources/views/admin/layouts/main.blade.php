@@ -42,6 +42,9 @@
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 
+<!-- <link rel="stylesheet" href="https://cdn.datatables.net/responsive/2.4.1/css/responsive.bootstrap4.min.css"> -->
+
+
 
 
 
@@ -155,6 +158,11 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script> 
 <script src="{{ asset('plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+
+<!-- <script src="https://cdn.datatables.net/responsive/2.4.1/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.4.1/js/responsive.bootstrap4.min.js"></script> -->
+
+
 <script src="{{ asset('plugins/select2/js/select2.full.min.js') }}"></script>
 <!-- CURRENT END_1 -->
 

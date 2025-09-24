@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\StudentHistoryController;
 use App\Http\Controllers\Admin\DeletedStudentController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\ScheduleGroupController;
+use App\Http\Controllers\Admin\StudentAttendancesController;
 
 Route::get('/', [AuthController::class, 'index']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -125,13 +126,20 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
 
     Route::group(['prefix'=>'scheduleGroup','middleware' => ['role:super-admin|school-admin']], function(){
         Route::get('/', [ScheduleGroupController::class, 'index'])->name('admin.schedule.group.index');
-
-        Route::get('list', [ScheduleGroupController::class, 'getEvents']);            // ?week_start=YYYY-MM-DD
+        Route::get('list', [ScheduleGroupController::class, 'getEvents']);         
         Route::post('add', [ScheduleGroupController::class, 'add']);
         Route::put('edit/{id}', [ScheduleGroupController::class, 'edit']);
         Route::delete('delete/{id}', [ScheduleGroupController::class, 'delete']);
         Route::get('/getGroupsRoomsBySchool/{schoolId?}', [ScheduleGroupController::class, 'getGroupsBySchool']);
 
+    });
+
+     Route::group(['prefix'=>'studentAttendances','middleware' => ['role:super-admin|school-admin']], function(){
+        Route::get('/', [StudentAttendancesController::class, 'index'])->name('admin.student.attendances.index');
+        Route::post('/getData', [StudentAttendancesController::class, 'getStudentAttendancesData'])->name('admin.student.attendances.getData');
+        Route::get('/getGroupsRoomsBySchool/{schoolId?}', [ScheduleGroupController::class, 'getGroupsBySchool']);
+        Route::get('/{id}/check', [StudentAttendancesController::class, 'checkStudentAttendances'])->name('admin.ceck.student.attendances.check');
+        Route::post('/add', [StudentAttendancesController::class, 'add'])->name('admin.ceck.student.attendances.add');
     });
 
 

@@ -22,9 +22,7 @@ class StudentController extends Controller
     protected $studentService;
     protected $student;
     public function __construct(StudentService $studentService){
-        $this->studentService = $studentService;
-
-        
+        $this->studentService = $studentService;     
     }
     public function index(){
         $schools = [];
@@ -95,7 +93,7 @@ class StudentController extends Controller
 
             return response()->json([
                 'status' => 1, 
-                'message' => 'Պահպանված է',
+                'message' => 'Գործողությունը կատարված է։',
                 'redirect'=> route('admin.student.index'),
             ]); 
 
@@ -193,7 +191,7 @@ class StudentController extends Controller
             DB::commit();
             return response()->json([
                 'status' => 1, 
-                'message' => 'Թարմացվել է',
+                'message' => 'Գործողությունը կատարված է։',
                 'redirect' => route('admin.student.edit', ['id' => $student->id]),
             ]);
 

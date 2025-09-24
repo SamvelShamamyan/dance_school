@@ -114,6 +114,16 @@
           </li>
         @endrole 
 
+        @role('super-admin|super-accountant|school-admin|school-accountant')
+          <li class="nav-item">
+            <a href="{{route('admin.student.attendances.index')}}"
+               class="nav-link {{ request()->routeIs('admin.student.attendances.index') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-user-check"></i> 
+              <p>Ներկա-բացակա</p>
+            </a>
+          </li>
+        @endrole 
+
       </ul>
     </nav>
     <!-- /.sidebar-menu -->
