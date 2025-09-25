@@ -134,7 +134,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
 
     });
 
-     Route::group(['prefix'=>'studentAttendances','middleware' => ['role:super-admin|school-admin']], function(){
+    Route::group(['prefix'=>'studentAttendances','middleware' => ['role:super-admin|school-admin']], function(){
         Route::get('/', [StudentAttendancesController::class, 'index'])->name('admin.student.attendances.index');
         Route::post('/getData', [StudentAttendancesController::class, 'getStudentAttendancesData'])->name('admin.student.attendances.getData');
         Route::get('/getGroupsRoomsBySchool/{schoolId?}', [ScheduleGroupController::class, 'getGroupsBySchool']);
