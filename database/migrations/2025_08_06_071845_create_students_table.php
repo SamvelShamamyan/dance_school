@@ -17,9 +17,11 @@ return new class extends Migration
             $table->string('last_name');
             $table->string('father_name');
             $table->string('email', 191)->unique();
+            $table->string('phone_1', 9);
+            $table->string('phone_2', 9);
             $table->string('address'); 
             $table->date('birth_date');
-            $table->string('soc_number');
+            $table->string('soc_number')->nullable();
             $table->date('created_date');
             $table->unsignedBigInteger('school_id')->nullable();
             $table->unsignedBigInteger('group_id')->nullable();

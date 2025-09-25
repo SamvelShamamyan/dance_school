@@ -29,12 +29,15 @@ class StudentUpdateRequest extends FormRequest
             'last_name'   => 'required|string|max:25',
             'father_name' => 'required|string|max:25',
             'address'     => 'required|string|max:25',
-            'soc_number'  => 'required|string|max:25',
+            'soc_number'  => 'nullable|string|max:25',
             'email' => [
                 'required',
                 'email',
                 Rule::unique('students', 'email')->ignore($this->route('id'))
             ],
+
+            'phone_1' => 'required|digits:9',
+            'phone_2' => 'nullable|digits:9',
 
             'student_expected_payments' => 'required|numeric|min:0',
             
@@ -73,13 +76,17 @@ class StudentUpdateRequest extends FormRequest
             'address.string'       => 'Բնակության հասցեն պետք է լինի տեքստային:',
             'address.max'          => 'Բնակության հասցեն չի կարող գերազանցել 100 նիշը:',
 
-            'soc_number.required'  => 'ՀԾՀ-ն պարտադիր է:',
             'soc_number.string'    => 'ՀԾՀ-ն համարն պետք է լինի տեքստային:',
             'soc_number.max'       => 'ՀԾՀ-ն համարն չի կարող գերազանցել 25 նիշը:',
 
             'email.required'       => 'Էլ. փոստը պարտադիր է:',
             'email.email'          => 'Էլ. փոստի ձևաչափը սխալ է:',
             'email.unique'         => 'Այս էլ. փոստը արդեն օգտագործվում է:',
+
+            'phone_1.required' => 'Հեռախոսահամարը պարտադիր է:',
+            'phone_1.digits' => 'Հեռախոսահամարը պետք է լինի 9 թվանշան:',
+
+            'phone_2.digits' => 'Հեռախոսահամարը պետք է լինի 9 թվանշան:',
 
             'student_expected_payments.required'       => 'Գումարը պարտադիր է:',
             'student_expected_payments.numeric'        => 'Գումարը պետք է լինի թիվ:',

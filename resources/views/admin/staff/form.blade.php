@@ -42,7 +42,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
   <div class="d-flex align-items-center">
-        <a href="{{ url()->previous() }}" 
+        <a href="{{ route('admin.staff.index') }}" 
             class="btn btn-outline-secondary btn-sm mr-3 btn-icon" 
             title="Հետ վերադարձ">
             <i class="fas fa-arrow-left"></i>
@@ -66,7 +66,7 @@
 
                     @if(Auth::user()->hasRole('super-admin') && $is_create)            
                         <div class="form-group">
-                            <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն</label>
+                            <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն <small class="validation_star">*</small></label>
                             <select name="school_id" id="schoolIdStudFilter" class="form-control">
                                 <option value="" disabled {{ empty(old('school_id', $student->school_id ?? '')) ? 'selected' : '' }}>Ընտրել</option>
                                 @foreach($schools as $school)
@@ -81,28 +81,28 @@
                     @endif
 
                     <div class="form-group">
-                        <label for="first_name">Անուն</label>
+                        <label for="first_name">Անուն <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="first_name" name="first_name"
                                value="{{ old('first_name', $staff->first_name ?? '') }}" placeholder="">
                         <small class="error_first_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="last_name">Ազգանուն</label>
+                        <label for="last_name">Ազգանուն <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="last_name" name="last_name"
                                value="{{ old('last_name', $staff->last_name ?? '') }}" placeholder="">
                         <small class="error_last_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="father_name">Հայրանուն</label>
+                        <label for="father_name">Հայրանուն <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="father_name" name="father_name"
                                value="{{ old('father_name', $staff->father_name ?? '') }}" placeholder="">
                         <small class="error_father_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="address">Բնակության հասցե</label>
+                        <label for="address">Բնակության հասցե <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="address" name="address"
                                value="{{ old('address', $staff->address ?? '') }}" placeholder="">
                         <small class="error_address text-danger"></small>
@@ -116,14 +116,25 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Էլ․ հասցե</label>
+                        <label for="email">Էլ․ հասցե <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="email" name="email"
                                value="{{ old('email', $staff->email ?? '') }}" placeholder="">
                         <small class="error_email text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="group_date">Ծննդյան Ամսաթիվ</label>
+                        <label for="phone_1">Հեռ․ / 1 <small class="validation_star">*</small></label>
+                        <input type="text" class="form-control" id="phone_1" name="phone_1" value="{{ old('phone_1', $staff->phone_1 ?? '') }}" placeholder="(__) ___-__-__">
+                        <small class="error_phone_1 text-danger"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_2">Հեռ․/ 2 </label>
+                        <input type="text" class="form-control" id="phone_2" name="phone_2" value="{{ old('phone_2', $staff->phone_2 ?? '') }}" placeholder="(__) ___-__-__">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="group_date">Ծննդյան Ամսաթիվ <small class="validation_star">*</small></label>
                         <div class="input-group date" id="staffBirthDatePicker" data-target-input="nearest">
                             <input type="text"
                                    id="birth_date"
@@ -140,7 +151,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="group_date">Աշխատանքի ընդունման ամսաթիվ</label>
+                        <label for="group_date">Աշխատանքի ընդունման ամսաթիվ <small class="validation_star">*</small></label>
                         <div class="input-group date" id="staffDatePicker" data-target-input="nearest">
                             <input type="text"
                                    id="staff_date"

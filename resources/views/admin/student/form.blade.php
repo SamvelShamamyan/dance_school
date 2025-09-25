@@ -41,7 +41,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
   <div class="d-flex align-items-center">
-    <a href="{{ url()->previous() }}" 
+    <a href="{{ route('admin.student.index') }}" 
         class="btn btn-outline-secondary btn-sm mr-3 btn-icon" 
         title="Հետ վերադարձ">
         <i class="fas fa-arrow-left"></i>
@@ -64,7 +64,7 @@
 
                     @if(Auth::user()->hasRole('super-admin') && $is_create)            
                         <div class="form-group">
-                            <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն</label>
+                            <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն <small class="validation_star">*</small></label>
                             <select name="school_id" id="schoolIdStudFilter" class="form-control">
                                 <option value="" disabled {{ empty(old('school_id', $student->school_id ?? '')) ? 'selected' : '' }}>Ընտրել</option>
                                 @foreach($schools as $school)
@@ -80,19 +80,19 @@
 
 
                     <div class="form-group">
-                        <label for="first_name">Անուն</label>
+                        <label for="first_name">Անուն <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', $student->first_name ?? '') }}" placeholder="">
                         <small class="error_first_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="last_name">Ազգանուն</label>
+                        <label for="last_name">Ազգանուն <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('first_name', $student->last_name ?? '') }}" placeholder="">
                         <small class="error_last_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="father_name">Հայրանուն</label>
+                        <label for="father_name">Հայրանուն <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="father_name" name="father_name" value="{{ old('first_name', $student->father_name ?? '') }}" placeholder="">
                         <small
                         
@@ -100,7 +100,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="address">Բնակության հասցե</label>
+                        <label for="address">Բնակության հասցե <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="address" name="address" value="{{ old('address', $student->address ?? '') }}" placeholder="">
                         <small class="error_address text-danger"></small>
                     </div>
@@ -112,19 +112,30 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Էլ․ հասցե</label>
+                        <label for="email">Էլ․ հասցե <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="email" name="email" value="{{ old('email', $student->email ?? '') }}" placeholder="">
                         <small class="error_email text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label>Վճարման ենթակա գումար</label>
+                        <label for="phone_1">Հեռ․ / 1 <small class="validation_star">*</small></label>
+                        <input type="text" class="form-control" id="phone_1" name="phone_1" value="{{ old('phone_1', $student->phone_1 ?? '') }}" placeholder="(__) ___-__-__">
+                        <small class="error_phone_1 text-danger"></small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone_2">Հեռ․/ 2 </label>
+                        <input type="text" class="form-control" id="phone_2" name="phone_2" value="{{ old('phone_2', $student->phone_2 ?? '') }}" placeholder="(__) ___-__-__">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Վճարման ենթակա գումար <small class="validation_star">*</small></label>
                         <input type="number" name="student_expected_payments" value="{{ old('student_expected_payments', $student->student_expected_payments ?? '') }}" class="form-control" min="0" step="1000" placeholder="Օրինակ` 50000">
                         <small class="error_student_expected_payments text-danger"></small>
                     </div>
-        
+
                     <div class="form-group">
-                        <label for="group_date">Ծննդյան Ամսաթիվ</label>
+                        <label for="group_date">Ծննդյան Ամսաթիվ <small class="validation_star">*</small></label>
                         <div class="input-group date" id="studentBirthDatePicker" data-target-input="nearest">
                             <input type="text"
                                 id="birth_date"
@@ -141,7 +152,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="group_date">Ընդունվելու ամսաթիվ</label>
+                        <label for="group_date">Ընդունվելու ամսաթիվ <small class="validation_star">*</small></label>
                         <div class="input-group date" id="studentDatePicker" data-target-input="nearest">
                             <input type="text"
                                 id="student_date"
@@ -157,7 +168,19 @@
                         <small class="error_created_date text-danger"></small>
                     </div>
 
-
+                    <div class="form-group card card-outline card-primary p-3 mb-2">
+                        <div class="form-check icheck-primary">
+                            <input 
+                            type="checkbox" 
+                            class="form-check-input" 
+                            id="is_guest" 
+                            name="is_guest" 
+                            value="1" 
+                            {{ old('is_guest', $student->is_guest ?? false) ? 'checked' : '' }}
+                            >
+                            <label class="form-check-label" for="is_guest">Հյուր</label>
+                        </div>
+                    </div>
     
                     @if(isset($student) && $student->files->count())
                     <div class="form-group">
@@ -205,7 +228,6 @@
                             </div>
                         @endforeach
                         </div>
-
                         <div id="removed-files"></div>
                         <small class="text-muted">Ֆայլը ջնջվում է պահպանելուց հետո։</small>
                     </div>

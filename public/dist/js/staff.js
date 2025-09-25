@@ -3,6 +3,12 @@ function saveStaff() {
     const formData = new FormData(form);
     const url = form.getAttribute('action'); 
 
+    const phone_1 = $('#phone_1').cleanVal();
+    const phone_2 = $('#phone_2').cleanVal();
+
+    formData.set('phone_1', phone_1);
+    formData.set('phone_2', phone_2 );
+
     $.ajax({        
         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
         url: url,
@@ -217,8 +223,29 @@ $(function () {
     dictRemoveFile: 'Հեռացնել',
   });
 
+  // dzStud.on("sendingmultiple", function (files, xhr, formData) {
+  //   $('#StaffForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
+  //   $('.text-danger').text('');
+  //   $('#staffBtn').prop('disabled', true);
+  // });
+
   dzStud.on("sendingmultiple", function (files, xhr, formData) {
-    $('#StaffForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
+    $('#StaffForm').serializeArray().forEach(({ name, value }) => {
+      formData.set(name, value);
+    });
+
+    const clean = v => (v || '').replace(/\D/g, '');
+    const p1 = (typeof $('#phone_1').cleanVal === 'function')
+      ? $('#phone_1').cleanVal()
+      : clean(formData.get('phone_1'));
+
+    const p2 = (typeof $('#phone_2').cleanVal === 'function')
+      ? $('#phone_2').cleanVal()
+      : clean(formData.get('phone_2'));
+
+    formData.set('phone_1', p1);
+    formData.set('phone_2', p2);
+
     $('.text-danger').text('');
     $('#staffBtn').prop('disabled', true);
   });

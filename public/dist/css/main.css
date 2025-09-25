@@ -142,3 +142,9 @@
   }
   .user-panel .info { min-width:0; }
   .user-panel .info .d-block { max-width:180px; }
+
+
+  .validation_star{
+    color: #dc3545 !important;
+    font-size: 20px;
+  }

@@ -94,7 +94,6 @@
                              <input type="hidden" name="students[]" value="{{ $item->id }}" {{ $isTrue ? '' : 'disabled' }}/>
                                 <tr>
                                 <td>{{ $item->full_name }}</td>
-                                {{-- "Հյուր" --}}
                                 <td class="text-center">
                                     <div class="icheck-primary d-inline">
                                     <input type="checkbox"
@@ -103,7 +102,6 @@
                                     <label for="guest{{  $item->id }}"></label>
                                     </div>
                                 </td>
-                                {{-- "Ներկա / Բացակա" --}}
                                 <td class="text-center">
                                     <div class="form-group clearfix mb-0">
                                     <div class="icheck-success d-inline">
@@ -182,16 +180,12 @@
                             @foreach ($items as $item)
                               <tr>
                                 <td>{{ $item->full_name }}</td>
-
-                                {{-- "Հյուր" --}}
                                 <td class="text-center">
                                   <div class="icheck-primary d-inline">
                                     <input type="checkbox" {{ $item->is_guest ? 'checked' : '' }} disabled>
                                     <label></label>
                                   </div>
                                 </td>
-
-                                {{-- "Ներկա / Բացակա" --}}
                                 <td class="text-center">
                                   <div class="form-group clearfix mb-0">
                                     <div class="icheck-success d-inline">

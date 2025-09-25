@@ -1,7 +1,14 @@
 function saveStudent() {
     const form = document.getElementById("StudentForm");
+    
     const formData = new FormData(form);
     const url = form.getAttribute('action'); 
+
+    const phone_1 = $('#phone_1').cleanVal();
+    const phone_2 = $('#phone_2').cleanVal();
+
+    formData.set('phone_1', phone_1);
+    formData.set('phone_2', phone_2 );
 
     $.ajax({        
         headers: {
@@ -227,11 +234,34 @@ $(function () {
     dictRemoveFile: 'Հեռացնել',
   });
 
+  // dzStud.on("sendingmultiple", function (files, xhr, formData) {
+  //   $('#StudentForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
+  //   $('.text-danger').text('');
+  //   $('#studentBtn').prop('disabled', true);
+  // });
+
+
   dzStud.on("sendingmultiple", function (files, xhr, formData) {
-    $('#StudentForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
+    $('#StudentForm').serializeArray().forEach(({ name, value }) => {
+      formData.set(name, value);
+    });
+
+    const clean = v => (v || '').replace(/\D/g, '');
+    const p1 = (typeof $('#phone_1').cleanVal === 'function')
+      ? $('#phone_1').cleanVal()
+      : clean(formData.get('phone_1'));
+
+    const p2 = (typeof $('#phone_2').cleanVal === 'function')
+      ? $('#phone_2').cleanVal()
+      : clean(formData.get('phone_2'));
+
+    formData.set('phone_1', p1);
+    formData.set('phone_2', p2);
+
     $('.text-danger').text('');
     $('#studentBtn').prop('disabled', true);
   });
+
 
   dzStud.on("successmultiple", function (files, response) {
     const res = (typeof response === 'string') ? JSON.parse(response) : response;
@@ -343,7 +373,7 @@ $(document).on('click', '.js-mark-remove-st', function () {
 
 
 
-  $(document).off('click.payment', '#studentTbl .view-history').on('click.payment', '#studentTbl .view-history', function (e) {
+$(document).off('click.payment', '#studentTbl .view-history').on('click.payment', '#studentTbl .view-history', function (e) {
       e.preventDefault();
       e.stopPropagation();
       const id  = $(this).data('id');
@@ -351,4 +381,9 @@ $(document).on('click', '.js-mark-remove-st', function () {
       const base = `/admin/payment/student/${encodeURIComponent(id)}`;
       const url  = sid ? `${base}?school_id=${encodeURIComponent(sid)}` : base;
       window.location.assign(url);
-    });
+});
+
+$(document).ready(function(){
+    $('#phone_1').mask('(000) 00-00-00');
+    $('#phone_2').mask('(000) 00-00-00');
+})

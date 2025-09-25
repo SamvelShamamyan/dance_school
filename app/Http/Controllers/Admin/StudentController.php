@@ -66,6 +66,8 @@ class StudentController extends Controller
                 'last_name' => $validated['last_name'],
                 'father_name' => $validated['father_name'],
                 'email' => $validated['email'], 
+                'phone_1' => $validated['phone_1'], 
+                'phone_2' => $validated['phone_2'], 
                 'student_expected_payments' => $student_expected_payments, 
                 'student_debts' => $student_expected_payments,
                 'address' => $validated['address'],  
@@ -75,8 +77,6 @@ class StudentController extends Controller
                 'school_id' => $schoolId,  
             ]); 
             
-            
-
             if ($request->hasFile('files')) {
                 foreach ($request->file('files') as $file) {
                     $path = $file->store("student_files/{$student->id}", 'public');
@@ -135,6 +135,7 @@ class StudentController extends Controller
     public function update(StudentUpdateRequest $request, $id){
         DB::beginTransaction();
         try {
+
             $validated = $request->validated();
             $student = Student::findOrFail($id);
 
@@ -146,6 +147,8 @@ class StudentController extends Controller
                 'last_name' => $validated['last_name'],
                 'father_name' => $validated['father_name'],
                 'email' => $validated['email'],
+                'phone_1' => $validated['phone_1'],
+                'phone_2' => $validated['phone_2'],
                 'student_expected_payments' => $student_expected_payments,
                 'student_debts' => $student_expected_payments, 
                 'address' => $validated['address'],

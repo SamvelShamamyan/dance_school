@@ -29,12 +29,14 @@ class StaffStoreRequest extends FormRequest
             'last_name'     => 'required|string|max:25',
             'father_name'   => 'required|string|max:25',
             'address'       => 'required|string|max:25',
-            'soc_number'    => 'required|string|max:25',
+            'soc_number'    => 'nullable|string|max:25',
             'email'         => 'required|email|unique:staff,email',
+            'phone_1' => 'required|digits:9',
+            'phone_2' => 'nullable|digits:9',
             'birth_date'    => [
                 'required',
                 'date_format:d.m.Y',
-                // 'after_or_equal:today'
+                'before_or_equal:today'
             ],
             'staff_date' => [
                 'required',
@@ -76,9 +78,14 @@ class StaffStoreRequest extends FormRequest
             'email.email'          => 'Էլ. փոստի ձևաչափը սխալ է:',
             'email.unique'         => 'Այս էլ. փոստը արդեն օգտագործվում է:',
 
+            'phone_1.required' => 'Հեռախոսահամարը պարտադիր է:',
+            'phone_1.digits' => 'Հեռախոսահամարը պետք է լինի 9 թվանշան:',
+
+            'phone_2.digits' => 'Հեռախոսահամարը պետք է լինի 9 թվանշան:',
+
             'birth_date.required'     => 'Ծննդյան ամսաթիվը պարտադիր է:',
             'birth_date.date_format'  => 'Ծննդյան ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
-            // 'birth_date.before_or_equal' => 'Ծննդյան ամսաթիվը չի կարող լինել ապագայում:',
+            'birth_date.before_or_equal' => 'Ծննդյան ամսաթիվը չի կարող լինել ապագայում:',
 
             'staff_date.required'     => 'Աշխատանքի ընդունման ամսաթիվը պարտադիր է:',
             'staff_date.date_format'  => 'Աշխատանքի ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',

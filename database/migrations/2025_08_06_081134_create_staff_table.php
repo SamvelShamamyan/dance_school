@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('email', 191)->unique();
             $table->string('address'); 
             $table->date('birth_date');
-            $table->string('soc_number');
+            $table->string('soc_number')->nullable();
             $table->date('created_date');
             $table->unsignedBigInteger('school_id')->nullable();
             $table->timestamps();
