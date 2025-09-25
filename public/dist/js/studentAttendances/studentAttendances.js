@@ -28,7 +28,7 @@ function checkAttendancesSave() {
             if (xhr.status === 422) {
                 let errors = xhr.responseJSON.errors;
                 $.each(errors, function(field, messages) {
-                    $(`.error_${field}`).text(messages[0])
+                      showInfo("info", messages[0], "");
                 });
             } else {
                 swal("error", "Something went wrong!", true, true)
@@ -48,6 +48,7 @@ $(function () {
     showTodayButton: true,
     defaultDate: checkAttendances ? moment(checkAttendances, 'DD.MM.YYYY') : moment()
   });
+    $('#inspection_date').attr('readonly', true);
     $('#checkAttendancesDatePicker').on('show.datetimepicker', function () {
         $('.bootstrap-datetimepicker-widget').css({ 'width': '360px', 'min-width': '360px' });
     });

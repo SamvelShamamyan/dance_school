@@ -20,7 +20,9 @@ class StudentAttendancesStoreRequest extends FormRequest
 
         return [
             'schedule_group_id'   => ['nullable','integer'],
-            'inspection_date'     => ['required','date_format:d.m.Y'],
+            'inspection_date'     => ['required','date_format:d.m.Y',
+                                        'after_or_equal:' . now()->format('d.m.Y'),
+                                        'before_or_equal:' . now()->format('d.m.Y'),],
             'students'            => ['required','array','min:1'],
 
             'attendance_check'    => ['required','array', 'required_array_keys:'.implode(',', $ids)],
@@ -35,6 +37,8 @@ class StudentAttendancesStoreRequest extends FormRequest
         return [
             'inspection_date.required' => 'Ընտրեք ստուգման ամսաթիվը:',
             'inspection_date.date_format' => 'Ստուգման ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025)',
+            'inspection_date.after_or_equal' => 'Ամսաթիվը պետք է լինի ընթացիկ օր։',
+            'inspection_date.before_or_equal' => 'Ամսաթիվը պետք է լինի ընթացիկ օր։',
             'students.required'        => 'Աշակերտների ցուցակը բացակայում է:',
             'students.min'             => 'Չկան աշակերտներ ցուցակում:',
             'attendance_check.required'=> 'Ավելացրեք առնվազն մեկ ուսանող:',

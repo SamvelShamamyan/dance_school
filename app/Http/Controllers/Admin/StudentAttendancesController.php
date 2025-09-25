@@ -64,10 +64,11 @@ class StudentAttendancesController extends Controller
             return Carbon::parse($row->inspection_date)->toDateString();
         });
 
-        $scheduleGroupTime = ScheduleGroup::where('id', $id)->first(['start_time', 'end_time']);
-        $currentTime = Carbon::now()->format('H:i:s');       
-
-        if($currentTime >= $scheduleGroupTime->start_time && $currentTime <= $scheduleGroupTime->end_time){
+        $scheduleGroupTime = ScheduleGroup::where('id', $id)->first(['start_time', 'end_time', 'week_day']);
+        $currentTime = Carbon::now()->format('H:i:s'); 
+        $today = Carbon::now();
+     
+        if($today->dayOfWeek && ($currentTime >= $scheduleGroupTime->start_time && $currentTime <= $scheduleGroupTime->end_time)){
           $isTrue = true;  
         }
 
@@ -77,7 +78,10 @@ class StudentAttendancesController extends Controller
     public function add(StudentAttendancesStoreRequest $request){
         try {
 
-            $inspectionDate = Carbon::createFromFormat('d.m.Y', $request->inspection_date)->format('Y-m-d');
+            // $inspectionDate = Carbon::createFromFormat('d.m.Y', $request->inspection_date)->format('Y-m-d');
+            $inspectionDate = Carbon::now();
+            $curentDate = $inspectionDate->toDate();
+
             $validated = $request->validated();
 
             foreach ( $validated['attendance_check']  as $studentId => $status) {
@@ -86,7 +90,7 @@ class StudentAttendancesController extends Controller
                     'student_id'        => (int)$studentId,
                     'is_guest'          => isset($request->attendance_guest[$studentId]) ? 1 : 0,
                     'checked_status'    => (int)$status, 
-                    'inspection_date'   => $inspectionDate,
+                    'inspection_date'   => $curentDate,
                 ]);
             }
 

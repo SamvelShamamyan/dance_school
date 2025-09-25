@@ -67,7 +67,7 @@
                                 name="inspection_date"
                                 class="form-control datetimepicker-input"
                                 data-target="#checkAttendancesDatePicker"
-                                data-toggle="datetimepicker" {{ $isTrue ? '' : 'disabled' }}/>
+                                data-toggle="datetimepicker" />
                         <div class="input-group-append"
                             data-target="#checkAttendancesDatePicker"
                             data-toggle="datetimepicker">
