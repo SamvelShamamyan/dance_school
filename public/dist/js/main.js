@@ -36,17 +36,20 @@ $(function() {
         columns: [  
             {
                 data: 'id',
-                name: 'id'
+                name: 'id',
+                width: "10%"
             },
             {
                 data: 'name',
-                name: 'name'
+                name: 'name',
+                width: "43%"
             },
             {
                 orderable: false,
                 searchable: false,
                 data: 'action',
                 name: 'action',
+                width: "33%"
             }
         ]
     });
