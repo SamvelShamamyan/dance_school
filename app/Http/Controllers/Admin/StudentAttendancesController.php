@@ -68,7 +68,7 @@ class StudentAttendancesController extends Controller
         $currentTime = Carbon::now()->format('H:i:s'); 
         $today = Carbon::now();
      
-        if($today->dayOfWeek && ($currentTime >= $scheduleGroupTime->start_time && $currentTime <= $scheduleGroupTime->end_time)){
+        if($today->dayOfWeek == $scheduleGroupTime->week_day && ($currentTime >= $scheduleGroupTime->start_time && $currentTime <= $scheduleGroupTime->end_time)){
           $isTrue = true;  
         }
 
