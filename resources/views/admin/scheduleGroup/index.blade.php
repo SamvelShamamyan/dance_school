@@ -160,7 +160,7 @@
 
          @if(Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant'))
           <div class="form-group">
-            <label for="school_id" class="mr-2 mb-0">Ընտրել ուս․ հաստատություն</label>
+            <label for="school_id" class="mr-2">Ընտրել ուս․ հաստատություն</label>
             <select id="school_id" class="form-control">
                 <option value="" selected >Բոլորը</option>
                 @foreach($schools as $school)
@@ -171,7 +171,7 @@
           </div>
 
           <div class="form-group">
-            <label for="group_id" class="mr-2 mb-0">Խումբ</label>
+            <label for="group_id" class="mr-2">Խումբ</label>
             <select id="group_id" class="form-control" disabled>
                 <option value="" selected >Ընտրել</option>
             </select>
@@ -179,7 +179,7 @@
           </div>
 
           <div class="form-group">
-            <label for="room_id" class="mr-2 mb-0">Դահլիճ</label>
+            <label for="room_id" class="mr-2">Դահլիճ</label>
             <select id="room_id" class="form-control" disabled>
                 <option value="" selected >Ընտրել</option>
             </select>
