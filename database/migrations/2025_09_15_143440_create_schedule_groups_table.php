@@ -29,7 +29,7 @@ return new class extends Migration
             $table->boolean('is_active')->default(true); 
             $table->timestamps();
 
-            $table->foreign('school_id')->references('id')->on('school_name')->onDelete('cascade');
+            $table->foreign('school_id')->references('id')->on('school_names')->onDelete('cascade');
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
             $table->foreign('room_id')->references('id')->on('rooms')->onDelete('cascade');
             

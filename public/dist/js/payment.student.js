@@ -13,9 +13,25 @@ function savePayent() {
         processData: false,
         type: 'POST',
         dataType: 'json',
-        success: function(response) {
-            if (response.status === 1) {
-                swal("success", "Գործողությունը կատարված է", true, true);
+        success:async function(response) {
+            if (response.status === 1) {     
+              await Swal.fire({
+                  title: "Գործողությունը կատարված է",
+                  text: "",
+                  icon: "success",
+                  confirmButtonText: "Տպել կտրոնը",
+                  cancelButtonText: 'Փակել',
+                  showCancelButton: true,
+                }).then((result) => {
+                  if (result.isConfirmed && response.id) {
+                    const url = `/admin/payment/receipt/${response.id}?print=1`;
+                    window.open(url, '_blank', 'noopener');
+                  }
+                  setTimeout(() => {
+                    location.reload();
+                  }, 500);
+                }); 
+
                 $('#singlePaymentForm')[0].reset();
                 $('.text-danger').text('');
                 $('#singlePaymentBtn').prop('disabled', true);

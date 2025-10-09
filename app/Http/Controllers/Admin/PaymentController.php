@@ -9,6 +9,7 @@ use App\Http\Requests\PaymentRequest\PaymentUpdateRequest;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 use Carbon\Carbon;
 use App\Models\SchoolName;
@@ -22,6 +23,7 @@ class PaymentController extends Controller
 {
      protected $paymentService;
     public function __construct(PaymentService $paymentService){
+        date_default_timezone_set('Asia/Yerevan');
         $this->paymentService = $paymentService;
     }
     public function index(){
@@ -36,9 +38,10 @@ class PaymentController extends Controller
             }
 
             $validated = $request->validated();
-            $paidAt = Carbon::createFromFormat('d.m.Y', $validated['paid_at'])->format('Y-m-d');
-
-            DB::transaction(function () use ($schoolId, $validated, $paidAt) {
+            $paidAt = Carbon::createFromFormat('d.m.Y', $validated['paid_at'])
+                            ->setTimeFromTimeString(now()->format('H:i:s'))
+                            ->format('Y-m-d H:i:s');
+            $paymentId = DB::transaction(function () use ($schoolId, $validated, $paidAt) {
 
                 $payment = Payment::create([
                     'school_id'  => $schoolId,
@@ -77,9 +80,16 @@ class PaymentController extends Controller
                     'student_prepayment'   => $R_after,      
                     'student_debts'        => $T_after,     
                 ]);
+
+                 return $payment->id;
             });
 
-            return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']);
+            return response()->json([
+                'status' => 1, 
+                'id' => $paymentId,
+                'message' => 'Գործողությունը կատարված է',
+            ]);
+
         } catch (Throwable $e) {
             return response()->json([
                 'status'  => 0,
@@ -301,4 +311,37 @@ class PaymentController extends Controller
             ], 500);
         }
     }
+
+    public function receipt(Payment $payment){
+        try{
+
+            if (!Auth::user()->hasRole('super-admin') && !Auth::user()->hasRole('super-accountant')) {
+                if ($payment->school_id !== Auth::user()->school_id) {
+                    abort(403);
+                }
+            }
+
+            $payment->load(['student', 'group', 'school']);
+
+            $paidDate = Carbon::parse($payment->paid_at)->format('d.m.y');
+            $paidTime = Carbon::parse($payment->paid_at)->format('H:i');
+            $randomCode = 'PM-' . strtoupper(Str::random(2)) . rand(1000, 9999) . '-' . $payment->id;
+
+            return view('admin.payment.receipt', [
+                'payment' => $payment,
+                'random_code' => $randomCode,
+                'paid_date' => $paidDate,
+                'paid_time' => $paidTime,
+            ]);
+
+        } catch(Throwable $e){
+            return response()->json([
+                'status' => 0,
+                'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
+                'error' => $e->getMessage(), 
+            ], 500);
+        }  
+    }
+    
+
 }

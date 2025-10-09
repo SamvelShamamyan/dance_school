@@ -46,3 +46,17 @@
 //         }, 300); 
 //     });
 // });
+
+function formatPhone(phone) {
+    if (!phone) return '';
+    phone = phone.toString().replace(/\D/g, '');
+
+    if (phone.length < 8) return phone;
+
+    const match = phone.match(/^(\d{3})(\d{2})(\d{2})(\d{2})$/);
+    if (match) {
+        return `(${match[1]})${match[2]}-${match[3]}-${match[4]}`;
+    }
+
+    return phone.replace(/(\d{3})(?=\d)/g, '$1 ');
+}

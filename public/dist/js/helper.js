@@ -11,7 +11,7 @@ function validation(errors){
 
 
  
-async function swal(type, message, reload=false, position = false){
+async function swal(type, message, reload = false, position = false){
     const Toast = Swal.mixin({
         toast: true,
         position: "top-end",

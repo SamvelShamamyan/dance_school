@@ -259,6 +259,20 @@ $(function() {
                 data: 'email',
                 name: 'email'
             },
+            // {
+            //     data: 'phone_1',
+            //     name: 'phone_1',
+            //     render: function (data, type, row) {
+            //         return formatPhone(data);
+            //     }
+            // },
+            // {
+            //     data: 'phone_2',
+            //     name: 'phone_2',
+            //     render: function (data, type, row) {
+            //         return formatPhone(data);
+            //     }
+            // },
             {
                 data: 'soc_number',
                 name: 'soc_number'
@@ -806,6 +820,20 @@ $(function() {
             {
                 data: 'email',
                 name: 'email'
+            },
+            {
+                data: 'phone_1',
+                name: 'phone_1',
+                render: function (data, type, row) {
+                    return formatPhone(data);
+                }
+            },
+            {
+                data: 'phone_2',
+                name: 'phone_2',
+                render: function (data, type, row) {
+                    return formatPhone(data);
+                }
             },
             {
                 data: 'soc_number',
