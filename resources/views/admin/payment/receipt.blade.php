@@ -93,7 +93,6 @@
   </div>
 
 <script>
-  // Авто-печать при ?print=1
   (function(){
     const url = new URL(window.location.href);
     if (url.searchParams.get('print') === '1') {
