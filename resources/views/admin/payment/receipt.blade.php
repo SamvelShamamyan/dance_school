@@ -17,7 +17,7 @@
     --font-main:"Inter","DejaVu Sans","Noto Sans Armenian",Arial,sans-serif;
     --font-title:"DejaVu Serif",Georgia,serif;
   }
-  html, body{ height:100%; }
+  html, body{ height:100%; } 
   body{ margin:0; background:var(--bg); color:var(--ink); font-family:var(--font-main); line-height:1.42; }
   .btns{display:flex;gap:.6rem;padding:10px 14px;position:sticky;top:0;background:#f8fafc;border-bottom:1px solid var(--line);z-index:5;}
   .btns button{border:1px solid var(--line);background:#fff;padding:.5rem .8rem;border-radius:8px;cursor:pointer;font-weight:600;}
