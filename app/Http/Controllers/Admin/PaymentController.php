@@ -10,6 +10,8 @@ use App\Http\Requests\PaymentRequest\PaymentUpdateRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendStudentEmailNotification;
 
 use Carbon\Carbon;
 use App\Models\SchoolName;
@@ -80,10 +82,11 @@ class PaymentController extends Controller
                     'student_prepayment'   => $R_after,      
                     'student_debts'        => $T_after,     
                 ]);
-
                  return $payment->id;
             });
 
+            $this->sendStudentEmailNotification($paymentId);
+            
             return response()->json([
                 'status' => 1, 
                 'id' => $paymentId,
@@ -217,7 +220,7 @@ class PaymentController extends Controller
     public function studentFilters(Request $request, Student $student){
 
         if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant')) {
-        $schoolId = (int) $request->query('school_id');
+            $schoolId = (int) $request->query('school_id');
         if (!$schoolId || $schoolId !== (int) $student->school_id) {
             abort(403);
         }
@@ -342,6 +345,14 @@ class PaymentController extends Controller
             ], 500);
         }  
     }
+
+
+    public function sendStudentEmailNotification(int $paymentId){
+        $payment = Payment::with('student')->findOrFail($paymentId);
+        // Mail::to($payment->student->email)->queue(new SendStudentEmailNotification());
+        Mail::to($payment->student->email)->send(new SendStudentEmailNotification());
+
+    }   
     
 
 }
