@@ -348,11 +348,27 @@ class PaymentController extends Controller
 
 
     public function sendStudentEmailNotification(int $paymentId){
-        $payment = Payment::with('student')->findOrFail($paymentId);
-        // Mail::to($payment->student->email)->queue(new SendStudentEmailNotification());
-        Mail::to($payment->student->email)->send(new SendStudentEmailNotification());
+        try{
+           
+            $payment = Payment::with('student')->findOrFail($paymentId);
+            Mail::to($payment->student->email)->queue(new SendStudentEmailNotification());
 
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Գործողությունը կատարված է',
+            ]);
+
+        }catch(Throwable $e){
+            return response()->json([
+                'status' => 0,
+                'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
+                'error' => $e->getMessage(), 
+            ], 500);
+        }  
+    }  
+      
+    public function sendEmailNotification(int $paymentId){
+       $this->sendStudentEmailNotification($paymentId);
     }   
-    
 
 }

@@ -7,13 +7,10 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\UserRequest\UserStoreRequest; 
 use App\Http\Requests\UserRequest\UserUpdateRequest; 
-
 use Illuminate\Support\Facades\Mail;
 use App\Mail\UserCreatedMail;
-
 use App\Models\SchoolName;
 use App\Models\User;
-
 use Spatie\Permission\Models\Role;
 use App\Services\UserService;
 use Throwable;

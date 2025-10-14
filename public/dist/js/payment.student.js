@@ -209,6 +209,47 @@ $(document).on('click', '.act-del', function () {
     });
 });
 
+$(document).on('click', '.act-notification', function () {
+    let id = $(this).data('id');
+    let el = this;
+
+    const $tbl = $('#studentPaymentTbl');
+    const SCHOOL_ID = $tbl.data('school-id');
+
+    Swal.fire({
+        title: "Դուք ցանկանում եք ուղարկել վճարման ծանուցում՞",
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: "Այո",
+        showCancelButton: false,
+        denyButtonText: `Ոչ`,
+        icon: "info",
+    }).then((result) => {
+        if (result.isConfirmed) {
+            $.ajax({
+                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+                url: `/admin/payment/student/sendEmailNotification/${id}`,
+                cache: false,
+                contentType: false,
+                processData: false,
+                type: 'POST',
+                dataType: 'json',
+                success: function (response) {
+                  if (response && response.status === -2) {
+                      swal("error", response.message);
+                  } else if (response && response.status === 1) {
+                      swal("success", response.message, true, true);
+                  }
+                },
+                error: function (xhr) {
+                  Swal.fire("Սխալ",  xhr.responseJSON.message, "error");
+                  console.error(xhr.responseJSON);
+                }
+            });
+        }
+    });
+});
+
 if ($('#paymentDatePicker').length){
   $('#paymentDatePicker').datetimepicker({
     format: 'DD.MM.YYYY',

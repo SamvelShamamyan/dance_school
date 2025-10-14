@@ -634,7 +634,7 @@ $(function () {
         type: 'post',
         data: function(d) {
           d.year   = $('#year').val();
-          d.method   = $('#method').val();
+          d.method = $('#method').val();
           d.status = $('#status').val();
         }
       },
@@ -663,6 +663,9 @@ $(function () {
             </button>
             <button class="btn btn-sm btn-outline-danger act-del" data-id="${id}" disabled>
               <i class="fas fa-trash"></i>
+            </button>
+            <button class="btn btn-sm btn-outline-warning act-notification" data-id="${id}">
+              <i class="fas fa-envelope"></i>
             </button>`
         }
       ]
