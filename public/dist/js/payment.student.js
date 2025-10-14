@@ -211,11 +211,6 @@ $(document).on('click', '.act-del', function () {
 
 $(document).on('click', '.act-notification', function () {
     let id = $(this).data('id');
-    let el = this;
-
-    const $tbl = $('#studentPaymentTbl');
-    const SCHOOL_ID = $tbl.data('school-id');
-
     Swal.fire({
         title: "Դուք ցանկանում եք ուղարկել վճարման ծանուցում՞",
         showDenyButton: true,
