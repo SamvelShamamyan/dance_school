@@ -46,7 +46,7 @@
                 <div class="card-body">
                     @if(Auth::user()->hasRole('super-admin'))            
                         <div class="form-group">
-                            <label for="filterSchoolGroup" class="mr-2 mb-0">Ուս․ հաստատություն</label>
+                            <label for="filterSchoolGroup" class="mr-2 mb-0">Ուս․ հաստատություն  <small class="validation_star">*</small></label>
                             <select name="school_id" id="filterSchoolGroup" class="form-control">
                                 <option value="" disabled {{ empty(old('school_id', $group->school_id ?? '')) ? 'selected' : '' }}>Ընտրել</option>
                                 @foreach($schools as $school)
@@ -61,13 +61,13 @@
                     @endif
 
                     <div class="form-group">
-                        <label for="group_name">Անուն</label>
+                        <label for="group_name">Անուն  <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="group_name" name="group_name" value="{{ old('name', $group->name ?? '') }}" placeholder="">
                         <small class="error_group_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="group_date">Ամսաթիվ</label>
+                        <label for="group_date">Ամսաթիվ  <small class="validation_star">*</small></label>
                         <div class="input-group date" id="groupDatePicker" data-target-input="nearest">
                             <input type="text"
                                 id="group_date"

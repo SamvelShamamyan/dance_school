@@ -22,7 +22,7 @@
                     <div class="card-body">
                         @if(Auth::user()->hasRole('super-admin'))            
                             <div class="form-group">
-                                <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն</label>
+                                <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն <small class="validation_star">*</small></label>
                                 <select name="school_id" id="school_id" class="form-control">
                                     <option value="" disabled {{ empty(old('school_id', $room->school_id ?? '')) ? 'selected' : '' }}>Ընտրել</option>
                                     @foreach($schools as $school)
@@ -36,7 +36,7 @@
                             </div>         
                         @endif
                         <div class="form-group">
-                            <label for="name">Անվանումը</label>
+                            <label for="name">Անվանումը <small class="validation_star">*</small></label>
                             <input type="text" name="name" class="form-control" id="name" value="{{ old('name', $room->name ?? '') }}" placeholder="">
                             <small class="error_name text-danger"></small>
                         </div>

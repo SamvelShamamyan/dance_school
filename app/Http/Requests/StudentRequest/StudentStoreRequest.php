@@ -33,6 +33,8 @@ class StudentStoreRequest extends FormRequest
             'email' => 'required|email|unique:students,email',
             'phone_1' => 'required|digits:9',
             'phone_2' => 'nullable|digits:9',
+            'parent_first_name' => ['nullable','string','max:25'],
+            'parent_last_name' => ['nullable','string','max:25'],
             'student_expected_payments' => 'required|numeric|min:0',
             'birth_date' => [
                 'required',

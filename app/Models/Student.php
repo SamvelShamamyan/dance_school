@@ -18,6 +18,8 @@ class Student extends Model
         'email',
         'phone_1',
         'phone_2',
+        'parent_first_name',
+        'parent_last_name',
         'address',
         'soc_number',
         'birth_date',
@@ -29,6 +31,7 @@ class Student extends Model
         'student_transactions',
         'student_debts',
         'student_month_debt',
+        'is_guest',
     ];
 
     protected $casts = [

@@ -57,6 +57,7 @@ class StudentController extends Controller
             }
 
             $validated = $request->validated();
+            $isGuest = $request->boolean('is_guest');
             
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
@@ -68,13 +69,16 @@ class StudentController extends Controller
                 'email' => $validated['email'], 
                 'phone_1' => $validated['phone_1'], 
                 'phone_2' => $validated['phone_2'], 
+                'parent_first_name' => $validated['parent_first_name'], 
+                'parent_last_name' => $validated['parent_last_name'], 
                 'student_expected_payments' => $student_expected_payments, 
                 'student_debts' => $student_expected_payments,
                 'address' => $validated['address'],  
                 'soc_number' => $validated['soc_number'],  
                 'birth_date' => $formattedBirthDate,
                 'created_date' => $formattedStudentDate, 
-                'school_id' => $schoolId,  
+                'school_id' => $schoolId,
+                'is_guest' => $isGuest,  
             ]); 
             
             if ($request->hasFile('files')) {
@@ -138,6 +142,7 @@ class StudentController extends Controller
 
             $validated = $request->validated();
             $student = Student::findOrFail($id);
+            $isGuest = $request->boolean('is_guest');
 
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
@@ -149,12 +154,15 @@ class StudentController extends Controller
                 'email' => $validated['email'],
                 'phone_1' => $validated['phone_1'],
                 'phone_2' => $validated['phone_2'],
+                'parent_first_name' => $validated['parent_first_name'], 
+                'parent_last_name' => $validated['parent_last_name'], 
                 'student_expected_payments' => $student_expected_payments,
                 'student_debts' => $student_expected_payments, 
                 'address' => $validated['address'],
                 'soc_number' => $validated['soc_number'],
                 'birth_date' => $formattedBirthDate,
                 'created_date' => $formattedStudentDate,
+                'is_guest' => $isGuest,
             ]);
 
             $removeIds = (array) $request->input('removed_files', []);

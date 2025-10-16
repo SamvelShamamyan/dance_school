@@ -38,6 +38,8 @@ class StudentUpdateRequest extends FormRequest
 
             'phone_1' => 'required|digits:9',
             'phone_2' => 'nullable|digits:9',
+            'parent_first_name' => ['nullable','string','max:25'],
+            'parent_last_name' => ['nullable','string','max:25'],
 
             'student_expected_payments' => 'required|numeric|min:0',
             

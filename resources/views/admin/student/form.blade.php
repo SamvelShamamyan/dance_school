@@ -37,6 +37,19 @@
     #student-dropzone .dz-success-mark,
     #student-dropzone .dz-error-mark { display: none !important; }
 
+
+  .form-section {
+    position: relative;
+    margin: 1.25rem 0 0.75rem;
+  }
+  .form-section hr {
+    margin: 0;
+    border-top: 1px dashed #5e5e5eff;
+  }
+
+
+
+
 </style>
 
 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
@@ -122,7 +135,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="phone_2">Հեռ․/ 2 </label>
+                        <label for="phone_2">Հեռ․ / 2 </label>
                         <input type="text" class="form-control" id="phone_2" name="phone_2" value="{{ old('phone_2', $student->phone_2 ?? '') }}" placeholder="(__) ___-__-__">
                     </div>
 
@@ -166,17 +179,44 @@
                         <small class="error_created_date text-danger"></small>
                     </div>
 
-                    <div class="form-group card card-outline card-primary p-3 mb-2">
-                        <div class="form-check icheck-primary">
+                    <div class="card card-outline card-primary p-3 mb-3">
+                        <div class="form-row">
+                            <div class="form-group col-md-6">
+                                <label for="parent_first_name">Ծնողի անուն </label>
+                                <input type="text"
+                                    class="form-control"
+                                    id="parent_first_name"
+                                    name="parent_first_name"
+                                    value="{{ old('parent_first_name', $student->parent_first_name ?? '') }}"
+                                    placeholder="">
+                                <small class="error_parent_first_name text-danger"></small>
+                            </div>
+
+                            <div class="form-group col-md-6">
+                                <label for="parent_last_name">Ծնողի ազգանուն </label>
+                                <input type="text"
+                                    class="form-control"
+                                    id="parent_last_name"
+                                    name="parent_last_name"
+                                    value="{{ old('parent_last_name', $student->parent_last_name ?? '') }}"
+                                    placeholder="">
+                                <small class="error_parent_last_name text-danger"></small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border rounded p-3 mb-3 bg-light d-flex align-items-center">
+                        <div class="form-check icheck-primary mb-0">
                             <input 
-                            type="checkbox" 
-                            class="form-check-input" 
-                            id="is_guest" 
-                            name="is_guest" 
-                            value="1" 
-                            {{ old('is_guest', $student->is_guest ?? false) ? 'checked' : '' }}
-                            >
-                            <label class="form-check-label" for="is_guest">Հյուր</label>
+                                type="checkbox"
+                                class="form-check-input"
+                                id="is_guest"
+                                name="is_guest"
+                                value="1"
+                                {{ old('is_guest', $student->is_guest ?? false) ? 'checked' : '' }}>
+                            <label class="form-check-label font-weight-bold text-secondary" for="is_guest">
+                                <i class="fas fa-user-check text-primary mr-1"></i> Հյուր
+                            </label>
                         </div>
                     </div>
     
@@ -279,7 +319,6 @@
             </div>
         </div>
     @endif
-
 </div>
 
 <script>

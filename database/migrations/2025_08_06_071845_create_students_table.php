@@ -19,6 +19,8 @@ return new class extends Migration
             $table->string('email', 191)->unique();
             $table->string('phone_1', 9);
             $table->string('phone_2', 9);
+            $table->string('parent_first_name')->nullable();         
+            $table->string('parent_last_name')->nullable();         
             $table->string('address'); 
             $table->date('birth_date');
             $table->string('soc_number')->nullable();
@@ -30,7 +32,9 @@ return new class extends Migration
             $table->decimal('student_expected_payments', 12, 2);   
             $table->decimal('student_transactions', 12, 2)->nullable();   
             $table->decimal('student_prepayment', 12, 2)->nullable();   
-            $table->decimal('student_debts', 12, 2)->nullable();   
+            $table->decimal('student_debts', 12, 2)->nullable();
+            
+            $table->boolean('is_last')->default(false);
 
             $table->timestamps();
             $table->softDeletes();

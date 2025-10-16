@@ -21,7 +21,7 @@
                      @csrf
                     <div class="card-body">
                         <div class="form-group">
-                            <label for="name">Ուս․ հաստատության անվանումը</label>
+                            <label for="name">Ուս․ հաստատության անվանումը  <small class="validation_star">*</small></label>
                             <input type="text" name="name" class="form-control" id="name" value="{{ old('name', $school->name ?? '') }}" placeholder="">
                             <small class="error_name text-danger"></small>
                         </div>

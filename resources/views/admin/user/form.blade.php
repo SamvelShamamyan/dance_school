@@ -24,31 +24,31 @@
                 <div class="card-body">
 
                     <div class="form-group">
-                        <label for="first_name">Անուն</label>
+                        <label for="first_name">Անուն  <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', $user->first_name ?? '') }}" placeholder="">
                         <small class="error_first_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="last_name">Ազգանուն</label>
+                        <label for="last_name">Ազգանուն  <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="last_name" name="last_name" value="{{ old('last_name', $user->last_name ?? '') }}" placeholder="">
                         <small class="error_last_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="father_name">Հայրանուն</label>
+                        <label for="father_name">Հայրանուն  <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="father_name" name="father_name" value="{{ old('father_name', $user->father_name ?? '') }}" placeholder="">
                         <small class="error_father_name text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="email">Էլ․ հասցե</label>
+                        <label for="email">Էլ․ հասցե  <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="email" name="email" value="{{ old('email', $user->email ?? '') }}" placeholder="">
                         <small class="error_email text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="school_id">Դպրոց</label>
+                        <label for="school_id">Դպրոց <small class="validation_star">*</small></label>
                         <select class="form-control" name="school_id" id="school_id">
                             <option value="" disabled {{ empty(old('school_id', $user->school_id ?? '')) ? 'selected' : '' }}>Ընտրել դպրոցը</option>
                             @foreach($schoolNameData as $school)
@@ -62,7 +62,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="role_name">Դերը</label>
+                        <label for="role_name">Դերը <small class="validation_star">*</small></label>
                         <select class="form-control" name="role_name" id="role_name">
                             <option value="" disabled {{ empty(old('role_name', $userRole ?? '')) ? 'selected' : '' }}>Ընտրել դերը</option>
                             @foreach($roles as $role)
