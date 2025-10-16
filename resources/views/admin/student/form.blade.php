@@ -94,9 +94,7 @@
                     <div class="form-group">
                         <label for="father_name">Հայրանուն <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="father_name" name="father_name" value="{{ old('first_name', $student->father_name ?? '') }}" placeholder="">
-                        <small
-                        
-                        class="error_father_name text-danger"></small>
+                        <small class="error_father_name text-danger"></small>
                     </div>
 
                     <div class="form-group">

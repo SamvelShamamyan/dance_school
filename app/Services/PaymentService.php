@@ -21,22 +21,46 @@ class PaymentService
      *  - սովորական դերեր՝
      *      միշտ սահմանափակում ենք ըստ օգտագործողի Auth::user()->school_id-ի
      */
+
     public function getPaymentData(Request $request): array{
         $isSuper = Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant');
 
-        // Սահմանում ենք school_id-ը՝ հաշվի առնելով դերը
         $schoolId = Auth::user()->school_id;
         if ($isSuper) {
             $schoolId = $request->input('school_id');
-            if ($schoolId === '') { $schoolId = null; } // '' => Բոլոր դպրոցները
+            if ($schoolId === '') { $schoolId = null; } 
         }
 
-        $year    = (int)($request->input('year') ?: now()->year);
+        $now       = now();
+        $yearStart = $request->filled('year')
+            ? (int)$request->input('year')
+            : ($now->month >= 9 ? $now->year : $now->year - 1);
+
+        $from = Carbon::create($yearStart, 9, 1)->startOfDay();
+        $to   = Carbon::create($yearStart + 1, 5, 31)->endOfDay();
+
+        $rangeFrom = $request->input('range_from'); 
+        $rangeTo   = $request->input('range_to');   
+        if ($rangeFrom && $rangeTo) {
+            try {
+                $rf = Carbon::createFromFormat('Y-m-d', $rangeFrom)->startOfDay();
+                $rt = Carbon::createFromFormat('Y-m-d', $rangeTo)->endOfDay();
+                if ($rf->gt($rt)) { [$rf, $rt] = [$rt, $rf]; }
+                $from = $rf;
+                $to   = $rt;
+            } catch (\Throwable $e) {
+            
+            }
+        }
+
+        $periodLabel = ($from->month === 9 && $from->day === 1 && $to->month === 5 && $to->day === 31 && $to->year === $from->year + 1)
+            ? sprintf('%d-%d', $from->year, $to->year)
+            : 'custom';
+
         $groupId = $request->input('group_id');
         $method  = $request->input('method');
         $status  = $request->input('status');
 
-        // DataTables
         $search  = trim((string) $request->input('search.value', ''));
         $draw    = (int)$request->input('draw', 1);
         $start   = (int)$request->input('start', 0);
@@ -46,23 +70,18 @@ class PaymentService
             ->join('students as s', 's.id', '=', 'payments.student_id')
             ->leftJoin('groups as g', 'g.id', '=', 'payments.group_id')
             ->leftJoin('school_names as sn', 'sn.id', '=', 'payments.school_id')
-            ->whereYear('payments.paid_at', $year);
+            ->whereBetween('payments.paid_at', [$from, $to]);
 
-        // Ֆիլտրացիա ըստ դպրոցի
         if (!$isSuper) {
-            // Սովորական դերերի դեպքում՝ միշտ սեփական դպրոցը
             $base->where('payments.school_id', Auth::user()->school_id);
-        } else if (!empty($schoolId)) {
-            // Սուպեր դերի դեպքում + կոնկրետ դպրոց
+        } elseif (!empty($schoolId)) {
             $base->where('payments.school_id', $schoolId);
         }
-        // Սուպեր դերի դեպքում + դատարկ school_id => չսահմանափակել (բոլոր դպրոցները)
 
         if (!empty($groupId)) $base->where('payments.group_id', $groupId);
         if (!empty($method))  $base->where('payments.method',   $method);
         if (!empty($status))  $base->where('payments.status',   $status);
 
-        // ====== Ամփոփում ամիսներով (առանց որոնումը հաշվի առնելու) ======
         $summaryRow = (clone $base)->selectRaw("
             SUM(CASE WHEN MONTH(payments.paid_at)=1  THEN payments.amount ELSE 0 END) as m01,
             SUM(CASE WHEN MONTH(payments.paid_at)=2  THEN payments.amount ELSE 0 END) as m02,
@@ -85,23 +104,22 @@ class PaymentService
             (int)($summaryRow->m10 ?? 0),(int)($summaryRow->m11 ?? 0),(int)($summaryRow->m12 ?? 0),
         ];
 
-        // ====== Որոնում  ======
+        // ====== Search ======
         $baseSearch = (clone $base);
         if ($search !== '') {
             $needle = mb_strtolower($search, 'UTF-8');
             $needle = str_replace(['\\','%','_'], ['\\\\','\%','\_'], $needle);
             $like   = '%'.$needle.'%';
             $esc    = '\\\\';
-
             $baseSearch->where(function($q) use ($like, $esc) {
                 $q->whereRaw("LOWER(s.first_name)  LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(s.last_name)   LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(s.father_name) LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(CONCAT(COALESCE(s.last_name,''),' ',COALESCE(s.first_name,''),' ',COALESCE(s.father_name,''))) LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(payments.comment) LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(g.name)           LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(sn.name)          LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(CAST(payments.amount AS CHAR)) LIKE ? ESCAPE '{$esc}'", [$like]);
+                ->orWhereRaw("LOWER(s.last_name)   LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(s.father_name) LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(CONCAT(COALESCE(s.last_name,''),' ',COALESCE(s.first_name,''),' ',COALESCE(s.father_name,''))) LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(payments.comment) LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(g.name)           LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(sn.name)          LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(CAST(payments.amount AS CHAR)) LIKE ? ESCAPE '{$esc}'", [$like]);
             });
         }
 
@@ -161,10 +179,10 @@ class PaymentService
                 $total += $val;
             }
             return array_merge([
-                'id'        => (int)$r->student_id,
-                'full_name' => (string)$r->full_name,
-                'school_id'  => (int)($r->school_id ?? 0), 
-                'is_deleted' => (int)$r->is_deleted === 1,   
+                'id'         => (int)$r->student_id,
+                'full_name'  => (string)$r->full_name,
+                'school_id'  => (int)($r->school_id ?? 0),
+                'is_deleted' => (int)$r->is_deleted === 1,
             ], $months, ['total'=>$total]);
         })->values()->toArray();
 
@@ -175,14 +193,19 @@ class PaymentService
             'data'            => $data,
             'summary'         => $summary,
             'meta'            => [
-                'year'      => $year,
+                'period' => [
+                    'label' => $periodLabel,
+                    'from'  => $from->toDateString(),
+                    'to'    => $to->toDateString(),
+                ],
                 'group_id'  => $groupId,
                 'method'    => $method,
                 'status'    => $status,
-                'school_id' => $schoolId, // null = բոլոր դպրոցները (super-ի համար)
+                'school_id' => $schoolId,
             ],
         ];
     }
+
 
     /**
      * Վճարումների գլխավոր էջի ֆիլտրերը։

@@ -477,11 +477,125 @@ $(function () {
 });
 
 // === Payments page ===
+// $(function () {
+//   if (!$('#paymentTbl').length) return;
+//   const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
+//   const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
+//   const renderMonth = v => (Number(v || 0) === 0 ? '<span class="text-muted">0</span>' : money(v));
+
+//   function renderSummary(arr){
+//     const wrap = document.getElementById('summary');
+//     if (!wrap) return;
+//     wrap.innerHTML = (arr || []).map((sum, i) => `
+//       <div class="col-6 col-sm-4 col-md-2 col-lg-1 mb-2">
+//         <div class="card p-2 text-center">
+//           <div class="text-muted small">${monthShortHY[i] || ''}</div>
+//           <div class="sum" style="font-weight:700">${money(sum)}</div>
+//         </div>
+//       </div>
+//     `).join('');
+//   }
+
+//   let paymentTbl = null;
+
+//   function initPaymentTable(){
+    
+//     if (paymentTbl) return; 
+
+//     paymentTbl = $("#paymentTbl").DataTable({
+//       language: lang,
+//       processing: true,
+//       serverSide: true,
+//       ajax: {
+//         headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+//         url: `/admin/payment/getData`,
+//         type: 'post',
+//         data: function(d) {
+//           d.year     = $('#year').val();
+//           d.group_id = $('#group_id').val();
+//           d.method   = $('#method').val();
+//           d.status   = $('#status').val();
+
+//           if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') {
+//                 d.school_id = $('#school_id').val();
+//             }
+
+//         }
+//       },
+//       columns: [
+//         { 
+//             data: 'full_name', 
+//             name: 'full_name',
+//             render: (v, t, row) => {
+//             if (row.is_deleted) {
+//                 return `${v} <span class="badge badge-danger ml-2">Հեռացված</span>`;
+//             }
+//             return v;
+//             }
+//         },
+//         { data: 'm01', className: 'text-end', render: renderMonth },
+//         { data: 'm02', className: 'text-end', render: renderMonth },
+//         { data: 'm03', className: 'text-end', render: renderMonth },
+//         { data: 'm04', className: 'text-end', render: renderMonth },
+//         { data: 'm05', className: 'text-end', render: renderMonth },
+//         { data: 'm06', className: 'text-end', render: renderMonth },
+//         { data: 'm07', className: 'text-end', render: renderMonth },
+//         { data: 'm08', className: 'text-end', render: renderMonth },
+//         { data: 'm09', className: 'text-end', render: renderMonth },
+//         { data: 'm10', className: 'text-end', render: renderMonth },
+//         { data: 'm11', className: 'text-end', render: renderMonth },
+//         { data: 'm12', className: 'text-end', render: renderMonth },
+//         { data: 'total', className: 'text-end font-weight-bold', render: v => money(v) },
+//         {
+//           data: 'id', orderable: false, searchable: false, className: 'text-center',
+//           render: (id, t, row) => `<button class="btn btn-sm btn-light view-history" data-id="${id}" data-school-id="${row.school_id ?? ''}" data-name="${row.full_name}" title="Պատմություն">&#8942;</button>`
+//         }
+//       ],
+//       createdRow: function(row, data){
+//         for (let m = 1; m <= 12; m++){
+//           const key = 'm' + String(m).padStart(2,'0');
+//           const val = Number(data[key] || 0);
+//           const $td = $('td', row).eq(m);
+//           if (val > 0) $td.addClass('table-success'); else $td.removeClass('table-success');
+//         }
+//       }
+//     });
+
+//     $('#paymentTbl').on('xhr.dt', function (e, settings, json) {
+//       if (json && Array.isArray(json.summary)) renderSummary(json.summary);
+//     });
+
+//     $('#btnRefresh, #year, #group_id, #status, #method, #filter_range_date').on('change click', function(){
+//       if ($.fn.DataTable.isDataTable('#paymentTbl')) {
+//         paymentTbl.ajax.reload();
+//       }
+//     });
+//   }
+
+//   $(document).one('payment:filtersLoaded', initPaymentTable);
+
+//   if ($('#year option').length) initPaymentTable();
+// });
+
 $(function () {
   if (!$('#paymentTbl').length) return;
-  const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
+
+  const monthShortHY = ['Հունվար','Փետրվար','Մարտ','Ապրիլ','Մայիս','Հունիս','Հուլիս','Օգստոս','Սեպտեմբեր','Հոկտեմբեր','Նոյեմբեր','Դեկտեմբեր'];
+  const academicOrderNums = [9,10,11,12,1,2,3,4,5,6,7,8]; // Սեպ → Մայիս (9 ամսի)
+  const academicKeys   = academicOrderNums.map(n => 'm' + String(n).padStart(2,'0'));
+  const academicTitles = academicOrderNums.map(n => monthShortHY[(n-1+12)%12]);
+
   const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
   const renderMonth = v => (Number(v || 0) === 0 ? '<span class="text-muted">0</span>' : money(v));
+
+  (function rebuildThead(){
+    const $thead = $('#paymentTbl thead');
+    if (!$thead.length) return;
+    let ths = `<tr><th>Անուն Ազգանուն</th>`;
+    academicTitles.forEach(t => ths += `<th class="text-end">${t}</th>`);
+    ths += `<th class="text-end">Ընդամենը</th><th class="text-center">Գործողություն</th></tr>`;
+    $thead.html(ths);
+  })();
 
   function renderSummary(arr){
     const wrap = document.getElementById('summary');
@@ -499,8 +613,23 @@ $(function () {
   let paymentTbl = null;
 
   function initPaymentTable(){
-    
-    if (paymentTbl) return; 
+    if (paymentTbl) return;
+
+    const monthCols = academicKeys.map(k => ({ data: k, className: 'text-end', render: renderMonth }));
+
+    const columns = [
+      {
+        data: 'full_name',
+        name: 'full_name',
+        render: (v, t, row) => row.is_deleted ? `${v} <span class="badge badge-danger ml-2">Հեռացված</span>` : v
+      },
+      ...monthCols,
+      { data: 'total', className: 'text-end font-weight-bold', render: v => money(v) },
+      {
+        data: 'id', orderable: false, searchable: false, className: 'text-center',
+        render: (id, t, row) => `<button class="btn btn-sm btn-light view-history" data-id="${id}" data-school-id="${row.school_id ?? ''}" data-name="${row.full_name}" title="Պատմություն">&#8942;</button>`
+      }
+    ];
 
     paymentTbl = $("#paymentTbl").DataTable({
       language: lang,
@@ -511,74 +640,62 @@ $(function () {
         url: `/admin/payment/getData`,
         type: 'post',
         data: function(d) {
-          d.year     = $('#year').val();
-          d.group_id = $('#group_id').val();
-          d.method   = $('#method').val();
-          d.status   = $('#status').val();
-
+          d.year       = $('#year').val();
+          d.group_id   = $('#group_id').val();
+          d.method     = $('#method').val();
+          d.status     = $('#status').val();
+          d.range_from = $('#range_from').val(); 
+          d.range_to   = $('#range_to').val();  
           if (window.currentUserRole === 'super-admin' || window.currentUserRole === 'super-accountant') {
-                d.school_id = $('#school_id').val();
-            }
-
+            d.school_id = $('#school_id').val();
+          }
         }
       },
-      columns: [
-        { 
-            data: 'full_name', 
-            name: 'full_name',
-            render: (v, t, row) => {
-            if (row.is_deleted) {
-                return `${v} <span class="badge badge-danger ml-2">Հեռացված</span>`;
-            }
-            return v;
-            }
-        },
-        { data: 'm01', className: 'text-end', render: renderMonth },
-        { data: 'm02', className: 'text-end', render: renderMonth },
-        { data: 'm03', className: 'text-end', render: renderMonth },
-        { data: 'm04', className: 'text-end', render: renderMonth },
-        { data: 'm05', className: 'text-end', render: renderMonth },
-        { data: 'm06', className: 'text-end', render: renderMonth },
-        { data: 'm07', className: 'text-end', render: renderMonth },
-        { data: 'm08', className: 'text-end', render: renderMonth },
-        { data: 'm09', className: 'text-end', render: renderMonth },
-        { data: 'm10', className: 'text-end', render: renderMonth },
-        { data: 'm11', className: 'text-end', render: renderMonth },
-        { data: 'm12', className: 'text-end', render: renderMonth },
-        { data: 'total', className: 'text-end font-weight-bold', render: v => money(v) },
-        {
-          data: 'id', orderable: false, searchable: false, className: 'text-center',
-          render: (id, t, row) => `<button class="btn btn-sm btn-light view-history" data-id="${id}" data-school-id="${row.school_id ?? ''}" data-name="${row.full_name}" title="Պատմություն">&#8942;</button>`
-        }
-      ],
-      createdRow: function(row, data){
-        for (let m = 1; m <= 12; m++){
-          const key = 'm' + String(m).padStart(2,'0');
-          const val = Number(data[key] || 0);
-          const $td = $('td', row).eq(m);
+      columns
+    });
+
+    $('#paymentTbl').on('draw.dt', function(){
+      $('#paymentTbl tbody tr').each(function(){
+        const $tds = $('td', this);
+        academicKeys.forEach((key, i) => {
+          const $td = $tds.eq(1 + i);
+          const rowData = paymentTbl.row(this).data() || {};
+          const val = Number(rowData[key] || 0);
           if (val > 0) $td.addClass('table-success'); else $td.removeClass('table-success');
-        }
-      }
+        });
+      });
     });
 
     $('#paymentTbl').on('xhr.dt', function (e, settings, json) {
-      if (json && Array.isArray(json.summary)) renderSummary(json.summary);
+      if (json?.summary) renderSummary(json.summary);
+
+      const p = json?.meta?.period;
+      if (p) {
+        $('#academicBadge').remove();
+        const title = (p.label === 'custom') ? 'Ընտրված' : p.label;
+        const html = `<span id="academicBadge" class="badge badge-info ml-2 mt-2">
+          ${title} • ${p.from}–${p.to}
+        </span>`;
+        $('#paymentTbl_wrapper .dataTables_length').append(html);
+      }
     });
 
-    $('#btnRefresh, #year, #group_id, #status, #method').on('change click', function(){
-      if ($.fn.DataTable.isDataTable('#paymentTbl')) {
-        paymentTbl.ajax.reload();
-      }
+    $('#btnRefresh, #year, #group_id, #status, #method, #school_id').on('change click', function(){
+      if ($.fn.DataTable.isDataTable('#paymentTbl')) paymentTbl.ajax.reload();
     });
   }
 
   $(document).one('payment:filtersLoaded', initPaymentTable);
-
   if ($('#year option').length) initPaymentTable();
+
+  $('#filter_range_date').on('apply.daterangepicker', function(ev, picker) {
+    if ($.fn.DataTable.isDataTable('#paymentTbl')) paymentTbl.ajax.reload();
+  });
+
 });
 
 
-//
+
 
 // === Student payments DataTable ===
 $(function () {

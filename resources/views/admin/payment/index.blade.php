@@ -43,11 +43,29 @@
           </select>
         </div>
       @endrole
+
+
+<div class="col-6 col-md-3">
+  <div class="form-group">
+    <label for="filter_range_date">Ժամանակահատված</label>
+    <div class="input-group">
+      <input type="text"
+             id="filter_range_date"
+             name="filter_range_date"
+             class="form-control" />
+      <input type="hidden" id="range_from" name="range_from">
+      <input type="hidden" id="range_to"   name="range_to">
+      <div class="input-group-append">
+        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
       
-      <div class="col-6 col-md-3 mb-3">
+      <!-- <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Տարի</label>
         <select id="year" class="form-control"></select>
-      </div>
+      </div> -->
 
       <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Խումբ</label>
@@ -79,29 +97,14 @@
 
 <div class="card shadow-sm mb-5">
     <div class="card-body bg-white">
-      <table class="table table-striped table-bordered table-responsive dtTbl" style="width:100%" id="paymentTbl">
-          <thead>
-              <tr>
-                  <th>Աշակերտ</th>
-                  <th>Հուն</th>
-                  <th>Փետ</th>
-                  <th>Մար</th>
-                  <th>Ապր</th>
-                  <th>Մայ</th>
-                  <th>Հուն</th>
-                  <th>Հուլ</th>
-                  <th>Օգս</th>
-                  <th>Սեպ</th>
-                  <th>Հոկ</th>
-                  <th>Նոյ</th>
-                  <th>Դեկ</th>
-                  <th>Ընդամենը</th>
-                  <th>Գործողություն</th>
-              </tr>
-          </thead>
-          <tbody>
-          </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-striped table-bordered dtTbl" style="width:100%" id="paymentTbl">
+            <thead>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+      </div>
   </div>
 </div>
 
