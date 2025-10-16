@@ -20,7 +20,7 @@ class StudentService
 
     $schoolId = Auth::user()->school_id;
 
-    $query = Student::with('school');
+    $query = Student::with('school')->orderBy('id', 'DESC');
 
     if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-accountant')) {
         $schoolId = $request->input('school_id');
