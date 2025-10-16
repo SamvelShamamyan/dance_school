@@ -366,39 +366,36 @@ if (window.__PAYMENT_JS_LOADED__) {
 
 
 $(function(){
+  let today = moment();
+  let startYear = today.month() >= 8 ? today.year() : today.year() - 1;
 
-let today = moment();
-let startYear = today.month() >= 8 ? today.year() : today.year() - 1;
-
-let start = moment(`${startYear}-09-01`, "YYYY-MM-DD");
-let end = moment(`${startYear + 1}-05-31`, "YYYY-MM-DD");
-
+  let start = moment(`${startYear}-09-01`, "YYYY-MM-DD");
+  let end = moment(`${startYear + 1}-05-31`, "YYYY-MM-DD");
 
   $('#range_from').val(start.format('YYYY-MM-DD'));
   $('#range_to').val(end.format('YYYY-MM-DD'));
 
-$('#filter_range_date').daterangepicker({
-  autoUpdateInput: true, 
-  locale: {
-    format: 'DD.MM.YYYY',
-    applyLabel: 'Կիրառել',
-    cancelLabel: 'Չեղարկել',
-    fromLabel: 'Սկիզբ',
-    toLabel: 'Վերջ',
-    daysOfWeek: ['Կ', 'Ե', 'Ե', 'Չ', 'Հ', 'Ու', 'Շ'],
-    monthNames: [
-      'Հունվար', 'Փետրվար', 'Մարտ', 'Ապրիլ', 'Մայիս', 'Հունիս',
-      'Հուլիս', 'Օգոստոս', 'Սեպտեմբեր', 'Հոկտեմբեր', 'Նոյեմբեր', 'Դեկտեմբեր'
-    ],
-    firstDay: 1
-  },
-  startDate: start,
-  endDate: end      
-}, function(start, end, label) {
-  $('#filter_range_date').val(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
+  $('#filter_range_date').daterangepicker({
+    autoUpdateInput: true, 
+    locale: {
+      format: 'DD.MM.YYYY',
+      applyLabel: 'Կիրառել',
+      cancelLabel: 'Չեղարկել',
+      fromLabel: 'Սկիզբ',
+      toLabel: 'Վերջ',
+      daysOfWeek: ['Կ', 'Ե', 'Ե', 'Չ', 'Հ', 'Ու', 'Շ'],
+      monthNames: [
+        'Հունվար', 'Փետրվար', 'Մարտ', 'Ապրիլ', 'Մայիս', 'Հունիս',
+        'Հուլիս', 'Օգոստոս', 'Սեպտեմբեր', 'Հոկտեմբեր', 'Նոյեմբեր', 'Դեկտեմբեր'
+      ],
+      firstDay: 1
+    },
+    startDate: start,
+    endDate: end      
+  }, function(start, end, label) {
+    $('#filter_range_date').val(start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY'));
 
-  $('#range_from').val(start.format('YYYY-MM-DD'));
-  $('#range_to').val(end.format('YYYY-MM-DD')).trigger('change');
-});
-
+    $('#range_from').val(start.format('YYYY-MM-DD'));
+    $('#range_to').val(end.format('YYYY-MM-DD')).trigger('change');
+  });
 })

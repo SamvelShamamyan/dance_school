@@ -45,22 +45,22 @@
       @endrole
 
 
-<div class="col-6 col-md-3">
-  <div class="form-group">
-    <label for="filter_range_date">Ժամանակահատված</label>
-    <div class="input-group">
-      <input type="text"
-             id="filter_range_date"
-             name="filter_range_date"
-             class="form-control" />
-      <input type="hidden" id="range_from" name="range_from">
-      <input type="hidden" id="range_to"   name="range_to">
-      <div class="input-group-append">
-        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+      <div class="col-6 col-md-3">
+        <div class="form-group">
+          <label for="filter_range_date">Ժամանակահատված</label>
+          <div class="input-group">
+            <input type="text"
+                  id="filter_range_date"
+                  name="filter_range_date"
+                  class="form-control" />
+            <input type="hidden" id="range_from" name="range_from">
+            <input type="hidden" id="range_to"   name="range_to">
+            <div class="input-group-append">
+              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
       
       <!-- <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Տարի</label>

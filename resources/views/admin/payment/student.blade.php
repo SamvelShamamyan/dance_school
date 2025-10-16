@@ -52,9 +52,27 @@
   <div class="card-body">
     <div class="row">
 
-      <div class="col-6 col-md-3 mb-2">
+      <!-- <div class="col-6 col-md-3 mb-2">
         <label class="form-label d-block">Տարի</label>
         <select id="year" class="form-control"></select>
+      </div> -->
+
+
+      <div class="col-6 col-md-3">
+        <div class="form-group">
+          <label for="student_payment_filter_range_date">Ժամանակահատված</label>
+          <div class="input-group">
+            <input type="text"
+                  id="student_payment_filter_range_date"
+                  name="student_payment_filter_range_date"
+                  class="form-control" />
+            <input type="hidden" id="range_from" name="range_from">
+            <input type="hidden" id="range_to"   name="range_to">
+            <div class="input-group-append">
+              <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <div class="col-6 col-md-3 mb-3">

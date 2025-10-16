@@ -31,16 +31,16 @@ class PaymentService
             if ($schoolId === '') { $schoolId = null; } 
         }
 
-        $now       = now();
+        $now = now();
         $yearStart = $request->filled('year')
             ? (int)$request->input('year')
             : ($now->month >= 9 ? $now->year : $now->year - 1);
 
         $from = Carbon::create($yearStart, 9, 1)->startOfDay();
-        $to   = Carbon::create($yearStart + 1, 5, 31)->endOfDay();
+        $to = Carbon::create($yearStart + 1, 5, 31)->endOfDay();
 
         $rangeFrom = $request->input('range_from'); 
-        $rangeTo   = $request->input('range_to');   
+        $rangeTo = $request->input('range_to');   
         if ($rangeFrom && $rangeTo) {
             try {
                 $rf = Carbon::createFromFormat('Y-m-d', $rangeFrom)->startOfDay();
@@ -439,7 +439,28 @@ class PaymentService
             if ($schoolId === '') { $schoolId = null; }
         }
 
-        $year   = (int)($request->input('year') ?: now()->year);
+        $now = now();
+        $yearStart = ($now->month >= 9 ? $now->year : $now->year - 1);
+
+        $from = Carbon::create($yearStart, 9, 1)->startOfDay();
+        $to   = Carbon::create($yearStart + 1, 5, 31)->endOfDay();
+
+        $rangeFrom = $request->input('range_from'); 
+        $rangeTo   = $request->input('range_to');   
+        if ($rangeFrom && $rangeTo) {
+            try {
+                $rf = Carbon::createFromFormat('Y-m-d', $rangeFrom)->startOfDay();
+                $rt = Carbon::createFromFormat('Y-m-d', $rangeTo)->endOfDay();
+                if ($rf->gt($rt)) { [$rf, $rt] = [$rt, $rf]; }
+                $from = $rf;
+                $to   = $rt;
+            } catch (\Throwable $e) {}
+        }
+
+        $periodLabel = ($from->month === 9 && $from->day === 1 && $to->month === 5 && $to->day === 31 && $to->year === $from->year + 1)
+            ? sprintf('%d-%d', $from->year, $to->year)
+            : 'custom';
+
         $method = $request->input('method');
         $status = $request->input('status');
 
@@ -448,15 +469,16 @@ class PaymentService
         $length = (int)$request->input('length', 10);
         $search = trim((string)$request->input('search.value', ''));
 
-        $base = Payment::query()->where('student_id', $studentId);
+        $base = Payment::query()
+            ->where('student_id', $studentId)
+            ->whereBetween('paid_at', [$from, $to]);
 
         if (!$isSuper) {
             $base->where('school_id', $schoolId);
-        } else if (!empty($schoolId)) {
+        } elseif (!empty($schoolId)) {
             $base->where('school_id', $schoolId);
         }
 
-        if (!empty($year))   $base->whereYear('paid_at', $year);
         if (!empty($method)) $base->where('method', $method);
         if (!empty($status)) $base->where('status', $status);
 
@@ -486,12 +508,13 @@ class PaymentService
         if ($search !== '') {
             $needle = mb_strtolower($search, 'UTF-8');
             $needle = str_replace(['\\','%','_'], ['\\\\','\%','\_'], $needle);
-            $like   = '%'.$needle.'%'; $esc='\\\\';
+            $like   = '%'.$needle.'%'; 
+            $esc    = '\\\\';
             $q->where(function($w) use ($like, $esc){
                 $w->orWhereRaw("LOWER(method)  LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(status)  LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(comment) LIKE ? ESCAPE '{$esc}'", [$like])
-                  ->orWhereRaw("LOWER(CAST(amount AS CHAR)) LIKE ? ESCAPE '{$esc}'", [$like]);
+                ->orWhereRaw("LOWER(status)  LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(comment) LIKE ? ESCAPE '{$esc}'", [$like])
+                ->orWhereRaw("LOWER(CAST(amount AS CHAR)) LIKE ? ESCAPE '{$esc}'", [$like]);
             });
         }
 
@@ -524,7 +547,18 @@ class PaymentService
             'recordsFiltered' => $recordsFiltered,
             'data'            => $rows,
             'summary'         => $summary,
-            'meta'            => ['year'=>$year, 'method' =>$method, 'status'=>$status, 'student_id'=>$studentId],
+            'meta'            => [
+                'period' => [
+                    'label' => $periodLabel,
+                    'from'  => $from->toDateString(),
+                    'to'    => $to->toDateString(),
+                ],
+                'method'     => $method,
+                'status'     => $status,
+                'student_id' => $studentId,
+                'school_id'  => $schoolId,
+            ],
         ];
     }
+
 }

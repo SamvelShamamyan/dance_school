@@ -710,31 +710,51 @@ $(function () {
   const statusMap = { paid:'Վճարված', pending:'Սպասման մեջ', refunded:'Վերադարձված', failed:'Սխալ' };
   const methodMap = { cash:'Կանխիկ', card:'Անկանխիկ', online:'Առցանց' };
 
+
+  const academicOrderNums = [9,10,11,12,1,2,3,4,5,6,7,8]; 
+  const academicKeys   = academicOrderNums.map(n => 'm' + String(n).padStart(2,'0'));
+  const academicTitles = academicOrderNums.map(n => monthShortHY[(n-1+12)%12]);
+
+  const toAcademicOrder = (arr = []) => academicOrderNums.map(n => arr[n - 1] ?? 0);
+
+  // function renderSummary(arr){
+  //   const wrap = document.getElementById('summary');
+  //   if (wrap) {
+  //       wrap.innerHTML = (arr || []).map((sum, i) => `
+  //       <div class="col-6 col-sm-4 col-md-2 col-lg-1 mb-2">
+  //           <div class="card p-2 text-center">
+  //           <div class="text-muted small">${monthShortHY[i] || ''}</div>
+  //           <div class="sum" style="font-weight:700">${money(sum)}</div>
+  //           </div>
+  //       </div>
+  //       `).join('');
+  //   }
+
+  //   const total = (arr || []).reduce((a, b) => a + Number(b || 0), 0);
+  //   $('#tfootTotal').text(money(total));
+  // }
+
     function renderSummary(arr){
-    const wrap = document.getElementById('summary');
-    const monthShortHY = ['Հուն','Փետ','Մար','Ապր','Մայ','Հուն','Հուլ','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
-    const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
-
-    if (wrap) {
-        wrap.innerHTML = (arr || []).map((sum, i) => `
+      const wrap = document.getElementById('summary');
+      if (!wrap) return;
+      const sums = toAcademicOrder(arr);
+      wrap.innerHTML = sums.map((sum, i) => `
         <div class="col-6 col-sm-4 col-md-2 col-lg-1 mb-2">
-            <div class="card p-2 text-center">
-            <div class="text-muted small">${monthShortHY[i] || ''}</div>
+          <div class="card p-2 text-center">
+            <div class="text-muted small">${academicTitles[i]}</div>
             <div class="sum" style="font-weight:700">${money(sum)}</div>
-            </div>
+          </div>
         </div>
-        `).join('');
-    }
-
-    const total = (arr || []).reduce((a, b) => a + Number(b || 0), 0);
-    $('#tfootTotal').text(money(total));
+      `).join('');
+      
+      const total = (arr || []).reduce((a, b) => a + Number(b || 0), 0);
+      $('#tfootTotal').text(money(total));
+      
     }
 
     const $tbl = $('#studentPaymentTbl');
     const STUDENT_ID = $tbl.data('student-id');
-
     const SCHOOLID = $tbl.data('school-id');
-
     const moreUrl = (SCHOOLID)
     ? `/admin/payment/student/${STUDENT_ID}/data?school_id=${SCHOOLID}`
     : `/admin/payment/student/${STUDENT_ID}/data`;
@@ -757,6 +777,8 @@ $(function () {
           d.year   = $('#year').val();
           d.method = $('#method').val();
           d.status = $('#status').val();
+          d.range_from = $('#range_from').val(); 
+          d.range_to   = $('#range_to').val();  
         }
       },
       columns: [
@@ -792,6 +814,21 @@ $(function () {
       ]
     });
 
+    $('#studentPaymentTbl').on('xhr.dt', function (e, settings, json) {
+      if (json?.summary) renderSummary(json.summary);
+
+      const p = json?.meta?.period;
+      if (p) {
+        $('#academicBadge').remove();
+        const title = (p.label === 'custom') ? 'Ընտրված' : p.label;
+        const html = `<span id="academicBadge" class="badge badge-info ml-2 mt-2">
+          ${title} • ${p.from}–${p.to}
+        </span>`;
+        $('#studentPaymentTbl_wrapper .dataTables_length').append(html);
+      }
+    });
+
+
     $('#studentPaymentTbl').on('xhr.dt', function (_e, _settings, json) {
       if (json && Array.isArray(json.summary)) renderSummary(json.summary);
     });
@@ -805,6 +842,10 @@ $(function () {
 
   $(document).one('payment:filtersLoaded', initStudentPaymentTable);
   if ($('#year option').length) initStudentPaymentTable();
+
+  $('#student_payment_filter_range_date').on('apply.daterangepicker', function(ev, picker) {
+    if ($.fn.DataTable.isDataTable('#studentPaymentTbl')) studentPaymentTbl.ajax.reload();
+  });
 });
 
 
