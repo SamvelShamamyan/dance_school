@@ -34,7 +34,7 @@ return new class extends Migration
             $table->decimal('student_prepayment', 12, 2)->nullable();   
             $table->decimal('student_debts', 12, 2)->nullable();
             
-            $table->boolean('is_last')->default(false);
+            $table->boolean('is_guest')->default(false);
 
             $table->timestamps();
             $table->softDeletes();
