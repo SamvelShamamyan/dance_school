@@ -580,10 +580,13 @@ $(function () {
 $(function () {
   if (!$('#paymentTbl').length) return;
 
-  const monthShortHY = ['Հունվար','Փետրվար','Մարտ','Ապրիլ','Մայիս','Հունիս','Հուլիս','Օգստոս','Սեպտեմբեր','Հոկտեմբեր','Նոյեմբեր','Դեկտեմբեր'];
-  const academicOrderNums = [9,10,11,12,1,2,3,4,5,6,7,8]; // Սեպ → Մայիս (9 ամսի)
+  const monthShortHY = ['Հնվ','Փտր','Մրտ','Ապր','Մայ','Հնս','Հլս','Օգս','Սեպ','Հոկ','Նոյ','Դեկ'];
+  const academicOrderNums = [9,10,11,12,1,2,3,4,5,6,7,8]; 
   const academicKeys   = academicOrderNums.map(n => 'm' + String(n).padStart(2,'0'));
   const academicTitles = academicOrderNums.map(n => monthShortHY[(n-1+12)%12]);
+
+  const toAcademicOrder = (arr = []) => academicOrderNums.map(n => arr[n - 1] ?? 0);
+ 
 
   const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
   const renderMonth = v => (Number(v || 0) === 0 ? '<span class="text-muted">0</span>' : money(v));
@@ -600,10 +603,11 @@ $(function () {
   function renderSummary(arr){
     const wrap = document.getElementById('summary');
     if (!wrap) return;
-    wrap.innerHTML = (arr || []).map((sum, i) => `
+    const sums = toAcademicOrder(arr);
+    wrap.innerHTML = sums.map((sum, i) => `
       <div class="col-6 col-sm-4 col-md-2 col-lg-1 mb-2">
         <div class="card p-2 text-center">
-          <div class="text-muted small">${monthShortHY[i] || ''}</div>
+          <div class="text-muted small">${academicTitles[i]}</div>
           <div class="sum" style="font-weight:700">${money(sum)}</div>
         </div>
       </div>
