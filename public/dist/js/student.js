@@ -1,6 +1,5 @@
 function saveStudent() {
     const form = document.getElementById("StudentForm");
-    
     const formData = new FormData(form);
     const url = form.getAttribute('action'); 
 
@@ -44,6 +43,10 @@ function saveStudent() {
     });
 }
 
+$(document).on('submit', '#StudentForm', function(e) {
+    e.preventDefault();
+    saveStudent();
+});
 
 $(document).on('click', '.btn-edit-student', function () {
     let id = $(this).data('id');

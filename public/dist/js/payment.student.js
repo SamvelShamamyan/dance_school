@@ -51,6 +51,11 @@ function savePayent() {
     });
 }
 
+$(document).on('submit', '#singlePaymentForm', function(e) {
+    e.preventDefault();
+    savePayent();
+});
+
 function updatePayment() {
     const form = document.getElementById("editPaymentForm");
     const formData = new FormData(form);
@@ -91,7 +96,10 @@ function updatePayment() {
     });
 }
 
-
+$(document).on('submit', '#editPaymentForm', function(e) {
+    e.preventDefault();
+    updatePayment();
+});
 
 $(function () {
   const $tbl = $('#studentPaymentTbl');

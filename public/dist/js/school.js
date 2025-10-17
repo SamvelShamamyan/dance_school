@@ -34,6 +34,11 @@ function saveSchool() {
     });
 }
 
+$(document).on('submit', '#schoolForm', function(e) {
+    e.preventDefault();
+    saveSchool();
+});
+
 $(document).on('click', '.btn-edit-school', function () {
     let id = $(this).data('id');
     if (id) {

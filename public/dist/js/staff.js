@@ -43,6 +43,11 @@ function saveStaff() {
     });
 }
 
+$(document).on('submit', '#StaffForm', function(e) {
+    e.preventDefault();
+    saveStaff();
+});
+
 
 $(document).on('click', '.btn-edit-staff', function () {
     let id = $(this).data('id');

@@ -32,6 +32,11 @@ function saveGroup() {
     });
 }
 
+$(document).on('submit', '#GroupForm', function(e) {
+    e.preventDefault();
+    saveGroup();
+});
+
 $(document).on('click', '.btn-edit-group', function () {
     let id = $(this).data('id');
     if (id) {

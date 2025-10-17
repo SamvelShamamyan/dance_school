@@ -82,6 +82,11 @@ if (window.__PAYMENT_JS_LOADED__) {
   }
   window.savePayment = savePayment; 
 
+$(document).on('submit', '#singlePaymentForm', function(e) {
+    e.preventDefault();
+    savePayment();
+});
+
   $(function () {
     moment.locale('hy');
     const paymentDate = $('#paid_at').val();
