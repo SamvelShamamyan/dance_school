@@ -14,7 +14,7 @@ class SchoolService
         $length = $request->input('length'); 
         $search = $request->input('search.value'); 
 
-        $query = SchoolName::query();
+        $query = SchoolName::query()->orderBy('id','DESC');
         $recordsTotal = $query->count();
 
         if (!empty($search)) {

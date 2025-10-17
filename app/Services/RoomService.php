@@ -16,7 +16,7 @@ class RoomService
 
     // $schoolId = Auth::user()->school_id;
 
-    $query = Room::with('school');
+    $query = Room::with('school')->orderBy('id', 'DESC');
 
     $selectedSchoolId = null;
 
