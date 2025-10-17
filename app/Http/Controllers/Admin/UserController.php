@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use App\Http\Requests\UserRequest\UserStoreRequest; 
 use App\Http\Requests\UserRequest\UserUpdateRequest; 
 use Illuminate\Support\Facades\Mail;
@@ -27,11 +28,10 @@ class UserController extends Controller
     }
 
     public function create(){
-
         $roles = Role::where('name', '!=', 'super-admin')->get();
-
         $schoolNameData = SchoolName::all();
-        return view('admin.user.form', compact('schoolNameData', 'roles'));
+        $is_create = true;
+        return view('admin.user.form', compact('schoolNameData', 'roles','is_create'));
     }
 
 
@@ -44,7 +44,8 @@ class UserController extends Controller
         try{
 
             $validated = $request->validated();
-            $defaultPassword = '12345';
+            $defaultPassword =  Str::random(10); //'12345';
+            
 
             $user = User::create([
                 'first_name'    => $validated['first_name'],
@@ -74,7 +75,8 @@ class UserController extends Controller
         $roles = Role::where('name', '!=', 'super-admin')->get();
         $schoolNameData = SchoolName::all();
         $userRole = $user->getRoleNames()->first(); 
-        return view('admin.user.form', compact('user','roles', 'schoolNameData', 'userRole')); 
+        $is_create = false;
+        return view('admin.user.form', compact('user','roles', 'schoolNameData', 'userRole', 'is_create')); 
     }
 
 
@@ -88,6 +90,7 @@ class UserController extends Controller
                 'last_name'     => $validated['last_name'],
                 'father_name'   => $validated['father_name'],
                 'email'         => $validated['email'],
+                'password'      => Hash::make($validated['password']),
                 'school_id'     => $validated['school_id'],  
             ]);
 

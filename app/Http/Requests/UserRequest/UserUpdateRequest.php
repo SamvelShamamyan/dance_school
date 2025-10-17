@@ -33,6 +33,7 @@ class UserUpdateRequest extends FormRequest
                 'email',
                 Rule::unique('users', 'email')->ignore($this->route('id'))
             ],
+            'password'      => ['nullable','string','min:5','max:25'],
             'school_id'     => 'required|exists:school_names,id',
             'role_name'     => 'required|exists:roles,name',
         ];
@@ -47,6 +48,11 @@ class UserUpdateRequest extends FormRequest
             'email.required'       => 'Էլ. փոստը պարտադիր է:',
             'email.email'          => 'Էլ. փոստի ձևաչափը սխալ է:',
             'email.unique'         => 'Այս էլ. փոստը արդեն օգտագործվում է:',
+            
+            'password.string'   => 'Գաղտնաբառը պետք է լինի տեքստային։',
+            'password.min'      => 'Գաղտնաբառը պետք է պարունակի առնվազն 6 նիշ։',
+            'password.max'      => 'Գաղտնաբառը չի կարող գերազանցել 25 նիշը։',
+
             'school_id.required'   => 'Դպրոցը պարտադիր է:',
             'school_id.exists'     => 'Ընտրված դպրոցը գոյություն չունի:',
             'role_name.required'   => 'Դորը պարտադիր է:',

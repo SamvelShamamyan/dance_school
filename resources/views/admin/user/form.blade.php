@@ -3,7 +3,7 @@
 
 <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
   <div class="d-flex align-items-center">
-    <a href="{{ url()->previous() }}" 
+     <a href="{{ route('admin.user.index') }}" 
         class="btn btn-outline-secondary btn-sm mr-3 btn-icon" 
         title="Հետ վերադարձ">
         <i class="fas fa-arrow-left"></i>
@@ -46,6 +46,14 @@
                         <input type="text" class="form-control" id="email" name="email" value="{{ old('email', $user->email ?? '') }}" placeholder="">
                         <small class="error_email text-danger"></small>
                     </div>
+
+                    @if(Auth::user()->hasRole('super-admin') && !$is_create)
+                        <div class="form-group">
+                            <label for="password">Գաղտնաբառ </label>
+                            <input type="text" class="form-control" id="password" name="password" placeholder="Թողեք դատարկ՝ եթե չեք փոխում">
+                            <small class="error_password text-danger"></small>
+                        </div>
+                     @endif
 
                     <div class="form-group">
                         <label for="school_id">Դպրոց <small class="validation_star">*</small></label>
