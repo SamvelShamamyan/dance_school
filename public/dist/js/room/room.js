@@ -35,4 +35,8 @@ function saveRoom() {
     });
 }
 
+$(document).on('submit', '#roomForm', function(e) {
+    e.preventDefault();
+    saveRoom();
+});
 
