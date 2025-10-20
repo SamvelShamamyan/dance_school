@@ -44,22 +44,24 @@ class UserController extends Controller
         try{
 
             $validated = $request->validated();
-            $defaultPassword =  Str::random(10); //'12345';
-            
+            $defaultPassword =  12345; //Str::random(10);            
 
             $user = User::create([
                 'first_name'    => $validated['first_name'],
                 'last_name'     => $validated['last_name'],
                 'father_name'   => $validated['father_name'],
                 'email'         => $validated['email'],
-                'school_id'     => $validated['school_id'],
+                'school_id'     => $request->role_name === 'super-accountant' ? null :  $validated['school_id'],
                 'password'      => Hash::make($defaultPassword),
             ]);
 
             $user->assignRole($request->role_name);
             Mail::to($user->email)->queue(new UserCreatedMail($user, $defaultPassword));
 
-            return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']);  
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Գործողությունը կատարված է',
+            ]);  
 
         }catch(Throwable $e){
             return response()->json([
@@ -90,8 +92,8 @@ class UserController extends Controller
                 'last_name'     => $validated['last_name'],
                 'father_name'   => $validated['father_name'],
                 'email'         => $validated['email'],
-                'password'      => Hash::make($validated['password']),
-                'school_id'     => $validated['school_id'],  
+                'password'      => isset($validated['password']) ? Hash::make($validated['password']) : $user->password,
+                'school_id'     => $request->role_name === 'super-accountant' ? null :  $validated['school_id'],  
             ]);
 
 
@@ -99,7 +101,10 @@ class UserController extends Controller
                 $user->syncRoles([$request->input('role_name')]);
             }
 
-            return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']);
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Գործողությունը կատարված է',
+            ]);
 
         }catch(Throwable $e){
             return response()->json([

@@ -56,20 +56,6 @@
                      @endif
 
                     <div class="form-group">
-                        <label for="school_id">Դպրոց <small class="validation_star">*</small></label>
-                        <select class="form-control" name="school_id" id="school_id">
-                            <option value="" disabled {{ empty(old('school_id', $user->school_id ?? '')) ? 'selected' : '' }}>Ընտրել դպրոցը</option>
-                            @foreach($schoolNameData as $school)
-                                <option value="{{ $school->id }}" 
-                                    {{ old('school_id', $user->school_id ?? '') == $school->id ? 'selected' : '' }}>
-                                    {{ $school->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                        <small class="error_school_id text-danger"></small>
-                    </div>
-
-                    <div class="form-group">
                         <label for="role_name">Դերը <small class="validation_star">*</small></label>
                         <select class="form-control" name="role_name" id="role_name">
                             <option value="" disabled {{ empty(old('role_name', $userRole ?? '')) ? 'selected' : '' }}>Ընտրել դերը</option>
@@ -81,6 +67,22 @@
                             @endforeach
                         </select>
                         <small class="error_role_name text-danger"></small>
+                    </div>
+
+                    <div id="school_container">
+                        <div class="form-group remove_user_school_block">
+                            <label for="school_id">Դպրոց <small class="validation_star">*</small></label>
+                            <select class="form-control" name="school_id" id="school_id">
+                                <option value="" disabled {{ empty(old('school_id', $user->school_id ?? '')) ? 'selected' : '' }}>Ընտրել դպրոցը</option>
+                                @foreach($schoolNameData as $school)
+                                    <option value="{{ $school->id }}" 
+                                        {{ old('school_id', $user->school_id ?? '') == $school->id ? 'selected' : '' }}>
+                                        {{ $school->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                            <small class="error_school_id text-danger"></small>
+                        </div>
                     </div>
 
                 </div>

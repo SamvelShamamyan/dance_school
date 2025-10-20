@@ -16,7 +16,8 @@ function saveGroup() {
             if (response.status === 1) {
                 swal("success", response.message, true, true);
                 $('#GroupAddForm')[0].reset();
-                $('.text-danger').text('');
+                // $('.text-danger').text('');
+                showFieldErrors(form, {}); 
             }
         },
         error: function(xhr) {
@@ -84,43 +85,6 @@ $(document).on('click', '.btn-delete-group', function () {
         }
     });
 });
-
-
-// $(document).on('click', '#studentGroupModalBtn', function () {
-    
-//     let groupId = $(this).data('group-id');
-//     $('#group_id').val(groupId);
-//     let school_id = '';
-//     $.ajax({
-//         headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-//         url: `/admin/group/getStudents`,
-//         type: 'POST',
-//         data: {'school_id':school_id},
-//         dataType: 'json',
-//         success: function (response) {            
-
-//             let $select = $('#addStudentsGroup');
-//             $select.empty();
-
-//             $.each(response, function (index, student) {
-//                 $select.append(
-//                     $('<option>', {
-//                         value: student.id,
-//                         text: student.full_name
-//                     })
-//                 );
-//             });
-
-//             $select.select2({
-//                 theme: 'bootstrap4',
-//                 placeholder: "Ընտրել",
-//                 width: '100%'
-//             });
-            
-//         }
-//     });
-// });
-
 
 if (window.currentUserRole === 'super-admin') {
 
@@ -231,7 +195,7 @@ if (window.currentUserRole === 'super-admin') {
         });
     });
 
-    $(document).on('click', '#staffGroupModalBtn', function () {
+$(document).on('click', '#staffGroupModalBtn', function () {
     
     let groupId = $(this).data('group-id');
     $('#group_staff_id').val(groupId);

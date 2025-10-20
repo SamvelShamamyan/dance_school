@@ -26,7 +26,8 @@ class UserStoreRequest extends FormRequest
             'last_name'     => 'required|string|max:25',
             'father_name'   => 'required|string|max:25',
             'email'         => 'required|email|unique:users,email',
-            'school_id'     => 'required|exists:school_names,id',
+            // 'school_id'     => 'required|exists:school_names,id',
+            'school_id'     => ['required_unless:role_name,super-accountant', 'nullable', 'integer', 'exists:school_names,id'],
             'role_name'     => 'required|exists:roles,name',
         ];
     }
@@ -40,8 +41,11 @@ class UserStoreRequest extends FormRequest
             'email.required'       => 'Էլ. փոստը պարտադիր է:',
             'email.email'          => 'Էլ. փոստի ձևաչափը սխալ է:',
             'email.unique'         => 'Այս էլ. փոստը արդեն օգտագործվում է:',
-            'school_id.required'   => 'Դպրոցը պարտադիր է:',
-            'school_id.exists'     => 'Ընտրված դպրոցը գոյություն չունի:',
+            // 'school_id.required'   => 'Դպրոցը պարտադիր է:',
+            // 'school_id.exists'     => 'Ընտրված դպրոցը գոյություն չունի:',
+            'school_id.required_unless' => 'Դպրոցը պարտադիր է:',
+            'school_id.integer'         => 'Դպրոցի ձևաչափը սխալ է։',
+            'school_id.exists'          => 'Այդպիսի դպրոց չկա։',
             'role_name.required'   => 'Դորը պարտադիր է:',
             'role_name.exists'     => 'Ընտրված դերը գոյություն չունի:',
         ];

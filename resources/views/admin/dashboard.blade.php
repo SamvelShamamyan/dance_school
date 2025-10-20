@@ -2,6 +2,9 @@
 
 @section('content')
 
+
+@if(Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant'))  
+
 <div class="row">
   <div class="col-lg-3 col-6">
     <div class="small-box bg-primary">
@@ -80,5 +83,21 @@
     </div>
   </div>
 </div>
+
+@endif
+
+
+@if(Auth::user()->hasRole('school-admin') || Auth::user()->hasRole('school-accountant')) 
+
+<div class="row">
+  <div class="card-body">
+    <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
+      <i class="fas fa-info-circle fa-lg mr-2"></i>
+      <span>Այս պահին ցուցադրելու համար տվյալներ չկան։</span>
+    </div>
+  </div>
+</div>
+
+@endif
 
 @endsection

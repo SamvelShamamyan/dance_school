@@ -807,7 +807,7 @@ $(function () {
             <button class="btn btn-sm btn-outline-danger act-del" data-id="${id}" disabled>
               <i class="fas fa-trash"></i>
             </button>
-            <button class="btn btn-sm btn-outline-warning act-notification" data-id="${id}">
+            <button class="btn btn-sm btn-outline-warning act-notification" title="Ուղարկել նամեկ" data-id="${id}">
               <i class="fas fa-envelope"></i>
             </button>`
         }

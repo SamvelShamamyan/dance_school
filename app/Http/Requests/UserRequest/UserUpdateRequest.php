@@ -34,7 +34,8 @@ class UserUpdateRequest extends FormRequest
                 Rule::unique('users', 'email')->ignore($this->route('id'))
             ],
             'password'      => ['nullable','string','min:5','max:25'],
-            'school_id'     => 'required|exists:school_names,id',
+            // 'school_id'     => 'required|exists:school_names,id',
+            'school_id'     => ['required_unless:role_name,super-accountant', 'nullable', 'integer', 'exists:school_names,id'],
             'role_name'     => 'required|exists:roles,name',
         ];
     }

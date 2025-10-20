@@ -85,7 +85,7 @@
           </li>
         @endrole
 
-        @role('super-admin|super-accountant')
+        @role('super-admin|super-accountant|school-admin|school-accountant')
           <li class="nav-item">
             <a href="{{route('admin.payment.index')}}"
                class="nav-link {{ request()->routeIs('admin.payment.index') ? 'active' : '' }}">
@@ -95,7 +95,7 @@
           </li>
         @endrole 
 
-        @role('super-admin|super-accountant|school-admin|school-accountant')
+        @role('super-admin|school-admin')
           <li class="nav-item">
             <a href="{{route('admin.deleted.students.index')}}"
                class="nav-link {{ request()->routeIs('admin.deleted.students.index') ? 'active' : '' }}">
@@ -104,7 +104,7 @@
             </a>
           </li>
         @endrole 
-        @role('super-admin|super-accountant|school-admin|school-accountant')
+        @role('super-admin|school-admin')
           <li class="nav-item">
             <a href="{{route('admin.schedule.group.index')}}"
                class="nav-link {{ request()->routeIs('admin.schedule.group.index') ? 'active' : '' }}">
@@ -114,7 +114,7 @@
           </li>
         @endrole 
 
-        @role('super-admin|super-accountant|school-admin|school-accountant')
+        @role('super-admin|school-admin')
           <li class="nav-item">
             <a href="{{route('admin.student.attendances.index')}}"
                class="nav-link {{ request()->routeIs('admin.student.attendances.index') ? 'active' : '' }}">

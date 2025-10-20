@@ -17,7 +17,8 @@ function saveSchool() {
             if (response.status === 1) {
                 swal("success", "Գործողությունը կատարված է", true, true);
                 $('#schoolForm')[0].reset();
-                $('.text-danger').text('');
+                // $('.text-danger').text('');
+                showFieldErrors(form, {});
                 $('#schoolFormBtn').prop('disabled', true);
             }
         },

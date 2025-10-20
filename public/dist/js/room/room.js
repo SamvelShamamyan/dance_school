@@ -17,7 +17,8 @@ function saveRoom() {
             if (response.status === 1) {
                 await swal("success", "Գործողությունը կատարված է", true, true);
                 $('#roomForm')[0].reset();
-                $('.text-danger').text('');
+                // $('.text-danger').text(''); 
+                showFieldErrors(form, {});
                 $('#roomFormBtn').prop('disabled', true);
                 window.location.href = response.redirect;
             }

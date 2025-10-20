@@ -25,7 +25,8 @@ function saveStudent() {
                 await swal("success", "Գործողությունը կատարված է", true, true);
                 $('.text-danger').text('');
                 $('#StudentForm')[0].reset();
-                $('.text-danger').text('');
+                // $('.text-danger').text('');
+                showFieldErrors(form, {}); 
                 $('#studentBtn').prop('disabled', true);
                 window.location.href = response.redirect;
             }

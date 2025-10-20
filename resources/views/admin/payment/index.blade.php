@@ -61,27 +61,14 @@
           </div>
         </div>
       </div>
-      
-      <!-- <div class="col-6 col-md-3 mb-3">
-        <label class="form-label d-block">Տարի</label>
-        <select id="year" class="form-control"></select>
-      </div> -->
-
       <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Խումբ</label>
         <select id="group_id" class="form-control"></select>
       </div>
-
       <div class="col-6 col-md-3 mb-3">
         <label class="form-label d-block">Վճարման տաբերակ</label>
         <select id="method" class="form-control"></select>
       </div>
-
-      <!-- <div class="col-6 col-md-3 mb-3">
-        <label class="form-label d-block">Վճարման կարգավիճակ</label>
-        <select id="status" class="form-control"></select>
-      </div> -->
-
     </div>
   </div>
 </div>
@@ -199,15 +186,6 @@
               </select>
               <small class="error_method text-danger"></small>
             </div>
-            <!-- <div class="form-group col-6">
-              <label>Վճարման կարգավիճակ</label>
-              <select name="status" class="form-control" id="pay_status">
-                <option value="" disabled selected>Ընտրել</option>
-                <option value="paid">Վճարված</option>
-                <option value="pending">Սպասման մեջ</option>
-              </select>
-              <small class="error_status text-danger"></small>
-            </div> -->
           </div>
           <div class="form-group mt-2">
             <label>Մեկնաբանություն</label>

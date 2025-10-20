@@ -90,7 +90,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{student}/groupHistory', action: [StudentHistoryController::class, 'groupHistoryData'])->name('admin.student.groupHistoryData');
     });
 
-    Route::group(['prefix'=>'payment','middleware' => ['role:super-admin|super-accountant|school-accountant']], function(){
+    Route::group(['prefix'=>'payment','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){
         Route::get('/', [PaymentController::class, 'index'])->name('admin.payment.index');
         Route::post('/getData', [PaymentController::class, 'getPaymentData'])->name('admin.payment.data');
         Route::get('/filters', [PaymentController::class,'filters'])->name('admin.payment.filters');

@@ -24,7 +24,8 @@ function saveStaff() {
               await swal("success", "Գործողությունը կատարված է", true, true);
                 $('.text-danger').text('');
                 $('#StaffForm')[0].reset();
-                $('.text-danger').text('');
+                // $('.text-danger').text('');
+                showFieldErrors(form, {}); 
                 $('#staffBtn').prop('disabled', true);
                 window.location.href = response.redirect;
             }

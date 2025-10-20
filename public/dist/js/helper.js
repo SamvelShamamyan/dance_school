@@ -1,3 +1,4 @@
+//Validation
 function validation(errors){
     let error_elements = $("small[class^='error_']");
     $('.error').empty();
@@ -9,6 +10,30 @@ function validation(errors){
     }
 }
 
+
+function showFieldErrors(formEl, errors) {
+    $(formEl).find('.text-danger').text('');
+    if (errors && typeof errors === 'object') {
+        $.each(errors, function(field, messages) {
+            $(`.error_${field}`).text(messages[0]);
+        });
+    }
+}
+
+function attachInlineErrorClearing() {
+    $('#UserForm,#roomForm,#GroupForm,#schoolForm,#StaffForm,#StudentForm').on('input change', 'input, select, textarea', function () {
+        const name = this.name;
+        const val = ($(this).is('select')) ? $(this).val() : $(this).val().trim();
+        if (val !== '' && val !== null) {
+            $(`.error_${name}`).text('');
+        }
+    });
+}
+
+$(function () {
+    attachInlineErrorClearing();
+});
+//Validation
 
  
 async function swal(type, message, reload = false, position = false){
@@ -105,3 +130,4 @@ function showInfo(type,title,text,callback = null) {
 function clear(){
   $('.clearable').val("");
 }
+

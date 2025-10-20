@@ -18,8 +18,9 @@ function saveUser() {
             if (response.status === 1) {
                 swal("success", "Գործողությունը կատարված է", true, true);
                 $('#UserForm')[0].reset();
-                $('.text-danger').text('');
+                // $('.text-danger').text('');
                 $('#userFormBtn').props('disabled', true);
+                showFieldErrors(form, {}); 
             }
         },
         error: function(xhr) {
@@ -79,6 +80,17 @@ $(document).on('click', '.btn-delete-user', function () {
                     console.error(xhr.responseJSON);
                 }
             });
+        }
+    });
+});
+
+
+$(document).ready(function() {
+    $('#role_name').on('change', function() {
+        if ($(this).val() === 'super-accountant') {
+           $('#school_id').prop('disabled', true);
+        } else {
+            $('#school_id').prop('disabled', false);
         }
     });
 });
