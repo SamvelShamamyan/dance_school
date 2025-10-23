@@ -13,13 +13,14 @@ function saveSchool() {
         processData: false,
         type: 'POST',
         dataType: 'json',
-        success: function(response) {
+        success: async function(response) {
             if (response.status === 1) {
-                swal("success", "Գործողությունը կատարված է", true, true);
+                await swal("success", "Գործողությունը կատարված է", true, true);
                 $('#schoolForm')[0].reset();
                 // $('.text-danger').text('');
                 showFieldErrors(form, {});
                 $('#schoolFormBtn').prop('disabled', true);
+                window.location.href = response.redirect;
             }
         },
         error: function(xhr) {

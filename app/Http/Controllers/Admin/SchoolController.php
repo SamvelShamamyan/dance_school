@@ -42,7 +42,11 @@ class SchoolController extends Controller
 
             $validated = $request->validated();
             SchoolName::create(["name" => $validated['name']]);    
-            return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']);  
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Գործողությունը կատարված է',
+                'redirect'=> route('admin.school.index'),
+            ]);  
 
         }catch(Throwable $e){
             return response()->json([
@@ -66,7 +70,11 @@ class SchoolController extends Controller
                 'name'    => $validated['name'],
             ]);
 
-            return response()->json(['status' => 1, 'message' => 'Գործողությունը կատարված է']);
+            return response()->json([
+                'status' => 1, 
+                'message' => 'Գործողությունը կատարված է',
+                'redirect' => route('admin.school.edit', ['id' => $school->id]),
+            ]);
 
         }catch(Throwable $e){
             return response()->json([

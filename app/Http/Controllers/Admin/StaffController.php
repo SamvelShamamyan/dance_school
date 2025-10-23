@@ -93,7 +93,8 @@ class StaffController extends Controller
                 'status' => 1,
                 'message' => 'Պահպանված է',
                 'redirect'=> route('admin.staff.index'),
-                'id' => $staff->id]);
+                'id' => $staff->id,
+            ]);
 
         } catch (Throwable $e) {
             return response()->json([
