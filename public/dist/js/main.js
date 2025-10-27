@@ -169,6 +169,10 @@ $(function() {
                 name: 'id'
             },
             {
+                data: 'school_name',
+                name: 'school_names.name'
+            },
+            {
                 data: 'full_name',
                 name: 'last_name',
                 orderable: false,
@@ -194,10 +198,6 @@ $(function() {
                 data: 'soc_number',
                 name: 'soc_number'
             },
-            // {
-            //     data: 'school_name',
-            //     name: 'school_names.name'
-            // },
             {
                 orderable: false,
                 searchable: false,

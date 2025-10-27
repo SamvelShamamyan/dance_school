@@ -245,6 +245,7 @@ function addStudentGroup() {
 
             if (response.status === 1) {
                 swal("success", response.message, true, true);
+                showFieldErrors(form, {}); 
                 $('#addStudentGroupBtn').prop('disabled', true)
             }
         },

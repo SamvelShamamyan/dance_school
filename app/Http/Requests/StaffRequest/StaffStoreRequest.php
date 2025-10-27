@@ -43,11 +43,13 @@ class StaffStoreRequest extends FormRequest
                 'date_format:d.m.Y',
                 // 'after_or_equal:today'
             ],
-            'files.*'    => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'], // 10 МБ
-             'school_id' => Auth::user()->hasRole('super-admin')
-                ? 'required|integer|exists:school_names,id'
-                : 'nullable',
+            'files.*'   => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'], // 10 МБ
+           
+            'school_ids' => Auth::user()->hasRole('super-admin')
+                ? 'required|array|min:1'
+                : 'nullable|array',
 
+            'school_ids.*'  => 'integer|exists:school_names,id',
         ];
     }
 
@@ -90,9 +92,17 @@ class StaffStoreRequest extends FormRequest
             'staff_date.required'     => 'Աշխատանքի ընդունման ամսաթիվը պարտադիր է:',
             'staff_date.date_format'  => 'Աշխատանքի ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
             // 'staff_date.after_or_equal' => 'Աշխատանքի ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
-            'school_id.required'        => 'Ուս․ հաստատություն պարտադիր է:',
-            'school_id.integer'         => 'Ուս․ հաստատություն ID-ն պետք է լինի ամբողջ թիվ:',
-            'school_id.exists'          => 'Նշված ուս․ հաստատություն ID-ն գոյություն չունի:',
+            
+            // 'school_id.required'        => 'Ուս․ հաստատություն պարտադիր է:',
+            // 'school_id.integer'         => 'Ուս․ հաստատություն ID-ն պետք է լինի ամբողջ թիվ:',
+            // 'school_id.exists'          => 'Նշված ուս․ հաստատություն ID-ն գոյություն չունի:',
+
+            'school_ids.required'   => 'Ուս․ հաստատություն պարտադիր է:',
+            'school_ids.array'      => 'Նշված տվյալները պետք է լինեն ցանկի տեսքով։',
+            'school_ids.min'        => 'Պետք է ընտրված լինի առնվազն մեկ հաստատություն։',
+            'school_ids.*.integer'  => 'Ընտրված հաստատության ID-ն պետք է լինի թիվ։',
+            'school_ids.*.exists'   => 'Ընտրված հաստատությունը չի գտնվել համակարգում։',
+
         ];
     }
 }

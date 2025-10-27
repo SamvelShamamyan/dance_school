@@ -1,38 +1,80 @@
 //Validation
-function validation(errors){
-    let error_elements = $("small[class^='error_']");
-    $('.error').empty();
-    $.each(error_elements, function(i, el){
-        $(el).empty();
-    })
-    for (const [key, value] of Object.entries(errors)) { 
-        $(`small.error_${key}`).text(value);
-    }
+// ---------- helpers ----------
+function toErrorClassKey(s) {
+  if (!s) return '';
+  let key = String(s).replace(/\./g, '_');
+  // 2) [] -> '', [x] -> _x
+  key = key.replace(/\[\]/g, '');
+  key = key.replace(/\[([^\]]+)\]/g, '_$1');
+  return key;
 }
 
+function elForErrorKey(key) {
+  return $(`small.error_${toErrorClassKey(key)}`);
+}
+
+function clearAllErrors(scope) {
+  const $root = scope ? $(scope) : $(document);
+  $root.find("small[class^='error_'], .text-danger").text('');
+  $root.find('.is-invalid').removeClass('is-invalid');
+}
+
+// ---------- rendering errors ----------
+function validation(errors) {
+  clearAllErrors();
+  if (!errors || typeof errors !== 'object') return;
+
+  Object.entries(errors).forEach(([key, val]) => {
+    const msg = Array.isArray(val) ? val[0] : val;
+    const $small = elForErrorKey(key);
+    if ($small.length) $small.text(msg);
+  });
+}
 
 function showFieldErrors(formEl, errors) {
-    $(formEl).find('.text-danger').text('');
-    if (errors && typeof errors === 'object') {
-        $.each(errors, function(field, messages) {
-            $(`.error_${field}`).text(messages[0]);
-        });
-    }
+  clearAllErrors(formEl);
+  if (!errors || typeof errors !== 'object') return;
+
+  $.each(errors, function (field, messages) {
+    const msg = Array.isArray(messages) ? messages[0] : messages;
+    const $small = elForErrorKey(field);
+    if ($small.length) $small.text(msg);
+  });
 }
 
+// ---------- inline clearing ----------
 function attachInlineErrorClearing() {
-    $('#UserForm,#roomForm,#GroupForm,#schoolForm,#StaffForm,#StudentForm').on('input change', 'input, select, textarea', function () {
-        const name = this.name;
-        const val = ($(this).is('select')) ? $(this).val() : $(this).val().trim();
-        if (val !== '' && val !== null) {
-            $(`.error_${name}`).text('');
-        }
-    });
+  $(document).on('input change','#UserForm,#roomForm,#GroupForm,#schoolForm,#StaffForm,#StudentForm,#SutdentGroupModalForm,#StaffGroupModalForm', function (e) {
+    const t = e.target;
+    const $t = $(t);
+
+    const rawName = t.name || $t.attr('name') || '';
+    const key = toErrorClassKey(rawName);
+
+    let hasValue = false;
+    if ($t.is('select')) {
+      const v = $t.val();
+      hasValue = Array.isArray(v) ? v.length > 0 : (v !== null && String(v).trim() !== '');
+    } else if ($t.is(':checkbox,:radio')) {
+      const $group = $(this).find(`[name="${rawName}"]`);
+      hasValue = $group.filter(':checked').length > 0;
+    } else {
+      const v = $t.val();
+      hasValue = v !== null && String(v).trim() !== '';
+    }
+
+    if (hasValue && key) {
+      const $small = elForErrorKey(key);
+      if ($small.length) $small.text('');
+      $t.removeClass('is-invalid');
+    }
+  });
 }
 
 $(function () {
-    attachInlineErrorClearing();
+  attachInlineErrorClearing();
 });
+
 //Validation
 
  

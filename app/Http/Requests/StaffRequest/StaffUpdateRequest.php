@@ -3,8 +3,9 @@
 namespace App\Http\Requests\StaffRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
-
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
+
 
 
 class StaffUpdateRequest extends FormRequest
@@ -50,6 +51,13 @@ class StaffUpdateRequest extends FormRequest
             'files.*'        => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'],
             'removed_files'  => ['array'],
             'removed_files.*'=> ['integer','exists:staff_files,id'],
+
+            'school_ids' => Auth::user()->hasRole('super-admin')
+                ? 'required|array|min:1'
+                : 'nullable|array',
+
+            'school_ids.*'  => 'integer|exists:school_names,id',
+
         ];
     }
 
@@ -92,6 +100,13 @@ class StaffUpdateRequest extends FormRequest
             'staff_date.required'     => 'Աշխատանքի ընդունման ամսաթիվը պարտադիր է:',
             'staff_date.date_format'  => 'Աշխատանքի ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
             // 'staff_date.after_or_equal' => 'Աշխատանքի ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
+
+            'school_ids.required'   => 'Ուս․ հաստատություն պարտադիր է:',
+            'school_ids.array'      => 'Նշված տվյալները պետք է լինեն ցանկի տեսքով։',
+            'school_ids.min'        => 'Պետք է ընտրված լինի առնվազն մեկ հաստատություն։',
+            'school_ids.*.integer'  => 'Ընտրված հաստատության ID-ն պետք է լինի թիվ։',
+            'school_ids.*.exists'   => 'Ընտրված հաստատությունը չի գտնվել համակարգում։',
+
         ];
     }
 }

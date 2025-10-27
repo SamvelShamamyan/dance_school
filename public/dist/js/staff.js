@@ -120,76 +120,6 @@ $(function () {
   });
 });
 
-
-
-// $(function () {
-//   const dzEl   = document.getElementById('staff-dropzone');
-//   const formEl = document.getElementById('StaffForm');
-//   const saveBtn= document.getElementById('staffBtn');
-
-//   if (!dzEl || !formEl || !saveBtn) return;
-//   if (typeof Dropzone === 'undefined') { console.error('Dropzone not loaded'); return; }
-
-//   const dz = new Dropzone(dzEl, {
-//     url: formEl.action,
-//     paramName: "files",           
-//     uploadMultiple: true,
-//     parallelUploads: 5,
-//     autoProcessQueue: false,
-//     maxFilesize: 10,               // MB
-//     maxFiles: 5,
-//     acceptedFiles: "image/*,.pdf",
-//     addRemoveLinks: true,
-//     clickable: '#staff-dropzone',
-//     previewsContainer: '#staff-dropzone',
-//     hiddenInputContainer: document.body,
-//     headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
-//     dictRemoveFile: 'Հեռացնել',
-//   });
-
-//   dz.on("sendingmultiple", function (files, xhr, formData) {
-//     $('#StaffForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
-//     $('.text-danger').text('');
-//     $('#staffBtn').prop('disabled', true);
-//   });
-
-//   dz.on("successmultiple", function (files, response) {
-//     if (response && response.status === 1) {
-//       swal("success", "Գործողությունը կատարված է", true, true);
-//       formEl.reset();
-//       dz.removeAllFiles(true);
-//       $('#removed-files').empty(); 
-//       $('#staffBtn').prop('disabled', true);
-//     } else {
-//       $('#staffBtn').prop('disabled', false);
-//       swal("error", "Something went wrong!", true, true);
-//     }
-//   });
-
-//   dz.on("errormultiple", function (files, xhrResp, xhr) {
-//     $('#staffBtn').prop('disabled', false);
-//     try {
-//       const res = xhr && xhr.response ? JSON.parse(xhr.response) : xhrResp;
-//       if (xhr && xhr.status === 422 && res && res.errors) {
-//         for (const field in res.errors) $(`.error_${field}`).text(res.errors[field][0]);
-//       } else {
-//         swal("error", (res && res.message) ? res.message : "Upload failed", true, true);
-//       }
-//     } catch {
-//       swal("error", "Upload failed", true, true);
-//     }
-//   });
-
-//   saveBtn.addEventListener('click', function () {
-//     if (dz.getAcceptedFiles().length > 0) {
-//       dz.processQueue();         
-//     } else {
-//       saveStaff();              
-//     }
-//   });
-// });
-
-
 $(function () {
   const dzElStud = document.getElementById('staff-dropzone');
   const formEl   = document.getElementById('StaffForm');
@@ -228,12 +158,6 @@ $(function () {
     headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
     dictRemoveFile: 'Հեռացնել',
   });
-
-  // dzStud.on("sendingmultiple", function (files, xhr, formData) {
-  //   $('#StaffForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
-  //   $('.text-danger').text('');
-  //   $('#staffBtn').prop('disabled', true);
-  // });
 
   dzStud.on("sendingmultiple", function (files, xhr, formData) {
     $('#StaffForm').serializeArray().forEach(({ name, value }) => {
@@ -353,4 +277,14 @@ $(document).on('click', '.js-mark-remove', function () {
     card.addClass('border-danger bg-light');
   }
 });
+
+$(function () {
+    $('.select2').select2({
+        theme: 'bootstrap4',
+        placeholder: "Ընտրել",
+        width: '100%'
+    });
+});
+
+
 

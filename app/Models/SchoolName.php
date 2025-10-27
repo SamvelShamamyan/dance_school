@@ -12,4 +12,9 @@ class SchoolName extends Model
         'id',
         'name',
     ];
+
+    public function staff() {
+        return $this->belongsToMany(Staff::class, 'school_staff', 'school_id', 'staff_id')
+                    ->withTimestamps();
+    }
 }

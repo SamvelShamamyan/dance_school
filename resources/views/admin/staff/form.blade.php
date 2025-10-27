@@ -61,23 +61,27 @@
                   action="{{ isset($staff) ? route('admin.staff.update', $staff->id) : route('admin.staff.add') }}"
                   method="post">
                 @csrf
-
                 <div class="card-body">
-
-                    @if(Auth::user()->hasRole('super-admin') && $is_create)            
+                    @if(Auth::user()->hasRole('super-admin'))            
                         <div class="form-group">
-                            <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն <small class="validation_star">*</small></label>
-                            <select name="school_id" id="schoolIdStudFilter" class="form-control">
-                                <option value="" disabled {{ empty(old('school_id', $student->school_id ?? '')) ? 'selected' : '' }}>Ընտրել</option>
+                            <label for="school_ids" class="mr-2">Ուս․ հաստատություն <small class="validation_star">*</small></label>
+
+                            @php
+                                $chosen = collect(old('school_ids', $selectedSchoolIds ?? []))
+                                            ->map(fn($v) => (int)$v)->all();
+                            @endphp
+
+                            <select name="school_ids[]" id="school_ids" class="form-control select2" multiple="multiple" data-placeholder="Ընտրել" style="width: 100%;">
                                 @foreach($schools as $school)
-                                    <option value="{{ $school->id }}" data-name="{{ $school->name }}" 
-                                    {{ old('school_id', $student->school_id ?? '') == $school->id ? 'selected' : '' }}>
+                                    <option value="{{ $school->id }}"
+                                            data-name="{{ $school->name }}"
+                                            {{ in_array($school->id, $chosen, true) ? 'selected' : '' }}>
                                         {{ $school->name }}
                                     </option>
-                                @endforeach
+                                @endforeach      
                             </select>
-                            <small class="error_school_id text-danger"></small>
-                        </div>     
+                            <small class="error_school_ids text-danger"></small>
+                        </div>         
                     @endif
 
                     <div class="form-group">
@@ -123,7 +127,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="phone_1">Հեռ․ / 1 <small class="validation_star">*</small></label>
+                        <label for="phone_1">Հեռ․/ 1 <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="phone_1" name="phone_1" value="{{ old('phone_1', $staff->phone_1 ?? '') }}" placeholder="(__) ___-__-__">
                         <small class="error_phone_1 text-danger"></small>
                     </div>

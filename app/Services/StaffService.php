@@ -4,83 +4,89 @@ namespace App\Services;
 
 use App\Models\Staff;
 use Illuminate\Http\Request;
-
 use Illuminate\Support\Facades\Auth;
 
 
 class StaffService
 {
-   public function getStaffData(Request $request)
-{
-    $draw = $request->input('draw');
-    $start = $request->input('start');
-    $length = $request->input('length');
-    $search = $request->input('search.value');
+    public function getStaffData(Request $request){
+   
+        $draw    = (int) $request->input('draw');
+        $start   = (int) $request->input('start', 0);
+        $length  = (int) $request->input('length', 10);
+        $search  = trim((string) $request->input('search.value', ''));
+        $orderIx = $request->input('order.0.column');
+        $orderBy = $request->input("columns.$orderIx.data");
+        $dir     = $request->input('order.0.dir', 'asc');
 
-    $schoolId = Auth::user()->school_id;
+        $user   = Auth::user();
 
-    $query = Staff::with('school');
+        $userSchoolId   = (int) ($user->school_id ?? 0);
+        $filterSchoolId = $user->hasRole('super-admin')
+            ? (int) $request->input('school_id', 0)
+            : $userSchoolId;
 
-    if (Auth::user()->hasRole('super-admin')) {
-        $schoolId = $request->input('school_id');
-        if ($schoolId !== null && $schoolId !== '') {
-            $query->where('school_id', $schoolId);
+        $query = Staff::query()
+            ->with(['schools:id,name'])
+            ->select('staff.*')->orderBy('id','DESC');
+
+        if ($user->hasRole('super-admin')) {
+            if ($filterSchoolId > 0) {
+                $query->whereHas('schools', fn($q) =>
+                    $q->where('school_names.id', $filterSchoolId)
+                );
+            }
         } else {
-            $query->whereNotNull('school_id'); 
+            $query->whereHas('schools', fn($q) =>
+                $q->where('school_names.id', $filterSchoolId)
+            );
         }
-    } else {
-        $query->where('school_id', $schoolId);
-    }
 
+        $recordsTotal = (clone $query)->count('staff.id');
 
+        if ($search !== '') {
+            $query->where(function ($q) use ($search) {
+                $q->where('first_name',  'like', "%{$search}%")
+                ->orWhere('last_name', 'like', "%{$search}%")
+                ->orWhere('father_name','like', "%{$search}%")
+                ->orWhereHas('schools', function ($q2) use ($search) {
+                    $q2->where('name', 'like', "%{$search}%");
+                });
+            });
+        }
 
-    $recordsTotal = $query->count();
+        $recordsFiltered = (clone $query)->count('staff.id');
 
-    if (!empty($search)) {
-        $query->where(function ($q) use ($search) {
-            $q->where('first_name', 'like', "%{$search}%")
-              ->orWhere('last_name', 'like', "%{$search}%")
-              ->orWhere('father_name', 'like', "%{$search}%")
-              ->orWhereHas('school', function ($q2) use ($search) {
-                  $q2->where('name', 'like', "%{$search}%"); 
-              });
+        if ($orderBy && in_array(strtolower($dir), ['asc','desc'], true)) {
+            if ($orderBy === 'school_name') {
+                $query->leftJoin('school_staff', 'school_staff.staff_id', '=', 'staff.id')
+                    ->leftJoin('school_names', 'school_names.id', '=', 'school_staff.school_id')
+                    ->groupBy('staff.id')
+                    ->orderBy('school_names.name', $dir)
+                    ->select('staff.*'); 
+            } else {
+                $query->orderBy($orderBy, $dir);
+            }
+        }
+
+        $rows = $query->skip($start)->take($length)->get();
+
+        $rows->transform(function ($item) {
+            $item->full_name   = trim($item->first_name.' '.$item->last_name.' '.$item->father_name);
+            $item->school_name = $item->schools->pluck('name')->join(', ');
+            $item->action = '
+                <button class="btn btn-info btn-edit-staff" data-id="'.$item->id.'" title="Խմբագրել"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-delete-staff" data-id="'.$item->id.'" title="Հեռացնել"><i class="fas fa-trash-alt"></i></button>
+            ';
+            return $item;
         });
+
+        return [
+            'draw'            => $draw,
+            'recordsTotal'    => $recordsTotal,
+            'recordsFiltered' => $recordsFiltered,
+            'data'            => $rows->values()->toArray(),
+        ];
     }
-
-    $recordsFiltered = $query->count();
-
-    $orderColumnIndex = $request->input('order.0.column');
-    $orderColumnName = $request->input("columns.$orderColumnIndex.data");
-    $orderDirection = $request->input('order.0.dir');
-
-    if ($orderColumnName && $orderDirection) {
-        if ($orderColumnName === 'school_name') {
-            $query->leftJoin('school_names', 'staff.school_id', '=', 'school_names.id')
-                  ->orderBy('school_names.name', $orderDirection)
-                  ->select('staff.*'); 
-        } else {
-            $query->orderBy($orderColumnName, $orderDirection);
-        }
-    }
-
-    $data = $query->skip($start)->take($length)->get();
-
-    $data->transform(function ($item) {
-        $item->full_name = $item->last_name . ' ' . $item->first_name . ' ' . $item->father_name;
-        $item->school_name = $item->school->name ?? '';
-        $item->action = '
-            <button class="btn btn-info btn-edit-staff" data-id="'.$item->id.'" title="Խմբագրել"><i class="fas fa-edit"></i></button>
-            <button class="btn btn-danger btn-delete-staff" data-id="'.$item->id.'" title="Հեռացնել"><i class="fas fa-trash-alt"></i></button>
-        ';
-        return $item;
-    });
-
-    return [
-        'draw' => intval($draw),
-        'recordsTotal' => $recordsTotal,
-        'recordsFiltered' => $recordsFiltered,
-        'data' => $data->values()->toArray()
-    ];
-}
 
 }

@@ -18,12 +18,11 @@ class Staff extends Model
         'soc_number',
         'birth_date',
         'created_date',
-        'school_id',
     ];
 
-    public function school(){
-        return $this->belongsTo(SchoolName::class, 'school_id');
-    }
+    // public function school(){
+    //     return $this->belongsTo(SchoolName::class, 'school_id');
+    // }
 
     public function groups(){
         return $this->belongsToMany(Group::class, 'group_staff')
@@ -32,6 +31,11 @@ class Staff extends Model
 
     public function files(){
         return $this->hasMany(StaffFile::class);
+    }
+
+    public function schools() {
+        return $this->belongsToMany(SchoolName::class, 'school_staff', 'staff_id', 'school_id')
+                    ->withTimestamps();
     }
 
 }
