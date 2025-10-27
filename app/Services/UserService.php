@@ -14,7 +14,7 @@ class UserService
     $length = $request->input('length');
     $search = $request->input('search.value');
     
-    $query = User::with('school')->whereNotNull('school_id');
+    $query = User::with('school')->whereNotNull('school_id')->orderBy('id', 'DESC');
 
 
     $recordsTotal = $query->count();

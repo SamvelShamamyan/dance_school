@@ -73,6 +73,10 @@ $(function() {
                 name: 'id'
             },
             {
+                data: 'school_name',
+                name: 'school_names.name'
+            },
+            {
                 data: 'first_name',
                 name: 'first_name'
             },
@@ -83,10 +87,6 @@ $(function() {
             {
                 data: 'father_name',
                 name: 'father_name'
-            },
-            {
-                data: 'school_name',
-                name: 'school_names.name'
             },
             {
                 orderable: false,
