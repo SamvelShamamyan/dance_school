@@ -78,8 +78,11 @@
 </div>
 
 @endsection
+@push('head')
 <script>
   window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
 </script>
-
+@endpush
+@push('scripts')
 <script src="{{ asset('dist/js/studentAttendances/studentAttendances.table.js') }}" defer></script>
+@endpush

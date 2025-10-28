@@ -240,8 +240,12 @@
 
 @endsection
 
+@push('head')
 <script>
     window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
     window.currentUserRoleSchoolId = @json(Auth::user()->school_id ?? null);
 </script>
-<script src="{{ asset( 'dist/js/scheduler.group.js') }}" defer></script>
+@endpush
+@push('scripts')
+  <script src="{{asset( 'dist/js/scheduler.group.js')}}" defer></script>
+@endpush

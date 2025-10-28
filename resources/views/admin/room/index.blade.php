@@ -85,7 +85,6 @@
     window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
   </script>
 @endpush
-
 @push('scripts')
-  <script src="{{ asset('dist/js/room/room.table.js') }}" defer></script>
+  <script src="{{asset('dist/js/room/room.table.js')}}" defer></script>
 @endpush
