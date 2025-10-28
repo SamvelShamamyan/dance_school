@@ -77,16 +77,8 @@ $(function() {
                 name: 'school_names.name'
             },
             {
-                data: 'first_name',
-                name: 'first_name'
-            },
-            {
-                data: 'last_name',
-                name: 'last_name'
-            },
-            {
-                data: 'father_name',
-                name: 'father_name'
+                data: 'full_name',
+                name: 'full_name'
             },
             {
                 orderable: false,
