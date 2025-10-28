@@ -162,7 +162,7 @@
           <div class="form-group">
             <label for="school_id" class="mr-2">Ընտրել ուս․ հաստատություն</label>
             <select id="school_id" class="form-control">
-                <option value="" selected >Բոլորը</option>
+                <option value="" selected disabled>Ընտրել</option>
                 @foreach($schools as $school)
                     <option value="{{ $school->id }}" data-name="{{ $school->name }}">{{ $school->name }}</option>
                 @endforeach
