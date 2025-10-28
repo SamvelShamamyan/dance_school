@@ -204,9 +204,13 @@
 
 @endsection
 
+@push('head')
+  <script>
+      window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
+      window.currentUserRoleSchoolId = @json(Auth::user()->school_id ?? null);
+  </script>
+@endpush
 
-<script>
-    window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
-    window.currentUserRoleSchoolId = @json(Auth::user()->school_id ?? null);
-</script>
-<script src="{{ asset('dist/js/payment.js') }}" defer></script>
+@push('scripts')
+  <script src="{{ asset('dist/js/payment.js') }}" defer></script>
+@endpush

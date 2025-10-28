@@ -49,7 +49,7 @@
 
 
 <!-- CURRENT START_3 -->
-
+@stack('head')
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
 <div class="wrapper">
@@ -214,6 +214,6 @@ if (window.Dropzone) { Dropzone.autoDiscover = false; }
 
 <!-- CURRENT END_2 -->
 
-
+@stack('scripts')
 </body>
 </html>                                       

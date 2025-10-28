@@ -79,8 +79,13 @@
 </div>
 
 @endsection
-<script>
-  window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
-</script>
 
-<script src="{{ asset('dist/js/room/room.table.js') }}" defer></script>
+@push('head')
+  <script>
+    window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
+  </script>
+@endpush
+
+@push('scripts')
+  <script src="{{ asset('dist/js/room/room.table.js') }}" defer></script>
+@endpush

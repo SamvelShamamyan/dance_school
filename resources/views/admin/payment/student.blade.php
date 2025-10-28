@@ -91,30 +91,32 @@
 
 <div class="card shadow-sm">
   <div class="card-body bg-white">
-    <table class="table table-striped table-bordered"
-           id="studentPaymentTbl"
-           data-student-id="{{ $student->id }}"
-           data-school-id="{{ $school_id }}"
-           style="width:100%">
-      <thead>
-        <tr>
-          <th>Ամսաթիվ</th>
-          <th>Գումար</th>
-          <th>Մեթոդ</th>
-          <th>Կարգավիճակ</th>
-          <th>Մեկնաբանություն</th>
-          <th class="dt-center">Գործողություն</th>
-        </tr>
-      </thead>
-      <tbody></tbody>
-      <tfoot>
-        <tr>
-          <th class="dt-right">Ընդամենը՝</th>
-          <th id="tfootTotal" class="dt-right"></th>
-          <th colspan="4"></th>
-        </tr>
-      </tfoot>
-    </table>
+    <div class="table-responsive">
+      <table class="table table-striped table-bordered"
+            id="studentPaymentTbl"
+            data-student-id="{{ $student->id }}"
+            data-school-id="{{ $school_id }}"
+            style="width:100%">
+        <thead>
+          <tr>
+            <th>Ամսաթիվ</th>
+            <th>Գումար</th>
+            <th>Մեթոդ</th>
+            <th>Կարգավիճակ</th>
+            <th>Մեկնաբանություն</th>
+            <th class="dt-center">Գործողություն</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+        <tfoot>
+          <tr>
+            <th class="dt-right">Ընդամենը՝</th>
+            <th id="tfootTotal" class="dt-right"></th>
+            <th colspan="4"></th>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -254,8 +256,12 @@
 
 @endsection
 
+@push('head')
 <script>
   window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
 </script>
-<script src="{{ asset('dist/js/payment.student.js') }}" defer></script>
+@endpush
 
+@push('scripts')
+  <script src="{{ asset('dist/js/payment.student.js') }}" defer></script>
+@endpush

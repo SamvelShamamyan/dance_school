@@ -50,6 +50,7 @@
         </div>
 @endsection
 
-<script src="{{ asset('dist/js/room/room.js') }}" defer></script>
-
+@push('scripts')
+    <script src="{{ asset('dist/js/room/room.js') }}" defer></script>
+@endpush
 
