@@ -12,7 +12,7 @@
 </div>
 
 <div class="row">
-    <div class="col-6">
+    <div class="col-12 col-md-12 col-lg-12 col-xl-6">
         <div class="card card-primary">
                 <div class="card-header">
                 <h3 class="card-title">{{ isset($school) ? 'Խմբագրել ուս․ հաստատությունը' : 'Ավելացնել ուս․ հաստատություն' }}</h3>
