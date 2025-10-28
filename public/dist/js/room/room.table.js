@@ -19,12 +19,12 @@ $(function() {
                 name: 'id'
             },
             {
-                data: 'name',
-                name: 'name'
-            },
-            {
                 data: 'school_name',
                 name: 'school_names.name'
+            },
+            {
+                data: 'name',
+                name: 'name'
             },
             {
                 orderable: false,
