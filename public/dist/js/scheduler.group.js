@@ -4,7 +4,7 @@
 /* =========================================================
    A) CONFIG & CONSTANTS
 ========================================================= */
-  const START_TIME = "11:30", END_TIME = "23:30", SLOT_MIN = 30;
+  const START_TIME = "10:00", END_TIME = "23:30", SLOT_MIN = 30;
   const SLOT_PX    = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--slot-px')) || 30;
   const GUTTER_PX  = 4;
   const TIME_COL_PX= parseInt(getComputedStyle(document.documentElement).getPropertyValue('--time-col')) || 80;

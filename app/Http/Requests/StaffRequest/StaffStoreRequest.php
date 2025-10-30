@@ -28,7 +28,8 @@ class StaffStoreRequest extends FormRequest
             'first_name'    => 'required|string|max:25',
             'last_name'     => 'required|string|max:25',
             'father_name'   => 'required|string|max:25',
-            'address'       => 'required|string|max:25',
+            // 'address'       => 'required|string|max:25',
+            'address'       => 'nullable|string|max:25',
             'soc_number'    => 'nullable|string|max:25',
             'email'         => 'required|email|unique:staff,email',
             'phone_1' => 'required|digits:9',
@@ -68,7 +69,7 @@ class StaffStoreRequest extends FormRequest
             'father_name.string'   => 'Հայրանունը պետք է լինի տեքստային:',
             'father_name.max'      => 'Հայրանունը չի կարող գերազանցել 25 նիշը:',
 
-            'address.required'     => 'Բնակության հասցեն պարտադիր է:',
+            // 'address.required'     => 'Բնակության հասցեն պարտադիր է:',
             'address.string'       => 'Բնակության հասցեն պետք է լինի տեքստային:',
             'address.max'          => 'Բնակության հասցեն չի կարող գերազանցել 100 նիշը:',
 

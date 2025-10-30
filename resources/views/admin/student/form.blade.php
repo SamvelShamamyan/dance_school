@@ -111,7 +111,7 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="address">Բնակության հասցե <small class="validation_star">*</small></label>
+                        <label for="address">Բնակության հասցե </label>
                         <input type="text" class="form-control" id="address" name="address" value="{{ old('address', $student->address ?? '') }}" placeholder="">
                         <small class="error_address text-danger"></small>
                     </div>
