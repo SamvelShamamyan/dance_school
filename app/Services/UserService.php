@@ -49,7 +49,7 @@ class UserService
     $data = $query->skip($start)->take($length)->get();
 
     $data->transform(function ($item) {
-        $item->full_name = $item->last_name . ' ' . $item->first_name . ' ' . $item->father_name;
+        $item->full_name = $item->first_name . ' ' . $item->last_name . ' ' . $item->father_name;
         $item->school_name = $item->school->name ?? '';
         $item->action = '
             <button class="btn btn-info btn-edit-user" data-id="'.$item->id.'"><i class="fas fa-edit"></i> Խմբագրել</button>
