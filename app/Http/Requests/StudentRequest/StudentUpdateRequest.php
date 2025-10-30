@@ -3,6 +3,7 @@
 namespace App\Http\Requests\StudentRequest;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 use Illuminate\Validation\Rule;
 
@@ -57,6 +58,9 @@ class StudentUpdateRequest extends FormRequest
             'files.*'        => ['nullable','file','mimes:jpg,jpeg,png,pdf','max:10240'],
             'removed_files'  => ['array'],
             'removed_files.*'=> ['integer','exists:student_files,id'],
+            'school_id' => Auth::user()->hasRole('super-admin')
+                ? 'required|integer|exists:school_names,id'
+                : 'nullable',
         ];
     }
 
@@ -102,6 +106,10 @@ class StudentUpdateRequest extends FormRequest
             'created_date.required'     => 'Ուսուցման ընդունման ամսաթիվը պարտադիր է:',
             'created_date.date_format'  => 'Ուսուցման ամսաթվի ձևաչափը պետք է լինի օր.ամիս.տարի (օրինակ՝ 06.08.2025):',
             // 'created_date.after_or_equal' => 'Ուսուցման ամսաթիվը չի կարող լինել մինչև ծննդյան ամսաթիվը:',
+
+            'school_id.required'        => 'Ուս․ հաստատություն պարտադիր է:',
+            'school_id.integer'         => 'Ուս․ հաստատություն ID-ն պետք է լինի ամբողջ թիվ:',
+            'school_id.exists'          => 'Նշված ուս․ հաստատություն ID-ն գոյություն չունի:',
         ];
     }
 }

@@ -38,8 +38,7 @@ class StudentController extends Controller
         if (Auth::user()->hasRole('super-admin')) {
             $schools = SchoolName::get();
         }
-        $is_create = true;
-        return view('admin.student.form', compact('schools','is_create'));
+        return view('admin.student.form', compact('schools'));
     }
 
     public function getSudentData(Request $request){
@@ -112,8 +111,11 @@ class StudentController extends Controller
 
 
     public function edit($id){
+        $schools = [];
         $student = Student::with('files')->findOrFail($id);
-
+         if (Auth::user()->hasRole('super-admin')) {
+            $schools = SchoolName::get();
+        }
         $files = $student->files->map(function ($f) {
             $url = $f->url ?? Storage::disk('public')->url($f->path);
             $isImage = Str::endsWith(strtolower($f->name ?? $f->path), [
@@ -132,7 +134,7 @@ class StudentController extends Controller
         return view('admin.student.form', [
             'student' => $student,
             'studentFilesJson' => $files->toJson(),
-            'is_create' => false,
+            'schools' => $schools,
         ]);
     }
 
@@ -143,6 +145,12 @@ class StudentController extends Controller
             $validated = $request->validated();
             $student = Student::findOrFail($id);
             $isGuest = $request->boolean('is_guest');
+
+            $schoolId = Auth::user()->school_id;
+
+            if (Auth::user()->hasRole('super-admin')) {
+                $schoolId = $request->school_id;
+            }
 
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
@@ -162,6 +170,7 @@ class StudentController extends Controller
                 'soc_number' => $validated['soc_number'],
                 'birth_date' => $formattedBirthDate,
                 'created_date' => $formattedStudentDate,
+                'school_id' => $schoolId,
                 'is_guest' => $isGuest,
             ]);
 

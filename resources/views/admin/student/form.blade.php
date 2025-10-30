@@ -75,7 +75,7 @@
 
                 <div class="card-body">
 
-                    @if(Auth::user()->hasRole('super-admin') && $is_create)            
+                    @if(Auth::user()->hasRole('super-admin'))            
                         <div class="form-group">
                             <label for="school_id" class="mr-2 mb-0">Ուս․ հաստատություն <small class="validation_star">*</small></label>
                             <select name="school_id" id="schoolIdStudFilter" class="form-control">
