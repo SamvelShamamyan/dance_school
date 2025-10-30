@@ -14,7 +14,7 @@ class SchoolService
         $length = $request->input('length'); 
         $search = $request->input('search.value'); 
 
-        $query = SchoolName::query()->orderBy('id','DESC');
+        $query = SchoolName::query();
         $recordsTotal = $query->count();
 
         if (!empty($search)) {
@@ -30,10 +30,10 @@ class SchoolService
         $orderDirection = $request->input('order.0.dir'); 
 
         if ($orderColumnName && $orderDirection) {
-            $query->orderBy($orderColumnName, $orderDirection);
+            $query->orderBy($orderColumnName, $orderDirection);  
         }
 
-        $data = $query->skip($start)->take($length)->get();
+        $data = $query->skip($start)->take($length)->orderBy('id', 'DESC')->get();
 
         $data->transform(function ($item) {
             $item->action = '

@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Staff;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 
@@ -15,9 +16,6 @@ class StaffService
         $start   = (int) $request->input('start', 0);
         $length  = (int) $request->input('length', 10);
         $search  = trim((string) $request->input('search.value', ''));
-        $orderIx = $request->input('order.0.column');
-        $orderBy = $request->input("columns.$orderIx.data");
-        $dir     = $request->input('order.0.dir', 'asc');
 
         $user   = Auth::user();
 
@@ -28,7 +26,7 @@ class StaffService
 
         $query = Staff::query()
             ->with(['schools:id,name'])
-            ->select('staff.*')->orderBy('id','DESC');
+            ->select('staff.*');
 
         if ($user->hasRole('super-admin')) {
             if ($filterSchoolId > 0) {
@@ -44,6 +42,11 @@ class StaffService
 
         $recordsTotal = (clone $query)->count('staff.id');
 
+
+        $orderColumnIndex = $request->input('order.0.column');
+        $orderColumnName = $request->input("columns.$orderColumnIndex.data");
+        $orderDirection = $request->input('order.0.dir');
+
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('first_name',  'like', "%{$search}%")
@@ -57,15 +60,23 @@ class StaffService
 
         $recordsFiltered = (clone $query)->count('staff.id');
 
-        if ($orderBy && in_array(strtolower($dir), ['asc','desc'], true)) {
-            if ($orderBy === 'school_name') {
-                $query->leftJoin('school_staff', 'school_staff.staff_id', '=', 'staff.id')
-                    ->leftJoin('school_names', 'school_names.id', '=', 'school_staff.school_id')
-                    ->groupBy('staff.id')
-                    ->orderBy('school_names.name', $dir)
+        if ($orderColumnName && $orderDirection) {
+            if ($orderColumnName === 'school_name') {
+                $schoolSort = DB::table('school_staff as ss')
+                    ->join('school_names as sn', 'sn.id', '=', 'ss.school_id')
+                    ->selectRaw('ss.staff_id, MIN(sn.name) as school_name')
+                    ->groupBy('ss.staff_id');
+
+                $query->leftJoinSub($schoolSort, 's', function ($join) {
+                        $join->on('s.staff_id', '=', 'staff.id');
+                    })
+                    ->orderBy('s.school_name', $orderDirection)
                     ->select('staff.*'); 
+            } elseif ($orderColumnName === 'full_name') {
+                $query->orderByRaw("LOWER(CONCAT(staff.first_name, ' ', staff.last_name)) {$orderDirection}")
+                    ->select('staff.*');
             } else {
-                $query->orderBy($orderBy, $dir);
+                $query->orderBy("staff.$orderColumnName", $orderDirection);
             }
         }
 

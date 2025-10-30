@@ -20,7 +20,7 @@ class StudentService
 
     $schoolId = Auth::user()->school_id;
 
-    $query = Student::with('school')->orderBy('id', 'DESC');
+    $query = Student::with('school');
 
     if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-accountant')) {
         $schoolId = $request->input('school_id');
@@ -61,12 +61,18 @@ class StudentService
             $query->leftJoin('school_names', 'staff.school_id', '=', 'school_names.id')
                   ->orderBy('school_names.name', $orderDirection)
                   ->select('students.*'); 
-        } else {
+        } 
+        elseif ($orderColumnName === 'full_name') {
+            $query->select('students.*')
+                ->orderByRaw("LOWER(CONCAT(COALESCE(students.first_name,''), ' ',COALESCE(students.last_name,''),  ' ',COALESCE(students.father_name,''))) 
+                    {$orderDirection}");
+        }
+        else {
             $query->orderBy($orderColumnName, $orderDirection);
         }
     }
 
-    $data = $query->skip($start)->take($length)->get();
+    $data = $query->skip($start)->take($length)->orderBy('id', 'DESC')->get();
 
     $data->transform(function ($item, $schoolId) {
 
@@ -75,7 +81,7 @@ class StudentService
         if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-accountant')) {
          $viewHistory = '<button class="btn btn-sm btn-light view-history" data-id="'.$item->id.'" data-school-id="'.$item->school_id.'" title="Պատմություն">&#8942;</button>'; 
         }
-        $item->full_name = $item->last_name . ' ' . $item->first_name . ' ' . $item->father_name;
+        $item->full_name = $item->first_name . ' ' . $item->last_name . ' ' . $item->father_name;
         $item->school_name = $item->school->name ?? '';
         $item->action = '
             <button class="btn btn-info btn-edit-student" data-id="'.$item->id.'" title="Խմբագրել"><i class="fas fa-edit"></i></button>

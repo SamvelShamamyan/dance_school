@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Str;
 use App\Http\Requests\UserRequest\UserStoreRequest; 
 use App\Http\Requests\UserRequest\UserUpdateRequest; 
 use Illuminate\Support\Facades\Mail;

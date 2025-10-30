@@ -33,6 +33,7 @@ $(function() {
             url: "/admin/school/getData",
             type: 'post'
         },
+        order: [[0, 'desc']],
         columns: [  
             {
                 data: 'id',
@@ -67,6 +68,7 @@ $(function() {
             url: "/admin/user/getData",
             type: 'post'
         },
+        order: [[0, 'desc']],
         columns: [  
             {
                 data: 'id',
@@ -106,6 +108,7 @@ $(function() {
                 if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterSchoolGroup').val() || '';}
             }
         },
+        order: [[0, 'desc']],
         columns: [  
             {
                 data: 'id',
@@ -155,6 +158,7 @@ $(function() {
             if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterSchool').val() || '';}
             }
         },
+        order: [[0, 'desc']],
         columns: [  
             {
                 data: 'id',
@@ -167,8 +171,6 @@ $(function() {
             {
                 data: 'full_name',
                 name: 'last_name',
-                orderable: false,
-                searchable: false,
             },
             {
                 data: 'address',
@@ -178,10 +180,6 @@ $(function() {
                 data: 'birth_date',
                 name: 'birth_date'
             },
-            // {
-            //     data: 'created_date',
-            //     name: 'created_date'
-            // },
             {
                 data: 'email',
                 name: 'email'
@@ -224,6 +222,7 @@ $(function() {
                 if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterStudentSchool').val() || '';}
             }
         },
+        order: [[0, 'desc']],
         columns: [  
             {
                 data: 'id',
@@ -232,8 +231,6 @@ $(function() {
             {
                 data: 'full_name',
                 name: 'last_name',
-                orderable: false,
-                searchable: false,
             },
             {
                 data: 'address',
@@ -243,10 +240,6 @@ $(function() {
                 data: 'birth_date',
                 name: 'birth_date'
             },
-            // {
-            //     data: 'created_date',
-            //     name: 'created_date'
-            // },
             {
                 data: 'email',
                 name: 'email'

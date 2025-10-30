@@ -14,8 +14,7 @@ class UserService
     $length = $request->input('length');
     $search = $request->input('search.value');
     
-    $query = User::with('school')->whereNotNull('school_id')->orderBy('id', 'DESC');
-
+    $query = User::with('school')->whereNotNull('school_id');
 
     $recordsTotal = $query->count();
 
@@ -39,14 +38,21 @@ class UserService
     if ($orderColumnName && $orderDirection) {
         if ($orderColumnName === 'school_name') {
             $query->leftJoin('school_names', 'users.school_id', '=', 'school_names.id')
-                  ->orderBy('school_names.name', $orderDirection)
-                  ->select('users.*'); 
-        } else {
+                ->select('users.*') 
+                ->orderBy('school_names.name', $orderDirection);
+        }
+        elseif ($orderColumnName === 'full_name') {
+            $query->select('users.*')
+                ->orderByRaw("LOWER(CONCAT(COALESCE(users.first_name,''), ' ',COALESCE(users.last_name,''),  ' ',COALESCE(users.father_name,''))) 
+                    {$orderDirection}");
+        }
+        else {
             $query->orderBy($orderColumnName, $orderDirection);
         }
     }
 
-    $data = $query->skip($start)->take($length)->get();
+
+    $data = $query->skip($start)->take($length)->orderBy('id', 'DESC')->get();
 
     $data->transform(function ($item) {
         $item->full_name = $item->first_name . ' ' . $item->last_name . ' ' . $item->father_name;
