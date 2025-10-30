@@ -25,13 +25,14 @@ public function getStaffListData(Request $request, $groupId)
     }
     
     $query = Staff::query()
-        ->with('school')
+        ->with('schools')
         ->select('staff.*', 'groups.id as group_id')
         ->join('group_staff', 'group_staff.staff_id', '=', 'staff.id')
         ->join('groups', 'groups.id', '=', 'group_staff.group_id')
         ->where('group_staff.group_id', $groupId)
-        ->whereNotNull('staff.school_id')
-        ->where('staff.school_id', $schoolId)
+        ->whereHas('schools', function ($q) use ($schoolId) {
+            $q->where('school_id', $schoolId);
+        })
         ->distinct('staff.id');
 
 
@@ -89,9 +90,12 @@ public function getStaffListData(Request $request, $groupId)
         if (Auth::user()->hasRole('super-admin')) {
             $schoolId = $request->input('school_id');
         }
+        
         $staff = Staff::select('id',
         DB::raw("CONCAT(first_name, ' ', last_name, ' ', father_name) as full_name")
-        )->where('school_id', $schoolId)->get();    
+        )->whereHas('schools', function ($q) use ($schoolId) {
+            $q->where('school_id', $schoolId);
+        })->get();    
         return $staff;
     }
 
@@ -104,8 +108,8 @@ public function getStaffListData(Request $request, $groupId)
             $schoolId = $request->school_id;
         }   
 
-        $groupId  = (int) $validated['group_id'];
-        $ids      = array_map('intval', $validated['add_staff'] ?? []);
+        $groupId = (int) $validated['group_id'];
+        $ids = array_map('intval', $validated['add_staff'] ?? []);
 
         if ($groupId <= 0 || empty($ids)) {
             return 0;
@@ -115,7 +119,9 @@ public function getStaffListData(Request $request, $groupId)
             ->where('school_id', $schoolId)
             ->firstOrFail();
 
-        $staffIds = Staff::where('school_id', $schoolId)
+        $staffIds = Staff::whereHas('schools', function ($q) use ($schoolId) {
+            $q->where('school_id', $schoolId);
+        })
             ->whereIn('id', $ids)
             ->pluck('id')
             ->all();
@@ -128,7 +134,7 @@ public function getStaffListData(Request $request, $groupId)
             $alreadyInGroup = $group->staff()->pluck('staff.id')->all();
 
             $alreadyInRequest = array_values(array_intersect($staffIds, $alreadyInGroup));
-            $toAttach         = array_values(array_diff($staffIds, $alreadyInGroup));
+            $toAttach = array_values(array_diff($staffIds, $alreadyInGroup));
 
             if (!empty($toAttach)) {
                 $group->staff()->attach($toAttach);
@@ -143,9 +149,9 @@ public function getStaffListData(Request $request, $groupId)
             }
 
             return [
-                'added_count'   => count($toAttach),
+                'added_count' => count($toAttach),
                 'already_count' => count($alreadyInRequest),
-                'already_ids'   => $alreadyInRequest,
+                'already_ids' => $alreadyInRequest,
                 'already_names' => $alreadyNames,
             ];
         });
