@@ -933,9 +933,7 @@ $(function() {
         language: lang,
         processing: true,
         serverSide: true,
-
         searchDelay: 700, 
-
         ajax: {
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
             url: "/admin/deletedStudent/getData",
@@ -952,8 +950,8 @@ $(function() {
             {
                 data: 'full_name',
                 name: 'last_name',
-                orderable: false,
-                searchable: false,
+                // orderable: false,
+                // searchable: false,
             },
             {
                 data: 'address',
@@ -963,10 +961,6 @@ $(function() {
                 data: 'birth_date',
                 name: 'birth_date'
             },
-            // {
-            //     data: 'created_date',
-            //     name: 'created_date'
-            // },
             {
                 data: 'email',
                 name: 'email'

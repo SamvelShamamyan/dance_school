@@ -84,5 +84,5 @@
 </script>
 @endpush
 @push('scripts')
-<script src="{{ asset('dist/js/studentAttendances/studentAttendances.table.js') }}" defer></script>
+    <script src="{{ asset('dist/js/studentAttendances/studentAttendances.table.js') }}" defer></script>
 @endpush

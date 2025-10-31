@@ -127,13 +127,13 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="phone_1">Հեռ․/ 1 <small class="validation_star">*</small></label>
+                        <label for="phone_1">Հեռ․/1 <small class="validation_star">*</small></label>
                         <input type="text" class="form-control" id="phone_1" name="phone_1" value="{{ old('phone_1', $staff->phone_1 ?? '') }}" placeholder="(__) ___-__-__">
                         <small class="error_phone_1 text-danger"></small>
                     </div>
 
                     <div class="form-group">
-                        <label for="phone_2">Հեռ․/ 2 </label>
+                        <label for="phone_2">Հեռ․/2 </label>
                         <input type="text" class="form-control" id="phone_2" name="phone_2" value="{{ old('phone_2', $staff->phone_2 ?? '') }}" placeholder="(__) ___-__-__">
                     </div>
 

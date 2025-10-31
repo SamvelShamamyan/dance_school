@@ -11,14 +11,13 @@ use Illuminate\Support\Facades\Auth;
 class DeletedStudentService
 {
    public function getSudentData(Request $request){
+   
     $draw = $request->input('draw');
     $start = $request->input('start');
     $length = $request->input('length');
     $search = $request->input('search.value');
 
-
     $schoolId = Auth::user()->school_id;
-
     $query = Student::onlyTrashed()->with('school');
 
     if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-admin') || Auth::user()->hasRole('school-accountant')) {
@@ -57,7 +56,13 @@ class DeletedStudentService
             $query->leftJoin('school_names', 'staff.school_id', '=', 'school_names.id')
                   ->orderBy('school_names.name', $orderDirection)
                   ->select('students.*'); 
-        } else {
+        } 
+        elseif ($orderColumnName === 'full_name') {
+            $query->select('students.*')
+                ->orderByRaw("LOWER(CONCAT(COALESCE(students.first_name,''), ' ',COALESCE(students.last_name,''),  ' ',COALESCE(students.father_name,''))) 
+                    {$orderDirection}");
+        }
+        else {
             $query->orderBy($orderColumnName, $orderDirection);
         }
     }

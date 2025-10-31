@@ -16,6 +16,7 @@ $(function() {
                 }
             }
         },
+        order: [[0, 'desc']],
         columns: [ 
             {
                 data: 'id',
@@ -23,33 +24,45 @@ $(function() {
             },
             {
                 data: 'school_name',
-                name: 'school_name'
+                name: 'school_name',
+                orderable: false,
+                searchable: false,
             },
             {
                 data: 'group_name',
-                name: 'groups.name'
+                name: 'groups.name',
+                orderable: false,
+                searchable: false,
             },
             {
                 data: 'room_name',
-                name: 'rooms.name'
+                name: 'rooms.name',
+                orderable: false,
+                searchable: false,
             },
             {
                 data: 'week_day',
-                name: 'week_day'
+                name: 'week_day',
+                orderable: false,
+                searchable: false,
             },
             {
                 data: 'start_time',
-                name: 'start_time'
+                name: 'start_time',
+                orderable: false,
+                searchable: false,
             },
             {
                 data: 'end_time',
-                name: 'end_time'
-            },
-            {
+                name: 'end_time',
                 orderable: false,
                 searchable: false,
+            },
+            {
                 data: 'action',
                 name: 'action',
+                orderable: false,
+                searchable: false,
             }
         ]
     });
