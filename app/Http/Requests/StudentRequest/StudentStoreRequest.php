@@ -31,7 +31,7 @@ class StudentStoreRequest extends FormRequest
             // 'address' => 'required|string|max:25',
             'address' => 'nullable|string|max:25',
             'soc_number' => 'nullable|string|max:25',
-            'email' => 'required|email|unique:students,email',
+            'email' => 'required|email',
             'phone_1' => 'required|digits:9',
             'phone_2' => 'nullable|digits:9',
             'parent_first_name' => ['nullable','string','max:25'],
