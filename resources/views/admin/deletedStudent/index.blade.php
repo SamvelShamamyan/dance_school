@@ -67,11 +67,11 @@
                         <th>ԱԱՀ</th>
                         <th>Բնակության հասցե</th>
                         <th>Ծննդյան ամսաթիվ</th>
-                        <!-- <th>Աշխատանքի ընդունման ամսաթիվ</th> -->
                         <th>Էլ․ հասցե</th>
                         <th>Հեռ/1</th>
                         <th>Հեռ/2</th>
                         <th>ՀԾՀ</th>
+                        <th>Գործողություն</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -83,6 +83,13 @@
 
 @endsection
 
+@push('head')
 <script>
   window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
 </script>
+@endpush
+
+
+@push('scripts')
+  <script src="{{ asset('dist/js/deleted.students.js') }}" defer></script>
+@endpush

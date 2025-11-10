@@ -72,10 +72,9 @@ class DeletedStudentService
     $data->transform(function ($item) {
         $item->full_name = $item->last_name . ' ' . $item->first_name . ' ' . $item->father_name;
         $item->school_name = $item->school->name ?? '';
-        $item->action = '
-            <button class="btn btn-info btn-edit-student" data-id="'.$item->id.'" title="Խմբագրել"><i class="fas fa-edit"></i></button>
-            <button class="btn btn-danger btn-delete-student" data-id="'.$item->id.'" title="Հեռացնել"><i class="fas fa-trash-alt"></i></button>
-        ';
+        $item->action ='<button class="btn btn-info btn-restore-student" data-id="'.$item->id.'" title="Վերականգնել աշակերտին">
+                            <i class="fas fa-user-graduate"></i> <i class="fas fa-undo"></i>
+                        </button>';
         return $item;
     });
 

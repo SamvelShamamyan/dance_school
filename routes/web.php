@@ -114,6 +114,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
     Route::group(['prefix'=>'deletedStudent','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){
         Route::get('/', [DeletedStudentController::class, 'index'])->name('admin.deleted.students.index');
         Route::post('/getData', [DeletedStudentController::class, 'getSudentData'])->name('admin.deleted.students.data');
+        Route::post('/{id}/restore', [DeletedStudentController::class, 'restoreStudentById'])->name('admin.deleted.students.restoreStudentById');
     });
 
     Route::group(['prefix'=>'room','middleware' => ['role:super-admin|school-admin']], function(){

@@ -226,41 +226,25 @@ $(function() {
         columns: [  
             {
                 data: 'id',
-                name: 'id'
+                name: 'id',
             },
             {
                 data: 'full_name',
                 name: 'last_name',
             },
             {
-                data: 'address',
-                name: 'address'
+                data: 'email',
+                name: 'email',
             },
             {
                 data: 'birth_date',
-                name: 'birth_date'
+                name: 'birth_date',
+                render: v => moment(v).format('DD.MM.YYYY'),
             },
             {
-                data: 'email',
-                name: 'email'
-            },
-            // {
-            //     data: 'phone_1',
-            //     name: 'phone_1',
-            //     render: function (data, type, row) {
-            //         return formatPhone(data);
-            //     }
-            // },
-            // {
-            //     data: 'phone_2',
-            //     name: 'phone_2',
-            //     render: function (data, type, row) {
-            //         return formatPhone(data);
-            //     }
-            // },
-            {
-                data: 'soc_number',
-                name: 'soc_number'
+                data: 'created_date',
+                name: 'created_date',
+                render: v => moment(v).format('DD.MM.YYYY'),
             },
             {
                 data: 'student_expected_payments',
@@ -283,10 +267,6 @@ $(function() {
                     return money(data);
                 }
             },
-            // {
-            //     data: 'school_name',
-            //     name: 'school_names.name'
-            // },
             {
                 orderable: false,
                 searchable: false,
@@ -328,7 +308,7 @@ $(function() {
         columns: [  
             {
                 data: 'id',
-                name: 'id'
+                name: 'id',
             },
             {
                 data: 'full_name',
@@ -337,35 +317,26 @@ $(function() {
                 searchable: false,
             },
             {
-                data: 'address',
-                name: 'address'
+                data: 'email',
+                name: 'email',
             },
             {
                 data: 'birth_date',
-                name: 'birth_date'
-            },
-            // {
-            //     data: 'created_date',
-            //     name: 'created_date'
-            // },
-            {
-                data: 'email',
-                name: 'email'
+                name: 'birth_date',
+                render: v => moment(v).format('DD.MM.YYYY')
             },
             {
-                data: 'soc_number',
-                name: 'soc_number'
+                data: 'created_date',
+                name: 'created_date',
+                render: v => moment(v).format('DD.MM.YYYY')
             },
-            // {
-            //     data: 'school_name',
-            //     name: 'school_names.name'
-            // },
             {
-                orderable: false,
-                searchable: false,
                 data: 'action',
                 name: 'action',
+                orderable: false,
+                searchable: false,
             }
+            
         ]
     });
 });
@@ -944,49 +915,53 @@ $(function() {
         },
         columns: [  
             {
-                data: 'id',
-                name: 'id'
+              data: 'id',
+              name: 'id',
             },
             {
-                data: 'full_name',
-                name: 'last_name',
-                // orderable: false,
-                // searchable: false,
+              data: 'full_name',
+              name: 'last_name',
             },
             {
-                data: 'address',
-                name: 'address'
+              data: 'address',
+              name: 'address'
             },
             {
-                data: 'birth_date',
-                name: 'birth_date'
+              data: 'birth_date',
+              name: 'birth_date',
             },
             {
-                data: 'email',
-                name: 'email'
+              data: 'email',
+              name: 'email',
             },
             {
-                data: 'phone_1',
-                name: 'phone_1',
-                render: function (data, type, row) {
-                    return formatPhone(data);
-                }
+              data: 'phone_1',
+              name: 'phone_1',
+              render: function (data, type, row) {
+                  return formatPhone(data);
+              }
             },
             {
-                data: 'phone_2',
-                name: 'phone_2',
-                render: function (data, type, row) {
-                    return formatPhone(data);
-                }
+              data: 'phone_2',
+              name: 'phone_2',
+              render: function (data, type, row) {
+                  return formatPhone(data);
+              }
             },
             {
-                data: 'soc_number',
-                name: 'soc_number'
+              data: 'soc_number',
+              name: 'soc_number'
             },
             // {
             //     data: 'school_name',
             //     name: 'school_names.name'
             // },
+            {
+              data: 'action',
+              name: 'action',
+              orderable: false,
+              searchable: false,
+            }
         ]  
     });
     if (window.currentUserRole === 'super-admin') {
