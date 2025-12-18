@@ -43,6 +43,7 @@ if (window.__PAYMENT_JS_LOADED__) {
       dataType: 'json',
       success: async function(response) {
         if (response.status === 1) {
+        $('#singlePaymentBtn').prop('disabled', true);
         await Swal.fire({
             title: "Գործողությունը կատարված է",
             text: "",

@@ -88,6 +88,7 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{id}/update', [StudentController::class, 'update'])->name('admin.student.update');
         Route::post('/{id}/delete', [StudentController::class, 'delete'])->name('admin.student.delete');
         Route::post('/{student}/groupHistory', action: [StudentHistoryController::class, 'groupHistoryData'])->name('admin.student.groupHistoryData');
+        Route::get('/getGroupsRoomsBySchool/{schoolId?}', [ScheduleGroupController::class, 'getGroupsBySchool']);
     });
 
     Route::group(['prefix'=>'payment','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){

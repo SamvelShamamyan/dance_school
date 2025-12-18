@@ -37,7 +37,7 @@
 </div>
 
 @if(Auth::user()->hasRole('super-admin'))
-    <div class="card mb-3">
+    <div id="studentHeaderFilter" class="card mb-3">
         <div class="card-body">
             <div class="row"> 
                 <div class="col-md-3"> 
@@ -52,6 +52,33 @@
                             @endforeach
                         </select>
                     </div>
+                </div>
+                <!-- Group Select -->
+                <div class="form-group col-md-3">
+                    <label for="group_id">Խումբ</label>
+                    <select id="group_id" class="form-control" disabled>
+                        <option value="" selected>Բոլորը</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
+
+@if(Auth::user()->hasRole('school-admin'))
+    <div id="studentHeaderFilter" class="card mb-3">
+        <div class="card-body">
+            <div class="form-row">
+                <!-- Group Select -->
+                <div class="form-group col-md-3">
+                    <label for="group_id">Խումբ</label>
+                    <select id="group_id" class="form-control">
+                        <option value="" selected>Բոլորը</option>
+                            @foreach($groups as $group)
+                                <option value="{{ $group->id }}" data-name="{{ $group->name }}">{{ $group->name }}</option>
+                            @endforeach
+                    </select>
                 </div>
             </div>
         </div>

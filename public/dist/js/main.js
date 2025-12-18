@@ -219,7 +219,11 @@ $(function() {
             url: "/admin/student/getData",
             type: 'post',
             data: function(d) {
-                if (window.currentUserRole === 'super-admin') {d.school_id = $('#filterStudentSchool').val() || '';}
+                if (window.currentUserRole === 'super-admin') {
+                  d.school_id = $('#filterStudentSchool').val() || ''; d.group_id = $('#group_id').val() || '';
+                }else if (window.currentUserRole === 'school-admin') {
+                    d.group_id = $('#studentHeaderFilter').find('#group_id').val() || '';
+                }
             }
         },
         order: [[0, 'desc']],
@@ -276,13 +280,26 @@ $(function() {
         ]  
     });
     if (window.currentUserRole === 'super-admin') {
-        $('#filterStudentSchool').on('change', function () {
-            const $select = $(this); 
-            const name = $select.find('option:selected').data('name');
-            $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
-            studentTbl.ajax.reload();
-        });
-    }
+      $('#filterStudentSchool').on('change', function () {
+          const $select = $(this); 
+          const name = $select.find('option:selected').data('name');
+          $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
+          studentTbl.ajax.reload();
+      });
+      $('#studentHeaderFilter').find('#group_id').on('change', function () {
+          const $select = $(this); 
+          const name = $select.find('option:selected').data('name');
+          $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
+          studentTbl.ajax.reload();
+      });
+    }else if (window.currentUserRole === 'school-admin') {
+       $('#studentHeaderFilter').find('#group_id').on('change', function () {
+          const $select = $(this); 
+          const name = $select.find('option:selected').data('name');
+          $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
+          studentTbl.ajax.reload();
+      });
+     }
 });
 
 

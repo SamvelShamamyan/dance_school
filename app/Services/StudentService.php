@@ -17,23 +17,35 @@ class StudentService
     $length = $request->input('length');
     $search = $request->input('search.value');
 
-
     $schoolId = Auth::user()->school_id;
-
     $query = Student::with('school');
 
-    if (Auth::user()->hasRole('super-admin') || Auth::user()->hasRole('super-accountant') || Auth::user()->hasRole('school-accountant')) {
-        $schoolId = $request->input('school_id');
-        if ($schoolId !== null && $schoolId !== '') {
+    $user    = Auth::user();
+    $schoolId = $request->input('school_id');
+    $groupId  = $request->input('group_id');
+
+    if ($user->hasRole(['super-admin', 'super-accountant', 'school-accountant'])) {
+
+        if (!empty($schoolId)) {
             $query->where('school_id', $schoolId);
-        } else {
-            $query->whereNotNull('school_id'); 
+
+            if (!empty($groupId)) {
+                $query->where('group_id', $groupId);
+            }
         }
+
+    } elseif ($user->hasRole('school-admin')) {
+
+        $query->where('school_id', $user->school_id);
+
+        if (!empty($groupId)) {
+            $query->where('group_id', $groupId);
+        }
+
     } else {
-        $query->where('school_id', $schoolId);
+
+        $query->where('school_id', $user->school_id);
     }
-    
-    // $query = Student::with('school')->whereNotNull('school_id')->where('school_id', Auth::user()->school_id);
 
 
     $recordsTotal = $query->count();
@@ -44,6 +56,7 @@ class StudentService
               ->orWhere('last_name', 'like', "%{$search}%")
               ->orWhere('father_name', 'like', "%{$search}%")
               ->orWhere('soc_number', 'like', "%{$search}%")
+              ->orWhere('email', 'like', "%{$search}%")
               ->orWhereHas('school', function ($q2) use ($search) {
                   $q2->where('name', 'like', "%{$search}%"); 
               });

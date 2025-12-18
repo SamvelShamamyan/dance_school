@@ -391,3 +391,42 @@ $(document).ready(function(){
     $('#phone_1').mask('(000) 00-00-00');
     $('#phone_2').mask('(000) 00-00-00');
 })
+
+
+
+$('#studentHeaderFilter').on('change', '#filterStudentSchool', function () {
+
+  const schoolId = $(this).val();
+  let $select = $('#studentHeaderFilter').find('#group_id');
+
+  if (!schoolId) {
+    $select.prop('disabled', true)
+      .empty()
+      .append('<option value="">Բոլորը</option>')
+      .val('');
+    $select.trigger('change');
+
+    document.dispatchEvent(new Event('filters:changed'));
+    return;
+  }
+
+  $.ajax({
+    headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    url: `/admin/student/getGroupsRoomsBySchool/${schoolId}`,
+    type: 'GET',
+    dataType: 'json',
+    success: function(response) {
+      $select.prop('disabled', false);
+      $select.empty().append('<option value="">Բոլորը</option>').val(''); 
+
+      $.each(response.groups, function (index, group) {
+        $select.append($('<option>', { value: group.id, text: group.name }));
+      });
+
+      document.dispatchEvent(new Event('filters:changed'));
+    },
+    error: function() {
+      swal("error", "Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։", "error");
+    },
+  });
+});

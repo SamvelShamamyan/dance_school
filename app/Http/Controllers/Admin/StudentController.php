@@ -14,6 +14,7 @@ use Carbon\Carbon;
 use App\Models\Student;
 use App\Models\StudentFile;
 use App\Models\SchoolName;
+use App\Models\Group;
 use App\Services\StudentService;
 use Throwable;
 
@@ -26,11 +27,20 @@ class StudentController extends Controller
     }
     public function index(){
         $schools = [];
+        $groups = [];
         if (Auth::user()->hasRole('super-admin')) {
             $schools = SchoolName::get();
         }
-        $is_create = true;
-        return view('admin.student.index', compact('schools'));
+
+        if(Auth::user()->hasRole('school-admin')){
+            $schoolId = Auth::user()->school_id;
+            $groups = Group::select('id', 'name')
+                ->where('school_id', $schoolId)
+                ->orderBy('name')
+                ->get();
+        }
+
+        return view('admin.student.index', compact('schools','groups'));
     }
 
     public function create(){
@@ -61,6 +71,7 @@ class StudentController extends Controller
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
             $student_expected_payments = $validated['student_expected_payments'];
+
             $student = Student::create([
                 'first_name' => $validated['first_name'],       
                 'last_name' => $validated['last_name'],
@@ -153,8 +164,10 @@ class StudentController extends Controller
             }
 
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
-            $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
+            $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');    
+
             $student_expected_payments = $validated['student_expected_payments'];
+
             $student->update([
                 'first_name' => $validated['first_name'],
                 'last_name' => $validated['last_name'],
@@ -165,7 +178,7 @@ class StudentController extends Controller
                 'parent_first_name' => $validated['parent_first_name'], 
                 'parent_last_name' => $validated['parent_last_name'], 
                 'student_expected_payments' => $student_expected_payments,
-                'student_debts' => $student_expected_payments, 
+                // 'student_debts' => Null, 
                 'address' => $validated['address'],
                 'soc_number' => $validated['soc_number'],
                 'birth_date' => $formattedBirthDate,
