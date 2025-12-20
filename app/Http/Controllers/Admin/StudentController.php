@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Http\Requests\StudentRequest\StudentStoreRequest;
 use App\Http\Requests\StudentRequest\StudentUpdateRequest;
+use App\Http\Requests\StudentCongratulation\StudentCongratulationStoreRequest;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Auth;
@@ -15,6 +16,9 @@ use App\Models\Student;
 use App\Models\StudentFile;
 use App\Models\SchoolName;
 use App\Models\Group;
+use App\Models\StudentCongratulation;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\SendCongratulationsEmail;
 use App\Services\StudentService;
 use Throwable;
 
@@ -39,6 +43,14 @@ class StudentController extends Controller
                 ->orderBy('name')
                 ->get();
         }
+        
+        // $birthdayStudentsThisMonth = Student::with(['school', 'group'])
+        //     // ->where('school_id', )
+        //     ->whereMonth('birth_date', Carbon::now())
+        //     ->whereNull('deleted_at') 
+        //     ->get();
+
+            // dd($birthdayStudentsThisMonth);
 
         return view('admin.student.index', compact('schools','groups'));
     }
@@ -264,5 +276,108 @@ class StudentController extends Controller
             ], 500);
         }
     }
+
+
+    public function birthdayBlock(Request $request){
+        $user = Auth::user();
+
+        $schoolId = $request->input('school_id');
+        $groupId  = $request->input('group_id');
+        $from     = $request->input('range_from'); 
+        $to       = $request->input('range_to');  
+
+        $currentDate = Carbon::now();
+        $year = $currentDate->year;
+
+        $q = Student::with(['school', 'group', 'studentCongratulation'])
+                ->whereNull('deleted_at')
+                 ->withExists([
+                    'studentCongratulation as this_year_send_congratulation_email' => function ($qq) use ($year) {
+                        $qq->whereYear('birth_date', $year);
+                    }
+                ]);;
+
+        if ($user->hasRole(['super-admin', 'super-accountant', 'school-accountant'])) {
+            if (!empty($schoolId)) $q->where('students.school_id', $schoolId);
+            if (!empty($groupId))  $q->where('students.group_id', $groupId);
+        } else {
+            $q->where('students.school_id', $user->school_id);
+            if (!empty($groupId)) $q->where('students.group_id', $groupId);
+        }
+
+        if (!empty($from) && !empty($to)) {
+            if ($from <= $to) {
+                $q->whereRaw("DATE_FORMAT(students.birth_date, '%m-%d') BETWEEN ? AND ?", [$from, $to]);
+            } else {
+                $q->where(function($w) use ($from, $to) {
+                    $w->whereRaw("DATE_FORMAT(students.birth_date, '%m-%d') >= ?", [$from])
+                    ->orWhereRaw("DATE_FORMAT(students.birth_date, '%m-%d') <= ?", [$to]);
+                });
+            }
+        } else {
+            $q->whereMonth('birth_date', Carbon::now()->month);
+        }
+
+        $birthdayStudentsThisMonth = $q
+            ->orderByRaw("DATE_FORMAT(students.birth_date, '%m-%d') ASC")
+            ->get();
+
+        return view('admin.student.partials.birthday_block', compact('birthdayStudentsThisMonth'))->render();
+    }
+
+
+    public function sendCongratulations(StudentCongratulationStoreRequest $request){
+        try{
+
+            $validated = $request->validated();
+            $currentDate = Carbon::now();
+            $year = $currentDate->year;
+
+            $existingStudentIds = StudentCongratulation::whereIn('student_id', $validated['student_ids'])
+                    ->whereYear('birth_date', $year)
+                    ->pluck('student_id')
+                    ->toArray();
+
+            $newStudentIds = array_values(array_diff($validated['student_ids'], $existingStudentIds));
+
+            if (empty($newStudentIds)) {
+                return; 
+            }
+
+            $students = Student::whereIn('id', $newStudentIds)->get();
+
+            foreach($students  as $student){
+                if (!empty($student->email)) {
+                    Mail::to($student->email)->queue(new SendCongratulationsEmail($student));
+                }
+            }
+
+            $rows = array_map(function ($id) use ($currentDate) {
+                return [
+                    'student_id' => $id,
+                    'birth_date' => $currentDate,
+                    'created_at' => $currentDate,
+                    'updated_at' => $currentDate,
+                ];
+            }, $newStudentIds);
+
+            // dd(vars: $rows);
+
+            StudentCongratulation::insert($rows);
+
+            return response()->json([
+                'status' => 1,
+                'message' => 'Գործողությունը կատարված է։'
+            ]);
+
+        }catch (Throwable $e) {
+            return response()->json([
+                'status' => 0,
+                'message' => 'Սխալ է տեղի ունեցել։ Խնդրում ենք կրկին փորձել։',
+                'error' => $e->getMessage(), 
+            ], 500);
+        }
+    }
+
 
 }

@@ -49,4 +49,8 @@ class Student extends Model
     public function files(){
         return $this->hasMany(StudentFile::class);
     }
+
+    public function studentCongratulation(){
+        return $this->hasMany(StudentCongratulation::class);
+    }
 }

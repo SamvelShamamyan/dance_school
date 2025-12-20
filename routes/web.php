@@ -89,6 +89,11 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::post('/{id}/delete', [StudentController::class, 'delete'])->name('admin.student.delete');
         Route::post('/{student}/groupHistory', action: [StudentHistoryController::class, 'groupHistoryData'])->name('admin.student.groupHistoryData');
         Route::get('/getGroupsRoomsBySchool/{schoolId?}', [ScheduleGroupController::class, 'getGroupsBySchool']);
+
+        Route::post('/birthdayBlock', [StudentController::class, 'birthdayBlock'])->name('admin.student.birthdayBlock');
+        Route::post('/sendCongratulations', [StudentController::class, 'sendCongratulations'])->name('admin.student.sendCongratulations');
+
+
     });
 
     Route::group(['prefix'=>'payment','middleware' => ['role:super-admin|super-accountant|school-admin|school-accountant']], function(){

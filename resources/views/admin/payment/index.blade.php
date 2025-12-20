@@ -6,7 +6,6 @@
   #summary .card { border-radius: 14px; }
   #summary .sum { font-weight: 700; font-size: 1.05rem; }
 </style>
-
 @endpush
 
 <div class="card shadow-sm mb-4 border-0">
@@ -80,7 +79,6 @@
     </div>
   </div>
 </div>
-
 
 <div class="card shadow-sm mb-5">
     <div class="card-body bg-white">

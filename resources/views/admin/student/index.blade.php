@@ -60,11 +60,26 @@
                         <option value="" selected>Բոլորը</option>
                     </select>
                 </div>
+                <div class="col-6 col-md-3">
+                    <div class="form-group">
+                        <label for="filter_range_date">Ծննդյան ամսաթիվ</label>
+                        <div class="input-group">
+                        <input type="text"
+                                id="filter_range_date"
+                                name="filter_range_date"
+                                class="form-control" />
+                        <input type="hidden" id="range_from" name="range_from">
+                        <input type="hidden" id="range_to"   name="range_to">
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 @endif
-
 
 @if(Auth::user()->hasRole('school-admin'))
     <div id="studentHeaderFilter" class="card mb-3">
@@ -80,10 +95,30 @@
                             @endforeach
                     </select>
                 </div>
+
+                 <div class="col-6 col-md-3">
+                    <div class="form-group">
+                        <label for="filter_range_date">Ծննդյան ամսաթիվ</label>
+                        <div class="input-group">
+                        <input type="text"
+                                id="filter_range_date"
+                                name="filter_range_date"
+                                class="form-control" />
+                        <input type="hidden" id="range_from" name="range_from">
+                        <input type="hidden" id="range_to"   name="range_to">
+                            <div class="input-group-append">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
 @endif
+
+<div id="birthdayBlock"></div>
 
 <div class="card shadow-sm">
     <div class="card-body bg-white">
