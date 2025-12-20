@@ -281,10 +281,11 @@ class StudentController extends Controller
     public function birthdayBlock(Request $request){
         $user = Auth::user();
 
-        $schoolId = $request->input('school_id');
-        $groupId  = $request->input('group_id');
-        $from     = $request->input('range_from'); 
-        $to       = $request->input('range_to');  
+        $schoolId       = $request->input('school_id');
+        $groupId        = $request->input('group_id');
+        $from           = $request->input('range_from'); 
+        $to             = $request->input('range_to');
+        $currentDate    = Carbon::now();  
 
         $currentDate = Carbon::now();
         $year = $currentDate->year;
@@ -321,8 +322,23 @@ class StudentController extends Controller
         $birthdayStudentsThisMonth = $q
             ->orderByRaw("DATE_FORMAT(students.birth_date, '%m-%d') ASC")
             ->get();
+     
+        $fromMonthFilter = null;
+        $toMonthFilter   = null;
 
-        return view('admin.student.partials.birthday_block', compact('birthdayStudentsThisMonth'))->render();
+        if (!empty($from)) {
+            $fromMonthFilter = (int) explode('-', $from)[0]; 
+        }
+
+        if (!empty($to)) {
+            $toMonthFilter = (int) explode('-', $to)[0];
+        }
+
+        return view('admin.student.partials.birthday_block', compact(
+            'birthdayStudentsThisMonth', 
+            'currentDate', 
+            'fromMonthFilter',
+            'toMonthFilter'))->render();
     }
 
 
@@ -332,6 +348,7 @@ class StudentController extends Controller
             $validated = $request->validated();
             $currentDate = Carbon::now();
             $year = $currentDate->year;
+            $month = $currentDate->month;
 
             $existingStudentIds = StudentCongratulation::whereIn('student_id', $validated['student_ids'])
                     ->whereYear('birth_date', $year)
@@ -341,7 +358,11 @@ class StudentController extends Controller
             $newStudentIds = array_values(array_diff($validated['student_ids'], $existingStudentIds));
 
             if (empty($newStudentIds)) {
-                return; 
+                return response()->json([
+                    'status' => 3,
+                    'message' => 'Գործողությունը կատարված է։'
+                ]);
+
             }
 
             $students = Student::whereIn('id', $newStudentIds)->get();
@@ -360,8 +381,6 @@ class StudentController extends Controller
                     'updated_at' => $currentDate,
                 ];
             }, $newStudentIds);
-
-            // dd(vars: $rows);
 
             StudentCongratulation::insert($rows);
 

@@ -717,6 +717,12 @@ function sendCongratulations() {
                   if (response.status === 1) {
                       await swal("success", response.message, true, true);
                   }
+                  if (response.status === 2) {
+                      showInfo('info',title,text)
+                  }
+                  if (response.status === 3) {
+                      showInfo('info','', 'Այսօրվա շնորհավորակն նամակներն արդեն ուղարկվել են։')
+                  }
               },
               error: function(xhr) {
                   console.log(xhr)

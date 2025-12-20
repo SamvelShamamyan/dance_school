@@ -1,3 +1,5 @@
+
+
 @if(!empty($birthdayStudentsThisMonth) && $birthdayStudentsThisMonth->count())
     <div class="card border-0 shadow-sm mb-3">
         <div class="card-body d-flex align-items-center justify-content-between">
@@ -34,9 +36,19 @@
                 <form id="sendCongratulationsForm" action="{{ route('admin.student.sendCongratulations') }}">
                     <div class="row">
                         @foreach($birthdayStudentsThisMonth as $st)
-                            <input type="hidden" name="student_ids[]" value="{{ $st->id }}">
+
+                            @php
+                                $isToday = \Carbon\Carbon::parse($st->birth_date)->isBirthday();
+                            @endphp
+
+                            @if (
+                                $currentDate->day === \Carbon\Carbon::parse($st->birth_date)->day && 
+                                $currentDate->month === \Carbon\Carbon::parse($st->birth_date)->month
+                                )
+                                <input type="hidden" name="student_ids[]" value="{{ $st->id }}">
+                            @endif
                             <div class="col-md-4 col-lg-3 mb-3">
-                                <div class="<?= $st->this_year_send_congratulation_email == false ? 'birthday-card' : 'birthday-card-sended'?> d-flex align-items-center justify-content-between p-3">
+                                <div class="{{ $st->this_year_send_congratulation_email ? 'birthday-card-sended' : 'birthday-card' }} {{ $isToday ? 'birthday-card-today' : '' }} d-flex align-items-center justify-content-between p-3">
 
                                     <div class="d-flex align-items-center">
                                         <div class="birthday-icon mr-3">🎂</div>
@@ -64,39 +76,48 @@
 
                                         </div>
                                     </div>
-                                    <!-- <span class="badge badge-warning badge-pill">
-                                        {{ \Carbon\Carbon::parse($st->birth_date)->format('d.m') }}
-                                    </span> -->
 
-<div class="d-flex flex-column align-items-end">
-    <span class="badge badge-warning badge-pill mb-1">
-        {{ \Carbon\Carbon::parse($st->birth_date)->format('d.m') }}
-    </span>
+                                    <div class="d-flex flex-column align-items-end">
+                                        <span class="badge badge-warning badge-pill mb-1">
+                                            {{ \Carbon\Carbon::parse($st->birth_date)->format('d.m') }}
 
-    @if($st->this_year_send_congratulation_email)
-        <i class="fas fa-check-circle text-success"
-           data-toggle="tooltip"
-           title="Շնորհավորական նամակը ուղարկված է"></i>
-    @else
-        <i class="fas fa-hourglass-half text-warning"
-           data-toggle="tooltip"
-           title="Նամակը դեռ չի ուղարկվել"></i>
-    @endif
-</div>
+                                            @if($isToday)
+                                            <span class="badge badge-today ml-1">ԱՅՍՕՐ</span>
+                                            @endif
+                                        </span>
 
+                                        @if($st->this_year_send_congratulation_email)
+                                            <i class="fas fa-check-circle text-success" data-toggle="tooltip" title="Շնորհավորական նամակը ուղարկված է"></i>
+                                        @else
+                                            <i class="fas fa-hourglass-half text-warning" data-toggle="tooltip" title="Նամակը դեռ չի ուղարկվել"></i>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         @endforeach
-                    </div>
-                    <div class="text-center mt-3">
-                       <button type="button"
-                                id="sendcongratulations"
-                                class="btn btn-warning btn-sm px-4 py-2 shadow-sm text-white"
-                                onclick="sendCongratulations()">
-                            <i class="fas fa-paper-plane mr-2"></i>
-                           Ուղարկել շնորհավորական նամակ
-                        </button>
-                    </div>
+                    </div> 
+                        @if (
+                            ($fromMonthFilter === null && $toMonthFilter === null) ||
+                            ($fromMonthFilter !== null && (int)$currentDate->month === (int)$fromMonthFilter) ||
+                            ($toMonthFilter !== null && (int)$currentDate->month === (int)$toMonthFilter)
+                            )
+                            <div class="text-center mt-3">
+                                <button type="button"
+                                        id="sendcongratulations"
+                                        class="btn btn-warning btn-sm px-4 py-2 shadow-sm text-white"
+                                        onclick="sendCongratulations()">
+                                    <i class="fas fa-paper-plane mr-2"></i>
+                                    Ուղարկել շնորհավորական նամակ
+                                </button>
+                            </div>
+                        @else
+                            <div class="text-center mt-3 text-muted small">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                <span class="text-muted dashed-text">
+                                    Դուք չեք կարող շնորհավորական նամակ ուղարկել նախորդ կամ հաջորդող ամիսների համար։
+                                </span> 
+                            </div>
+                        @endif
                 </form>
             </div>
         </div>
