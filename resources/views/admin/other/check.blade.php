@@ -37,7 +37,10 @@
 
 
 @if($studentsList->isEmpty())
-  <div class="alert alert-warning mb-0">Տվյալներ չկան</div>
+ <div class="alert alert-info d-flex align-items-center mb-0" role="alert">
+    <i class="fas fa-info-circle fa-lg mr-2"></i>
+    <span>Տվյալները բացակայում են</span>
+  </div>
 @else
 
   <div class="col-6 col-md-6 col-lg-6 col-xl-6">
