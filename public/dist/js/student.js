@@ -22,7 +22,7 @@ function saveStudent() {
         dataType: 'json',
         success: async function(response) {
             if (response.status === 1) {
-                await swal("success", "Գործողությունը կատարված է", true, true);
+                // await swal("success", "Գործողությունը կատարված է", true, true);
                 $('.text-danger').text('');
                 $('#StudentForm')[0].reset();
                 // $('.text-danger').text('');
@@ -110,7 +110,8 @@ $(function () {
     format: 'DD.MM.YYYY',
     locale: 'hy',
     showTodayButton: true,
-    defaultDate: birthDate ? moment(birthDate, 'DD.MM.YYYY') : moment()
+    // defaultDate: birthDate ? moment(birthDate, 'DD.MM.YYYY') : moment()
+    defaultDate: false
   });
 
   $('#studentDatePicker').datetimepicker({

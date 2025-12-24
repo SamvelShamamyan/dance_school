@@ -72,6 +72,16 @@ class StudentController extends Controller
         try{
 
             $schoolId = Auth::user()->school_id;
+            $validated = $request->validated();
+            $currentDate = Carbon::now();
+            $student_expected_payments = $validated['student_expected_payments'];
+            if($currentDate->day > 15){
+                $student_debts = "8500";
+            }else{
+                $student_expected_payments = $validated['student_expected_payments'];
+                $student_debts = $validated['student_expected_payments'];
+            }
+
 
             if (Auth::user()->hasRole('super-admin')) {
                 $schoolId = $request->school_id;
@@ -82,7 +92,7 @@ class StudentController extends Controller
             
             $formattedBirthDate = Carbon::createFromFormat('d.m.Y', $validated['birth_date'])->format('Y-m-d');
             $formattedStudentDate = Carbon::createFromFormat('d.m.Y', $validated['created_date'])->format('Y-m-d');
-            $student_expected_payments = $validated['student_expected_payments'];
+            // $student_expected_payments = $validated['student_expected_payments'];
 
             $student = Student::create([
                 'first_name' => $validated['first_name'],       
@@ -94,7 +104,7 @@ class StudentController extends Controller
                 'parent_first_name' => $validated['parent_first_name'], 
                 'parent_last_name' => $validated['parent_last_name'], 
                 'student_expected_payments' => $student_expected_payments, 
-                'student_debts' => $student_expected_payments,
+                'student_debts' => $student_debts,
                 'address' => $validated['address'],  
                 'soc_number' => $validated['soc_number'],  
                 'birth_date' => $formattedBirthDate,

@@ -152,6 +152,7 @@
                                 id="birth_date"
                                 name="birth_date"
                                 value="{{ old('birth_date', isset($student->birth_date) ? \Carbon\Carbon::parse($student->birth_date)->format('d.m.Y') : '') }}"
+                                placeholder="Ընտրել"
                                 class="form-control datetimepicker-input"
                                 data-target="#studentBirthDatePicker"
                                 data-toggle="datetimepicker" />
