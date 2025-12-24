@@ -54,7 +54,7 @@
             <input type="hidden" name="schedule_group_id" value="{{ $id }}">
             <div class="card card-primary">
                 <div class="card-header">
-                    <h3 class="card-title">Ստուգման ենթակա խմումբը ըստ աշակերտների</h3>
+                    <h3 class="card-title mb-0 font-weight-bold">Ստուգման ենթակա խմումբը ըստ աշակերտների</h3>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
@@ -141,7 +141,7 @@
       <div class="col-12 col-md-12 col-lg-12 col-xl-6">
         <div class="card card-primary">
           <div class="card-header">
-            <h3 class="card-title">Անցկացված ստուգումների պատմություն</h3>
+            <h3 class="card-title mb-0 font-weight-bold">Անցկացված ստուգումների պատմություն</h3>
           </div>
           <div class="card-body">
             <div id="accordion">
@@ -151,15 +151,46 @@
                 <div class="card">
                   <div class="card-header" id="heading-{{ $loop->index }}">
                     <h5 class="mb-0">
-                      <button class="btn btn-link"
-                              data-toggle="collapse"
-                              data-target="#{{ $collapseId }}"
-                              aria-expanded="{{ $loop->first ? 'true' : 'false' }}"
-                              aria-controls="{{ $collapseId }}">
-                        <i class="fas fa-university text-primary mr-1 fa-lg"></i> {{ $first->school_name ?? '' }} /
-                        <i class="fas fa-users text-info mr-1 fa-lg"></i> {{ $first->group_name ?? '' }} /
-                        <i class="fas fa-calendar text-success mr-1 fa-lg"></i> {{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}
+                      <button class="btn btn-link d-flex align-items-center justify-content-between w-100 text-left px-0"
+                            type="button"
+                            data-toggle="collapse"
+                            data-target="#{{ $collapseId }}"
+                            aria-expanded="{{ $loop->first ? 'true' : 'false' }}"
+                            aria-controls="{{ $collapseId }}">
+
+                        <div class="d-flex align-items-center flex-wrap">
+                            <i class="fas fa-university text-primary mr-2"></i>
+                            <strong class="mr-2">
+                                {{ $first->school_name ?? '' }}
+                            </strong>
+
+                            <span class="text-muted mx-2">•</span>
+
+                            <i class="fas fa-users text-info mr-2"></i>
+                            <span class="font-weight-semibold mr-2">
+                                {{ $first->group_name ?? '' }}
+                            </span>
+
+                            <span class="text-muted mx-2">•</span>
+
+                            <i class="fas fa-calendar text-success mr-2"></i>
+                            <span class="text-muted">
+                                {{ \Carbon\Carbon::parse($date)->format('d.m.Y') }}
+                            </span>
+                        </div>
+
+                        <div class="d-flex align-items-center count-wrap">
+                            <span class="text-muted small mr-2 count-label">Աշակերտներ</span>
+
+                            <span class="badge badge-info badge-pill px-3 count-badge">
+                                {{ $items->count() }}
+                            </span>
+
+                            <i class="fas fa-chevron-down ml-3 text-muted"></i>
+                        </div>
+
                       </button>
+
                     </h5>
                   </div>
                   <div id="{{ $collapseId }}"
@@ -216,7 +247,7 @@
     <div class="col-12 col-md-12 col-lg-12 col-xl-6">
       <div class="card card-primary shadow-sm">
         <div class="card-header">
-          <h3 class="card-title mb-0">Անցկացված ստուգումների պատմություն</h3>
+          <h3 class="card-title mb-0 font-weight-bold">Անցկացված ստուգումների պատմություն</h3>
         </div>
         <div class="card-body">
           <div class="alert alert-info d-flex align-items-center mb-0" role="alert">

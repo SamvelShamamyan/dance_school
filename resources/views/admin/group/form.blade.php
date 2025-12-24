@@ -38,7 +38,7 @@
     <div class="col-12 col-md-12 col-lg-12 col-xl-6">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">{{ isset($group) ? 'Խմբագրել Խումբը' : 'Ավելացնել Խումբ' }}</h3>
+                <h3 class="card-title mb-0 font-weight-bold">{{ isset($group) ? 'Խմբագրել Խումբը' : 'Ավելացնել Խումբ' }}</h3>
             </div>
             
             <form id="GroupForm" action="{{ isset($group) ? route('admin.group.update', $group->id) : route('admin.group.add') }}">

@@ -198,7 +198,6 @@ $(function () {
 //   });
 // });
 
-
 $(function () {
   const dzElStud = document.getElementById('student-dropzone');
   const formEl   = document.getElementById('StudentForm');
@@ -237,12 +236,6 @@ $(function () {
     headers: { "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content },
     dictRemoveFile: 'Հեռացնել',
   });
-
-  // dzStud.on("sendingmultiple", function (files, xhr, formData) {
-  //   $('#StudentForm').serializeArray().forEach(({name, value}) => formData.append(name, value));
-  //   $('.text-danger').text('');
-  //   $('#studentBtn').prop('disabled', true);
-  // });
 
 
   dzStud.on("sendingmultiple", function (files, xhr, formData) {
@@ -368,15 +361,6 @@ $(document).on('click', '.js-mark-remove-st', function () {
 });
 
 
-// $('#yearpicker').datepicker({
-//     format: "yyyy",
-//     viewMode: "years",
-//     minViewMode: "years",
-//     autoclose: true
-// });
-
-
-
 $(document).off('click.payment', '#studentTbl .view-history').on('click.payment', '#studentTbl .view-history', function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -430,163 +414,6 @@ $('#studentHeaderFilter').on('change', '#filterStudentSchool', function () {
     },
   });
 });
-
-// $(function(){
-//   let today = moment();
-
-//   let start = moment().startOf('month');
-//   let end   = moment().endOf('month');
-
-//   // $('#range_from').val(start.format('YYYY-MM-DD'));
-//   // $('#range_to').val(end.format('YYYY-MM-DD'));
-
-//   $('#range_from').val(start.format('MM-DD'));
-//   $('#range_to').val(end.format('MM-DD'));
-
-//   $('#filter_range_date').daterangepicker({
-//     autoUpdateInput: true,
-//     locale: {
-//       format: 'DD.MM',
-//       applyLabel: 'Կիրառել',
-//       cancelLabel: 'Չեղարկել',
-//       fromLabel: 'Սկիզբ',
-//       toLabel: 'Վերջ',
-//       daysOfWeek: ['Կ', 'Ե', 'Ե', 'Չ', 'Հ', 'Ու', 'Շ'],
-//       monthNames: [
-//         'Հունվար', 'Փետրվար', 'Մարտ', 'Ապրիլ', 'Մայիս', 'Հունիս',
-//         'Հուլիս', 'Օգոստոս', 'Սեպտեմբեր', 'Հոկտեմբեր', 'Նոյեմբեր', 'Դեկտեմբեր'
-//       ],
-//       firstDay: 1
-//     },
-//     startDate: start,
-//     endDate: end
-//   }, function(start, end) {
-
-//     $('#filter_range_date').val(
-//       start.format('DD.MM.YYYY') + ' - ' + end.format('DD.MM.YYYY')
-//     );
-
-//     // $('#range_from').val(start.format('YYYY-MM-DD'));
-//     // $('#range_to').val(end.format('YYYY-MM-DD')).trigger('change');
-//     $('#range_from').val(start.format('MM-DD'));
-//     $('#range_to').val(end.format('MM-DD')).trigger('change');
-//   });
-// });
-
-
-
-// $(function () {
-//   let start = moment().startOf('month');
-//   let end   = moment().endOf('month');
-
-//   // по дефолту пусто
-//   $('#filter_range_date').val('');
-//   $('#range_from').val('');
-//   $('#range_to').val('');
-
-//   $('#filter_range_date').daterangepicker({
-//     autoUpdateInput: false,
-//     startDate: start,
-//     endDate: end,
-//     locale: {
-//       format: 'DD.MM',
-//       applyLabel: 'Կիրառել',
-//       cancelLabel: 'Չեղարկել',
-//       fromLabel: 'Սկիզբ',
-//       toLabel: 'Վերջ',
-//       daysOfWeek: ['Կ', 'Ե', 'Ե', 'Չ', 'Հ', 'Ու', 'Շ'],
-//       monthNames: [
-//         'Հունվար', 'Փետրվար', 'Մարտ', 'Ապրիլ', 'Մայիս', 'Հունիս',
-//         'Հուլիս', 'Օգոստոս', 'Սեպտեմբեր', 'Հոկտեմբեր', 'Նոյեմբեր', 'Դեկտեմբեր'
-//       ],
-//       firstDay: 1
-//     }
-//   }, function (start, end) {
-
-//     // показываем пользователю DD.MM
-//     $('#filter_range_date').val(start.format('DD.MM') + ' - ' + end.format('DD.MM'));
-
-//     // ✅ отправляем на сервер как раньше (MM-DD)
-//     $('#range_from').val(start.format('MM-DD'));
-//     $('#range_to').val(end.format('MM-DD')).trigger('change');
-//   });
-
-//   $('#filter_range_date').on('cancel.daterangepicker', function () {
-//     $(this).val('');
-//     $('#range_from').val('');
-//     $('#range_to').val('').trigger('change');
-//   });
-// });
-
-
-// $(function () {
-//   let start = moment().startOf('month');
-//   let end   = moment().endOf('month');
-
-//   // по дефолту пусто
-//   $('#filter_range_date').val('');
-//   $('#range_from').val('');
-//   $('#range_to').val('');
-
-//   $('#filter_range_date').daterangepicker({
-//     autoUpdateInput: false,
-//     startDate: start,
-//     endDate: end,
-//     locale: {
-//       format: 'DD.MM',
-//       applyLabel: 'Կիրառել',
-//       cancelLabel: 'Չեղարկել',
-//       fromLabel: 'Սկիզբ',
-//       toLabel: 'Վերջ',
-//       daysOfWeek: ['Կ', 'Ե', 'Ե', 'Չ', 'Հ', 'Ու', 'Շ'],
-//       monthNames: [
-//         'Հունվար', 'Փետրվար', 'Մարտ', 'Ապրիլ', 'Մայիս', 'Հունիս',
-//         'Հուլիս', 'Օգոստոս', 'Սեպտեմբեր', 'Հոկտեմբեր', 'Նոյեմբեր', 'Դեկտեմբեր'
-//       ],
-//       firstDay: 1
-//     }
-//   }, function (start, end) {
-
-//     // показываем пользователю DD.MM
-//     $('#filter_range_date').val(start.format('DD.MM') + ' - ' + end.format('DD.MM'));
-
-//     // отправляем на сервер как раньше (MM-DD)
-//     $('#range_from').val(start.format('MM-DD'));
-//     $('#range_to').val(end.format('MM-DD')).trigger('change');
-//   });
-
-//   // штатный cancel по крестику/Cancel в самом daterangepicker
-//   $('#filter_range_date').on('cancel.daterangepicker', function () {
-//     $(this).val('');
-//     $('#range_from').val('');
-//     $('#range_to').val('').trigger('change');
-
-//     // 🔥 сообщаем main.js что надо обновить таблицу/блок
-//     $(document).trigger('student:dateRangeReset');
-//   });
-
-//   // ✅ ТВОЯ КНОПКА "Չեղարկել"
-//   $(document).on('click', '.cancelBtn', function () {
-
-//     const picker = $('#filter_range_date').data('daterangepicker');
-//     if (picker) {
-//       // вернуть "исходную позицию" самого picker (как было при загрузке)
-//       picker.setStartDate(start.clone());
-//       picker.setEndDate(end.clone());
-//       picker.updateView();
-//       picker.updateCalendars();
-//     }
-
-//     // очистить поля (чтобы фильтра не было)
-//     $('#filter_range_date').val('');
-//     $('#range_from').val('');
-//     $('#range_to').val('').trigger('change');
-
-//     // 🔥 сообщаем main.js что надо обновить таблицу/блок
-//     $(document).trigger('student:dateRangeReset');
-//   });
-// });
-
 
 $(function () {
   let start = moment().startOf('month');
@@ -650,44 +477,6 @@ $(function () {
   });
 });
 
-
-
-// function sendCongratulations() {
-//     const form = document.getElementById("sendCongratulationsForm");
-//     const formData = new FormData(form);
-//     const url = form.getAttribute('action'); 
-//     $.ajax({        
-//         headers: {
-//             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-//         },
-//         url:  url,
-//         data: formData,
-//         cache: false,
-//         contentType: false,
-//         processData: false,
-//         type: 'POST',
-//         dataType: 'json',
-//         success: async function(response) {
-//             if (response.status === 1) {
-//                 // await swal("success", response.message, true, true);
-//                 $('#schoolFormBtn').prop('disabled', true);
-//                 window.location.href = response.redirect;
-//             }
-//         },
-//         error: function(xhr) {
-//             if (xhr.status === 422) {
-//                 let errors = xhr.responseJSON.errors;
-//                 $.each(errors, function(field, messages) {
-//                     $(`.error_${field}`).text(messages[0])
-//                 });
-//             } else {
-//                 swal("error", xhr.message, true, true)
-//             }
-//         }
-//     });
-// }
-
-
 function sendCongratulations() {
     const form = document.getElementById("sendCongratulationsForm");
     const formData = new FormData(form);
@@ -726,12 +515,10 @@ function sendCongratulations() {
               },
               error: function(xhr) {
                   console.log(xhr)
-                  // swal("error", xhr.message, true, true)
                   swal("error", xhr.message, true, false)
               }
           });
         }
     });
-
 }
 

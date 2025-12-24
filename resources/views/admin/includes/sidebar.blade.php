@@ -122,6 +122,15 @@
               <p>Ներկա-բացակա</p>
             </a>
           </li>
+
+           <li class="nav-item">
+            <a href="{{route('admin.otherOffers.index')}}"
+               class="nav-link {{ request()->routeIs('admin.otherOffers.index') ? 'active' : '' }}">
+              <i class="nav-icon fas fa-th-large"></i>
+              <p>Այլ</p>
+            </a>
+          </li>
+
         @endrole 
 
       </ul>

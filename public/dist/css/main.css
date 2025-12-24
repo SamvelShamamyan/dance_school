@@ -275,3 +275,18 @@
     padding-bottom: 4px;
     border-bottom: 1px dashed #dee2e6;
 }
+
+.tr-disabled {
+    pointer-events: none;  
+    opacity: 0.5;         
+    background-color: #f1f1f1;
+}
+
+
+.count-wrap { line-height: 1; }
+.count-wrap .count-label { line-height: 1; }
+.count-wrap .count-badge {
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+}

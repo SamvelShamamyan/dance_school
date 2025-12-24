@@ -279,11 +279,11 @@ $(document).on('click', '.js-mark-remove', function () {
 });
 
 $(function () {
-    $('.select2').select2({
-        theme: 'bootstrap4',
-        placeholder: "Ընտրել",
-        width: '100%'
-    });
+  $('.select2').select2({
+      theme: 'bootstrap4',
+      placeholder: "Ընտրել",
+      width: '100%'
+  });
 });
 
 

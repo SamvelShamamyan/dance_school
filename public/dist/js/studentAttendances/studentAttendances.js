@@ -30,7 +30,7 @@ function checkAttendancesSave() {
                 $.each(errors, function(field, messages) {
                       showInfo("info", messages[0], "");
                 });
-            } else {
+            } else {    
                 swal("error", "Something went wrong!", true, true)
             }
         }

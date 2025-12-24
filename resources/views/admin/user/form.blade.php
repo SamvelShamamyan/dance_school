@@ -15,7 +15,7 @@
     <div class="col-12 col-md-12 col-lg-12 col-xl-6">
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">{{ isset($user) ? 'Խմբագրել համակարգողին' : 'Ավելացնել համակարգող' }}</h3>
+                <h3 class="card-title mb-0 font-weight-bold">{{ isset($user) ? 'Խմբագրել համակարգողին' : 'Ավելացնել համակարգող' }}</h3>
             </div>
             
             <form id="UserForm" action="{{ isset($user) ? route('admin.user.update', $user->id) : route('admin.user.add') }}">

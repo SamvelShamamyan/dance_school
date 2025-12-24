@@ -26,7 +26,7 @@
             </div>
 
             <div class="col-auto">
-                <a href="{{ route('admin.room.create') }}" 
+                <a href="{{ route('admin.otherOffers.create') }}" 
                    class="btn btn-success shadow-sm">
                     <i class="fas fa-plus"></i> Ավելացնել
                 </a>
@@ -62,12 +62,17 @@
 <div class="card shadow-sm">
     <div class="card-body bg-white">
         <div class="table-responsive">
-            <table class="table table-striped table-bordered dtTbl" style="width:100%" id="room">
+            <table class="table table-striped table-bordered dtTbl" style="width:100%" id="otherOffers">
                 <thead>
                     <tr>
                         <th>ID</th>
                         <th>Ուս․ հաստատություն</th>
                         <th>Անվանումը</th>
+                        <th>Գումար</th>
+                        <th>Աշակերտների քանակ (ընդհանուր)</th>
+                        <th>Վճարած</th>
+                        <th>Չվճարած</th>
+                        <th>Ընհանուր գումար</th>
                         <th>Գործողություն</th>
                     </tr>
                 </thead>
@@ -86,6 +91,5 @@
   </script>
 @endpush
 @push('scripts')
-  <script src="{{asset('dist/js/room/room.table.js')}}" defer></script>
-  <script src="{{asset('dist/js/room/room.js')}}" defer></script>
+  <script src="{{asset('dist/js/other.offers.js')}}" defer></script>
 @endpush

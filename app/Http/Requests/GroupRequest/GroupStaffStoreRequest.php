@@ -22,7 +22,7 @@ class GroupStaffStoreRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'group_id'  => 'required|integer|exists:groups,id',
+            'group_id'      => 'required|integer|exists:groups,id',
             'add_staff'     => 'required|array|min:1',
             'add_staff.*'   => 'integer|exists:staff,id',
         ];
@@ -31,7 +31,7 @@ class GroupStaffStoreRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'group_id.required' => 'Խումբը պարտադիր է:',
+            'group_id.required'     => 'Խումբը պարտադիր է:',
             'add_staff.required'    => 'Ընտրեք առնվազն մեկ աշխատակից(պարուսույց):',
         ];
     }

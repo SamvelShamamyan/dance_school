@@ -15,7 +15,7 @@
     <div class="col-12 col-md-12 col-lg-12 col-xl-6">
         <div class="card card-primary">
                 <div class="card-header">
-                <h3 class="card-title">{{ isset($school) ? 'Խմբագրել ուս․ հաստատությունը' : 'Ավելացնել ուս․ հաստատություն' }}</h3>
+                <h3 class="card-title mb-0 font-weight-bold">{{ isset($school) ? 'Խմբագրել ուս․ հաստատությունը' : 'Ավելացնել ուս․ հաստատություն' }}</h3>
                 </div>
                 <form id="schoolForm" action="{{ isset($school) ? route('admin.school.update', $school->id) : route('admin.school.add') }}">
                      @csrf

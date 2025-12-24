@@ -1230,3 +1230,88 @@ $(function() {
         });
     }
 });
+
+
+$(function() {
+    const money = n => Number(n || 0).toLocaleString('hy-AM', { maximumFractionDigits: 0 });
+    let otherOfferTbl = $("#otherOffers").DataTable({
+        language: lang,
+        processing: true,
+        serverSide: true,
+        ajax: {
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            url: "/admin/otherOffers/getData",
+            type: 'post',
+            data: function(d) {
+                if (window.currentUserRole === 'super-admin') {d.school_id = $('#school_id').val() || '';}
+            }
+        },
+        columns: [  
+            {
+                data: 'id',
+                name: 'id'
+            },
+            {
+                data: 'school_name',
+                name: 'school_names.name'
+            },
+            {
+                data: 'name',
+                name: 'name'
+            },
+            {
+                data: 'payments',
+                name: 'payments',
+                render: d => money(d)
+            },
+            { 
+              data: 'total_students', 
+              name: 'total_students', 
+              className: 'text-center',
+                createdCell: function (td, cellData) {
+                      td.classList.add('font-weight-bold', 'table-warning');
+                    }, 
+            },
+            { 
+              data: 'paid_students', 
+              name: 'paid_students', 
+              className: 'text-center',  
+                createdCell: function (td, cellData) {
+                    td.classList.add('font-weight-bold', 'table-success');
+                  }
+            },
+            { 
+              data: 'unpaid_students', 
+              name: 'unpaid_students', 
+              className: 'text-center',
+                createdCell: function (td, cellData) {
+                  td.classList.add('font-weight-bold', 'table-danger');
+                }
+             },
+            { 
+              data: 'collected_sum', 
+              name: 'collected_sum',
+                createdCell: function (td, cellData) {
+                  td.classList.add('font-weight-bold', 'table-info');
+                }, 
+              render: d => money(d),
+            },
+            {
+                orderable: false,
+                searchable: false,
+                data: 'action',
+                name: 'action',
+            }
+        ]
+    });
+    if (window.currentUserRole === 'super-admin') {
+        $('#school_id').on('change', function () {
+            const $select = $(this); 
+            const name = $select.find('option:selected').data('name');
+            $('#currentSchoolTitle').text(name ? name : 'Բոլորը');
+            otherOfferTbl.ajax.reload();
+        });
+    }
+});

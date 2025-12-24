@@ -16,6 +16,7 @@ use App\Http\Controllers\Admin\DeletedStudentController;
 use App\Http\Controllers\Admin\RoomController;
 use App\Http\Controllers\Admin\ScheduleGroupController;
 use App\Http\Controllers\Admin\StudentAttendancesController;
+use App\Http\Controllers\Admin\OtherController;
 
 Route::get('/', [AuthController::class, 'index']);
 Route::post('login', [AuthController::class, 'login'])->name('login');
@@ -149,6 +150,23 @@ Route::group(['namespace'=>'Admin','prefix'=>'admin','middleware'=>['auth']], fu
         Route::get('/getGroupsRoomsBySchool/{schoolId?}', [ScheduleGroupController::class, 'getGroupsBySchool']);
         Route::get('/{id}/check', [StudentAttendancesController::class, 'checkStudentAttendances'])->name('admin.ceck.student.attendances.check');
         Route::post('/add', [StudentAttendancesController::class, 'add'])->name('admin.ceck.student.attendances.add');
+    });
+
+    Route::group(['prefix'=>'otherOffers','middleware' => ['role:super-admin|school-admin']], function(){
+        Route::get('/', [OtherController::class, 'index'])->name('admin.otherOffers.index');
+        Route::post('/getData', [OtherController::class, 'getOtherOffersData'])->name('admin.otherOffers.getData');
+        
+        Route::get('/check/{id}', [OtherController::class, 'checkOtherOffers'])->name('admin.otherOffers.check');
+
+        Route::get('/create', [OtherController::class, 'create'])->name('admin.otherOffers.create');
+        Route::post('/add', [OtherController::class, 'add'])->name('admin.otherOffers.add');
+        Route::get('/{id}/edit', [OtherController::class, 'edit'])->name('admin.otherOffers.edit');
+        Route::post('/{id}/update', [OtherController::class, 'update'])->name('admin.otherOffers.update');
+        Route::get('/getGroupsBySchool/{schoolId}', [PaymentController::class, 'getGroupsBySchool'])->name('admin.otherOffers.getGroupsBySchool');
+        Route::post('delete/{id}', [OtherController::class, 'delete']);
+
+        Route::post('/paid', [OtherController::class, 'savePaid'])->name('admin.otherOffers.paid');  
+
     });
 
 

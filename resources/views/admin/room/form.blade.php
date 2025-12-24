@@ -15,7 +15,7 @@
     <div class="col-12 col-md-12 col-lg-12 col-xl-6">
         <div class="card card-primary">
                 <div class="card-header">
-                <h3 class="card-title">{{ isset($room) ? 'Խմբագրել դահլիճը' : 'Ավելացնել դահլիճ' }}</h3>
+                <h3 class="card-title mb-0 font-weight-bold">{{ isset($room) ? 'Խմբագրել դահլիճը' : 'Ավելացնել դահլիճ' }}</h3>
                 </div>
                     <div class="card-body">
                         <form id="roomForm" action="{{ isset($room) ? route('admin.room.update', $room->id) : route('admin.room.add') }}">
