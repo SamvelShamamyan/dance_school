@@ -205,7 +205,7 @@ if (window.Dropzone) { Dropzone.autoDiscover = false; }
 </script>
 <script src="{{ asset('dist/js/group.js') }}"></script>
 <script src="{{ asset('dist/js/staff.js') }}?v=2"></script>
-<script src="{{ asset('dist/js/student.js') }}?v=2"></script>
+<!-- <script src="{{ asset('dist/js/student.js') }}?v=2"></script> -->
 <!-- <script src="{{ asset('dist/js/payment.js') }}"></script> -->
 <!-- <script src="{{ asset('dist/js/payment.student.js') }}"></script> -->
 

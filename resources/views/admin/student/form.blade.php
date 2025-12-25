@@ -322,9 +322,12 @@
     @endif
 </div>
 
+@endsection
+
 <script>
   window.currentUserRole = @json(Auth::user()->getRoleNames()[0] ?? null);
 </script>
 
-@endsection
-
+@push('scripts')
+  <script src="{{asset('dist/js/student.js')}}" defer></script>
+@endpush
