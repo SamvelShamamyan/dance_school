@@ -40,7 +40,7 @@
     <div id="studentHeaderFilter" class="card mb-3">
         <div class="card-body">
             <div class="row"> 
-                <div class="col-md-3"> 
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12"> 
                     <div class="form-group">
                         <label for="filterStudentSchool">Ընտրել ուս․ հաստատություն</label>
                         <select id="filterStudentSchool" class="form-control">
@@ -54,13 +54,13 @@
                     </div>
                 </div>
                 <!-- Group Select -->
-                <div class="form-group col-md-3">
+                <div class="form-group col-xl-4 col-lg-4 col-md-6 col-sm-12">
                     <label for="group_id">Խումբ</label>
                     <select id="group_id" class="form-control" disabled>
                         <option value="" selected>Բոլորը</option>
                     </select>
                 </div>
-                <div class="col-6 col-md-3">
+                <div class="col-xl-4 col-lg-4 col-md-6 col-sm-12">
                     <div class="form-group">
                         <label for="filter_range_date">Ծննդյան ամսաթիվ</label>
                         <div class="input-group">
