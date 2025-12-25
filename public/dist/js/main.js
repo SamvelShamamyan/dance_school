@@ -1323,4 +1323,4 @@ $(function() {
             otherOfferTbl.ajax.reload();
         });
     }
-});
+});   
