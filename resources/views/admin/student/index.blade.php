@@ -153,4 +153,5 @@
 
 @push('scripts')
   <script src="{{asset('dist/js/student.js')}}" defer></script>
+  <script src="{{asset('dist/js/student.table.js')}}" defer></script>
 @endpush
