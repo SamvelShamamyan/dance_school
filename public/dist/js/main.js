@@ -1301,6 +1301,7 @@ $(function() {
             { 
               data: 'collected_sum', 
               name: 'collected_sum',
+              className: 'text-center',   
                 createdCell: function (td, cellData) {
                   td.classList.add('cell-soft-finance', 'font-weight-bold');
                 }, 
