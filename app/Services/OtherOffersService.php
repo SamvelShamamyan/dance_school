@@ -94,6 +94,7 @@ class OtherOffersService
             'name'            => 'other_offers.name',
             'payments'        => 'other_offers.payments',
 
+            'groups_count'    => 'groups_count',
             'total_students'  => 'total_students',
 
             'paid_students'   => 'paid_students',
