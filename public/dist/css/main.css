@@ -290,3 +290,36 @@
   align-items: center;
   line-height: 1;
 }
+
+td[class^="cell-soft-"] {
+    border-radius: 6px;
+    padding: 0.4rem 0.55rem;
+    white-space: nowrap;
+}
+
+.cell-soft-info {
+    background-color: #eef6ff;
+    color: #0b5ed7;
+}
+
+.cell-soft-success {
+    background-color: #edf9f0;
+    color: #1e7e34;
+}
+
+.cell-soft-warning {
+    background-color: #fff7e6;
+    color: #b26a00;
+}
+
+.cell-soft-danger {
+    background-color: #fdeeee;
+    color: #b02a37;
+}
+
+.cell-soft-finance {
+    background-color: #e8f7f4; 
+    color: #0f766e;             
+    border-radius: 6px;
+    padding: 0.4rem 0.55rem;
+}

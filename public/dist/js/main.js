@@ -1267,34 +1267,42 @@ $(function() {
                 render: d => money(d)
             },
             { 
+              data: 'groups_count', 
+              name: 'groups_count', 
+              className: 'text-center',
+              createdCell: function (td) {
+                td.classList.add('cell-soft-info', 'font-weight-bold');
+              }
+            },
+            { 
               data: 'total_students', 
               name: 'total_students', 
               className: 'text-center',
-                createdCell: function (td, cellData) {
-                      td.classList.add('font-weight-bold', 'table-warning');
-                    }, 
+              createdCell: function (td) {
+                td.classList.add('cell-soft-warning', 'font-weight-bold');
+              }
             },
             { 
               data: 'paid_students', 
               name: 'paid_students', 
               className: 'text-center',  
-                createdCell: function (td, cellData) {
-                    td.classList.add('font-weight-bold', 'table-success');
-                  }
+              createdCell: function (td) {
+                td.classList.add('cell-soft-success', 'font-weight-bold');
+              }
             },
             { 
               data: 'unpaid_students', 
               name: 'unpaid_students', 
               className: 'text-center',
-                createdCell: function (td, cellData) {
-                  td.classList.add('font-weight-bold', 'table-danger');
-                }
+              createdCell: function (td) {
+                td.classList.add('cell-soft-danger', 'font-weight-bold');
+              }
              },
             { 
               data: 'collected_sum', 
               name: 'collected_sum',
                 createdCell: function (td, cellData) {
-                  td.classList.add('font-weight-bold', 'table-info');
+                  td.classList.add('cell-soft-finance', 'font-weight-bold');
                 }, 
               render: d => money(d),
             },

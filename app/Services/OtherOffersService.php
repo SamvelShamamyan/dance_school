@@ -30,6 +30,10 @@ class OtherOffersService
             ->selectRaw('oog.other_offer_id, COUNT(DISTINCT oop.student_id) as paid_students')
             ->groupBy('oog.other_offer_id');
 
+        $groupsCountSub = DB::table('other_offer_groups as oog')
+            ->selectRaw('oog.other_offer_id, COUNT(DISTINCT oog.group_id) as groups_count')
+            ->groupBy('oog.other_offer_id');
+
         // base query
         $query = OtherOffer::query()
             ->leftJoin('school_names as sn', 'other_offers.school_id', '=', 'sn.id')
@@ -39,12 +43,17 @@ class OtherOffersService
             ->leftJoinSub($paidStudentsSub, 'ps', function ($join) {
                 $join->on('ps.other_offer_id', '=', 'other_offers.id');
             })
+            ->leftJoinSub($groupsCountSub, 'gc', function ($join) {
+                $join->on('gc.other_offer_id', '=', 'other_offers.id');
+            })
             ->selectRaw("
                 other_offers.*,
                 COALESCE(sn.name, '') as school_name,
 
                 COALESCE(ts.total_students, 0) as total_students,
                 COALESCE(ps.paid_students, 0) as paid_students,
+
+                COALESCE(gc.groups_count, 0) as groups_count,
 
                 (COALESCE(ts.total_students, 0) - COALESCE(ps.paid_students, 0)) as unpaid_students,
                 (COALESCE(ps.paid_students, 0) * other_offers.payments) as collected_sum
