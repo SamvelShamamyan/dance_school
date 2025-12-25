@@ -41,7 +41,7 @@ function saveStudent() {
                 swal("error", "Something went wrong!", true, true)
             }
         }
-    });
+    });   
 }
 
 $(document).on('submit', '#StudentForm', function(e) {
