@@ -74,8 +74,9 @@ class StudentController extends Controller
             $schoolId = Auth::user()->school_id;
             $validated = $request->validated();
             $currentDate = Carbon::now();
+
             $student_expected_payments = $validated['student_expected_payments'];
-            if($currentDate->day > 15){
+            if($currentDate->day > 15 && $student_expected_payments == "17000"){
                 $student_debts = "8500";
             }else{
                 $student_expected_payments = $validated['student_expected_payments'];
