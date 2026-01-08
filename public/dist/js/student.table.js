@@ -37,7 +37,6 @@ $(function() {
             url: "/admin/student/getData",
             type: 'post',
             data: function(d) {
-                // ✅ ВСЕГДА отправляем '' если пусто
                 const rangeFrom = $('#range_from').val() || '';
                 const rangeTo   = $('#range_to').val() || '';
 
@@ -107,7 +106,7 @@ $(function() {
 
     // ✅ reset daterangepicker (из student.js) -> reload
     $(document)
-        .off('student:dateRangeReset') // чтобы не было дублей
+        .off('student:dateRangeReset') 
         .on('student:dateRangeReset', function () {
             if ($.fn.DataTable.isDataTable('#studentTbl')) {
                 studentTbl.ajax.reload(null, true);

@@ -106,3 +106,7 @@
     </div>
   </div>
 </div>
+
+@push('scripts')
+  <script src="{{asset('dist/js/student.js')}}" defer></script>
+@endpush
