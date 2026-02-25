@@ -1,5 +1,4 @@
 @php
-    // Есть ли вообще ДР сегодня (для кнопки отправки)
     $hasTodayBirthday = false;
 @endphp
 
