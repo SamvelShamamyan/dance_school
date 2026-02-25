@@ -41,10 +41,8 @@
                             @php
                                 $birth = \Carbon\Carbon::parse($st->birth_date);
 
-                                // ВАЖНО: сегодня ли у конкретного ученика
                                 $isTodayStudent = ($currentDate->day === $birth->day) && ($currentDate->month === $birth->month);
 
-                                // Для кнопки: если хоть один сегодня — true
                                 if ($isTodayStudent) {
                                     $hasTodayBirthday = true;
                                 }
